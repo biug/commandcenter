@@ -248,6 +248,11 @@ sc2::Point2D BuildingPlacer::getRefineryPosition()
 
         sc2::Point2D geyserPos(unit->pos);
 
+		if (std::find(m_geysers.begin(), m_geysers.end(), geyserPos) != m_geysers.end())
+		{
+			continue;
+		}
+
         // check to see if it's next to one of our depots
         bool nearDepot = false;
         for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
@@ -270,6 +275,10 @@ sc2::Point2D BuildingPlacer::getRefineryPosition()
         }
     }
 
+	if (closestGeyser != sc2::Point2D(0, 0) && std::find(m_geysers.begin(), m_geysers.end(), closestGeyser) == m_geysers.end())
+	{
+		m_geysers.emplace_back(closestGeyser);
+	}
     return closestGeyser;
 }
 

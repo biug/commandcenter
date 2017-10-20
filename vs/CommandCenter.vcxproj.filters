@@ -97,6 +97,12 @@
     <ClCompile Include="..\src\TechTree.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MacroAct.cpp">
+      <Filter>macro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Common.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -199,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="..\src\TechTree.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MacroCommand.h">
+      <Filter>macro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MacroAct.h">
+      <Filter>macro</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

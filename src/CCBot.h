@@ -27,6 +27,9 @@ class CCBot : public sc2::Agent
 
     GameCommander           m_gameCommander;
 
+	bool					m_warpgateResearched;
+	bool					m_blinkResearched;
+
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
 
@@ -35,6 +38,7 @@ public:
     CCBot();
     void OnGameStart() override;
     void OnStep() override;
+	void OnUpgradeCompleted(sc2::UpgradeID upgradeID) override;
 
           BotConfig & Config();
           WorkerManager & Workers();

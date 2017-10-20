@@ -11,6 +11,8 @@ CCBot::CCBot()
     , m_gameCommander(*this)
     , m_strategy(*this)
     , m_techTree(*this)
+	, m_warpgateResearched(false)
+	, m_blinkResearched(false)
 {
     
 }
@@ -56,6 +58,20 @@ void CCBot::OnStep()
     m_gameCommander.onFrame();
 
     Debug()->SendDebug();
+}
+
+void CCBot::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
+{
+	switch (upgradeID.ToType()) {
+	case sc2::UPGRADE_ID::WARPGATERESEARCH: {
+		m_warpgateResearched = true;
+	}
+	case sc2::UPGRADE_ID::BLINKTECH: {
+		m_blinkResearched = true;
+	}
+	default:
+		break;
+	}
 }
 
 // TODO: Figure out my race

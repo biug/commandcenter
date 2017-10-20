@@ -10,6 +10,7 @@ class BuildingPlacer
 {
     CCBot & m_bot;
 
+	std::vector<sc2::Point2D> m_geysers;
     std::vector< std::vector<bool> > m_reserveMap;
 
     // queries for various BuildingPlacer data

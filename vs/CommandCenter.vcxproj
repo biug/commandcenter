@@ -90,8 +90,8 @@
     <IncludePath>C:\Libraries\SC2AI\sc2api_precompiled\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>C:\Libraries\SC2AI\sc2api_precompiled\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Libraries\SC2AI\sc2api_precompiled\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\scbots\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -291,9 +291,11 @@
     <ClCompile Include="..\src\BuildOrder.cpp" />
     <ClCompile Include="..\src\BuildOrderQueue.cpp" />
     <ClCompile Include="..\src\CombatCommander.cpp" />
+    <ClCompile Include="..\src\Common.cpp" />
     <ClCompile Include="..\src\DistanceMap.cpp" />
     <ClCompile Include="..\src\GameCommander.cpp" />
     <ClCompile Include="..\src\JSONTools.cpp" />
+    <ClCompile Include="..\src\MacroAct.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\MapTools.cpp" />
     <ClCompile Include="..\src\MeleeManager.cpp" />
@@ -331,6 +333,8 @@
     <ClInclude Include="..\src\DistanceMap.h" />
     <ClInclude Include="..\src\GameCommander.h" />
     <ClInclude Include="..\src\JSONTools.h" />
+    <ClInclude Include="..\src\MacroAct.h" />
+    <ClInclude Include="..\src\MacroCommand.h" />
     <ClInclude Include="..\src\MapTools.h" />
     <ClInclude Include="..\src\MeleeManager.h" />
     <ClInclude Include="..\src\BuildType.h" />

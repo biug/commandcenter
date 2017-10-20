@@ -61,38 +61,41 @@ void ProductionManager::manageBuildOrderQueue()
     // while there is still something left in the queue
     while (!m_queue.isEmpty())
     {
-        // this is the unit which can produce the currentItem
-        const sc2::Unit * producer = getProducer(currentItem.type);
+		if (currentItem.type.isUnit())
+		{
+			// this is the unit which can produce the currentItem
+			const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
 
-        // check to see if we can make it right now
-        bool canMake = canMakeNow(producer, currentItem.type);
+			// check to see if we can make it right now
+			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
 
-        // TODO: if it's a building and we can't make it yet, predict the worker movement to the location
+			// TODO: if it's a building and we can't make it yet, predict the worker movement to the location
 
-        // if we can make the current item
-        if (producer && canMake)
-        {
-            // create it and remove it from the _queue
-            create(producer, currentItem);
-            m_queue.removeCurrentHighestPriorityItem();
+			// if we can make the current item
+			if (producer && canMake)
+			{
+				// create it and remove it from the _queue
+				create(producer, currentItem);
+				m_queue.removeCurrentHighestPriorityItem();
 
-            // don't actually loop around in here
-            break;
-        }
-        // otherwise, if we can skip the current item
-        else if (m_queue.canSkipItem())
-        {
-            // skip it
-            m_queue.skipItem();
+				// don't actually loop around in here
+				break;
+			}
+			// otherwise, if we can skip the current item
+			else if (m_queue.canSkipItem())
+			{
+				// skip it
+				m_queue.skipItem();
 
-            // and get the next one
-            currentItem = m_queue.getNextHighestPriorityItem();
-        }
-        else
-        {
-            // so break out
-            break;
-        }
+				// and get the next one
+				currentItem = m_queue.getNextHighestPriorityItem();
+			}
+			else
+			{
+				// so break out
+				break;
+			}
+		}
     }
 }
 
@@ -161,19 +164,19 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
 
     // if we're dealing with a building
     // TODO: deal with morphed buildings & addons
-    if (m_bot.Data(item.type).isBuilding)
+    if (item.type.isBuilding(m_bot))
     {
         // send the building task to the building manager
-        m_buildingManager.addBuildingTask(item.type.getUnitTypeID(), m_bot.GetStartLocation());
+        m_buildingManager.addBuildingTask(item.type.getUnitType(), m_bot.GetStartLocation());
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
-        Micro::SmartTrain(producer, item.type.getUnitTypeID(), m_bot);
+        Micro::SmartTrain(producer, item.type.getUnitType(), m_bot);
     }
     else if (item.type.isUpgrade())
     {
-        Micro::SmartAbility(producer, m_bot.Data(item.type.getUpgradeID()).buildAbility, m_bot);
+        Micro::SmartAbility(producer, m_bot.Data(item.type.getUpgradeType()).buildAbility, m_bot);
     }
 }
 

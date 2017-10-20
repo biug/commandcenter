@@ -16,3 +16,5 @@ namespace Players
 {
     enum {Self = 0, Enemy = 1};
 }
+
+int GetIntFromString(const std::string & s);
