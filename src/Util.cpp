@@ -392,7 +392,7 @@ sc2::UnitTypeID Util::GetUnitTypeIDFromName(const std::string & name, CCBot & bo
 {
     for (const sc2::UnitTypeData & data : bot.Observation()->GetUnitTypeData())
     {
-        if (name == data.name)
+        if (EqualIgnoreCase(name, data.name))
         {
             return data.unit_type_id;
         }
@@ -405,7 +405,7 @@ sc2::UpgradeID Util::GetUpgradeIDFromName(const std::string & name, CCBot & bot)
 {
     for (const sc2::UpgradeData & data : bot.Observation()->GetUpgradeData())
     {
-        if (name == data.name)
+		if (EqualIgnoreCase(name, data.name))
         {
             return data.upgrade_id;
         }
