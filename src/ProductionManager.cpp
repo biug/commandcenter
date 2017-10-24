@@ -81,14 +81,28 @@ void ProductionManager::manageBuildOrderQueue()
 				// don't actually loop around in here
 				break;
 			}
-			// otherwise, if we can skip the current item
-			else if (m_queue.canSkipItem())
+			else
 			{
-				// skip it
-				m_queue.skipItem();
+				// so break out
+				break;
+			}
+		}
+		else if (currentItem.type.isUpgrade())
+		{
+			// this is the unit which can produce the currentItem
+			const sc2::Unit * producer = getProducer(currentItem.type.getUpgradeType());
 
-				// and get the next one
-				currentItem = m_queue.getNextHighestPriorityItem();
+			// check to see if we can make it right now
+			bool canMake = canMakeNow(producer, currentItem.type.getUpgradeType());
+			// if we can make the current item
+			if (producer && canMake)
+			{
+				// create it and remove it from the _queue
+				create(producer, currentItem);
+				m_queue.removeCurrentHighestPriorityItem();
+
+				// don't actually loop around in here
+				break;
 			}
 			else
 			{
@@ -101,7 +115,7 @@ void ProductionManager::manageBuildOrderQueue()
 
 const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Point2D closestTo)
 {
-    // get all the types of units that cna build this type
+    // get all the types of units that can build this type
     auto & producerTypes = m_bot.Data(type).whatBuilds;
 
     // make a set of all candidate producers

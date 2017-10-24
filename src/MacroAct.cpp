@@ -70,6 +70,7 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 					int amount = GetIntFromString(m[1].str());
 					if (amount >= 0) {
 						*this = MacroAct(t, amount);
+						_type = MacroActs::Command;
 						return;
 					}
 				}
@@ -80,6 +81,7 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 				if (commandName == inputName)
 				{
 					*this = MacroAct(t);
+					_type = MacroActs::Command;
 					return;
 				}
 			}
@@ -102,12 +104,13 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 	}
 
 	_buildType = BuildType(inputName, bot);
+	_type = _buildType.isUnit() ? MacroActs::Unit : MacroActs::Upgrade;
 	_macroLocation = specifiedMacroLocation;
 }
 
 MacroAct::MacroAct(BuildType t)
 	: _buildType(t)
-	, _type(MacroActs::Unit)
+	, _type(t.isUnit() ? MacroActs::Unit : MacroActs::Upgrade)
 	, _macroLocation(MacroLocation::Anywhere)
 {
 }

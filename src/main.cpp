@@ -30,6 +30,9 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
+	std::cout << sc2::UpgradeIDToName(sc2::UPGRADE_ID::WARPGATERESEARCH) << std::endl;
+	std::cout << sc2::UnitTypeToName(sc2::UNIT_TYPEID::PROTOSS_ZEALOT) << std::endl;
+
     bool parsingFailed = doc.Parse(config.c_str()).HasParseError();
     if (parsingFailed)
     {
