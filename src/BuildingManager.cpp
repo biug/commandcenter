@@ -22,25 +22,56 @@ void BuildingManager::onStart()
 // gets called every frame from GameCommander
 void BuildingManager::onFrame()
 {
-    for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
-    {
-        // filter out units which aren't buildings under construction
-        if (m_bot.Data(unit->unit_type).isBuilding)
-        {
-            std::stringstream ss;
-            ss << unit->tag;
-            m_bot.Map().drawText(unit->pos, ss.str());
-        }
-    }
+	for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		// filter out units which aren't buildings under construction
+		if (m_bot.Data(unit->unit_type).isBuilding)
+		{
+			std::stringstream ss;
+			ss << unit->tag;
+			m_bot.Map().drawText(unit->pos, ss.str());
+		}
+	}
 
-    validateWorkersAndBuildings();          // check to see if assigned workers have died en route or while constructing
-    assignWorkersToUnassignedBuildings();   // assign workers to the unassigned buildings and label them 'planned'    
-    constructAssignedBuildings();           // for each planned building, if the worker isn't constructing, send the command    
-    checkForStartedConstruction();          // check to see if any buildings have started construction and update data structures    
-    checkForDeadTerranBuilders();           // if we are terran and a building is under construction without a worker, assign a new one    
-    checkForCompletedBuildings();           // check to see if any buildings have completed and update data structures
+	validateWorkersAndBuildings();          // check to see if assigned workers have died en route or while constructing
+	assignWorkersToUnassignedBuildings();   // assign workers to the unassigned buildings and label them 'planned'    
+	constructAssignedBuildings();           // for each planned building, if the worker isn't constructing, send the command    
+	checkForStartedConstruction();          // check to see if any buildings have started construction and update data structures    
+	checkForDeadTerranBuilders();           // if we are terran and a building is under construction without a worker, assign a new one    
+	checkForCompletedBuildings();           // check to see if any buildings have completed and update data structures
+	
+	if (!m_bot.warpgateComplete()) {
 
-    drawBuildingInformation();
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
+			{
+				for (auto c : m_bot.UnitInfo().getUnits(Players::Self)) {
+					if (c->unit_type == sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE)
+						Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, c, m_bot);
+				}
+			}
+		}
+	}
+	else {
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
+			{
+				Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, b, m_bot);
+			}
+		}
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY) {
+				Micro::SmartAbility(b, sc2::ABILITY_ID::MORPH_WARPGATE, m_bot);
+			}
+
+		}
+	}
+	drawBuildingInformation();
+		
+	
 }
 
 bool BuildingManager::isBeingBuilt(sc2::UnitTypeID type)
@@ -299,7 +330,7 @@ void BuildingManager::checkForCompletedBuildings()
             toRemove.push_back(b);
         }
     }
-
+	
     removeBuildings(toRemove);
 }
 

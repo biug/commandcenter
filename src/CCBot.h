@@ -52,4 +52,7 @@ public:
     const sc2::Race & GetPlayerRace(int player) const;
     sc2::Point2D GetStartLocation() const;
     const sc2::Unit * GetUnit(const UnitTag & tag) const;
+	bool warpgateComplete() {
+		return m_warpgateResearched;
+	}
 };

@@ -18,4 +18,7 @@ namespace Micro
     void SmartBuildTarget   (const sc2::Unit * builder,   const sc2::UnitTypeID & buildingType, const sc2::Unit * target, CCBot & bot);
     void SmartTrain         (const sc2::Unit * builder,   const sc2::UnitTypeID & buildingType, CCBot & bot);
     void SmartAbility       (const sc2::Unit * builder,   const sc2::AbilityID & abilityID, CCBot & bot);
-};
+	void SmartAbility       (const sc2::Unit * builder,   const sc2::AbilityID & abilityID, const sc2::Unit * target,CCBot &bot);
+	void SmartAbility       (const sc2::Unit * builder,   const sc2::AbilityID & abilityID, const sc2::Point2D & point, CCBot & bot);
+	void SmartWarp          (const sc2::Unit * builder,   const sc2::UnitTypeID & buildingType, const sc2::Point2D &point, CCBot & bot);
+};  

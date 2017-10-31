@@ -25,7 +25,7 @@ class Squad
     std::map<const sc2::Unit *, bool> m_nearEnemy;
 
     const sc2::Unit * unitClosestToEnemy() const;
-
+	
     void updateUnits();
     void addUnitsToMicroManagers();
     void setNearEnemyUnits();
@@ -39,7 +39,7 @@ public:
 
     Squad(const std::string & name, const SquadOrder & order, size_t priority, CCBot & bot);
     Squad(CCBot & bot);
-
+	
     void onFrame();
     void setSquadOrder(const SquadOrder & so);
     void addUnit(const sc2::Unit * unit);

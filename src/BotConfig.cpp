@@ -44,7 +44,7 @@ BotConfig::BotConfig()
     
     WorkersPerRefinery                  = 3;
     BuildingSpacing                     = 1;
-    PylonSpacing                        = 3;
+    PylonSpacing                        = 8;
 }
 
 void BotConfig::readConfigFile()

@@ -7,6 +7,8 @@ ProductionManager::ProductionManager(CCBot & bot)
     : m_bot             (bot)
     , m_buildingManager (bot)
     , m_queue           (bot)
+	, warpGate (0)
+	, used(0)
 {
 
 }
@@ -63,9 +65,12 @@ void ProductionManager::manageBuildOrderQueue()
     {
 		if (currentItem.type.isUnit())
 		{
+			
 			// this is the unit which can produce the currentItem
-			const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
-
+			
+			
+				const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
+			
 			// check to see if we can make it right now
 			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
 
@@ -83,6 +88,7 @@ void ProductionManager::manageBuildOrderQueue()
 			}
 			else
 			{
+				
 				// so break out
 				break;
 			}
@@ -106,6 +112,7 @@ void ProductionManager::manageBuildOrderQueue()
 			}
 			else
 			{
+			
 				// so break out
 				break;
 			}
@@ -117,9 +124,14 @@ const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Po
 {
     // get all the types of units that can build this type
     auto & producerTypes = m_bot.Data(type).whatBuilds;
-
+	warpGate = m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_WARPGATE, true);
+	if (type.getUnitTypeID() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY&&m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PYLON, false) == 3) {
+		closestTo = sc2::Point2D(10, 15) + sc2::Point2D(m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition().x / 2 + m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition().x / 2, m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition().y / 2 + m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition().y / 2);
+		
+	}
     // make a set of all candidate producers
     std::vector<const sc2::Unit *> candidateProducers;
+
     for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
     {
         // reasons a unit can not train the desired type
@@ -127,7 +139,7 @@ const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Po
         if (unit->build_progress < 1.0f) { continue; }
         if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
         if (unit->is_flying) { continue; }
-
+		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY&&m_bot.warpgateComplete()) { continue; }
         // TODO: if unit is not powered continue
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
@@ -135,7 +147,7 @@ const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Po
         // if we haven't cut it, add it to the set of candidates
         candidateProducers.push_back(unit);
     }
-
+	
     return getClosestUnitToPosition(candidateProducers, closestTo);
 }
 
@@ -145,10 +157,16 @@ const sc2::Unit * ProductionManager::getClosestUnitToPosition(const std::vector<
     {
         return 0;
     }
+	if (warpGate>0&&units[0]->unit_type == sc2::UNIT_TYPEID::PROTOSS_WARPGATE) {
+		int t = used%warpGate;
+		used++;
+		return units[t];
 
+	}
     // if we don't care where the unit is return the first one we have
     if (closestTo.x == 0 && closestTo.y == 0)
     {
+		
         return units[0];
     }
 
@@ -168,6 +186,28 @@ const sc2::Unit * ProductionManager::getClosestUnitToPosition(const std::vector<
     return closestUnit;
 }
 
+const sc2::Unit * ProductionManager::pylonClosestToEnemy()
+{
+	const sc2::Unit * closest = nullptr;
+	float closestDist = std::numeric_limits<float>::max();
+	
+	for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		BOT_ASSERT(unit, "null unit");
+		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
+			// the distance to the order position
+			int dist = m_bot.Map().getGroundDistance(unit->pos, m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition());
+
+			if (dist != -1 && (!closest || dist < closestDist))
+			{
+				closest = unit;
+				closestDist = (float)dist;
+			}
+		}
+	}
+
+	return closest;
+}
 // this function will check to see if all preconditions are met and then create a unit
 void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item)
 {
@@ -186,7 +226,14 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
-        Micro::SmartTrain(producer, item.type.getUnitType(), m_bot);
+		if (producer->unit_type == sc2::UNIT_TYPEID::PROTOSS_WARPGATE) {
+			
+					Micro::SmartWarp(producer, item.type.getUnitType(), pylonClosestToEnemy()->pos + sc2::Point2D(rand()%5+1,rand()%5+1) - sc2::Point2D(rand() % 5, rand() % 5), m_bot);
+			
+		}
+		else {
+			Micro::SmartTrain(producer, item.type.getUnitType(), m_bot);
+		}
     }
     else if (item.type.isUpgrade())
     {
@@ -219,6 +266,14 @@ bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType &
                 return true;
             }
         }
+		buildTypeAbility = m_bot.Data(type).warpAbility;
+		for (const sc2::AvailableAbility & available_ability : available_abilities.abilities)
+		{
+			if (available_ability.ability_id == buildTypeAbility)
+			{
+				return true;
+			}
+		}
     }
 
     return false;

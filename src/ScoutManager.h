@@ -13,7 +13,7 @@ class ScoutManager
     int             m_numScouts;
     bool            m_scoutUnderAttack;
     float           m_previousScoutHP;
-
+	bool            arrive;
     bool            enemyWorkerInRadiusOf(const sc2::Point2D & pos) const;
     sc2::Point2D    getFleePosition() const;
     const sc2::Unit * closestEnemyWorkerTo(const sc2::Point2D & pos) const;

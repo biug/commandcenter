@@ -30,8 +30,7 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
-	std::cout << sc2::UpgradeIDToName(sc2::UPGRADE_ID::WARPGATERESEARCH) << std::endl;
-	std::cout << sc2::UnitTypeToName(sc2::UNIT_TYPEID::PROTOSS_ZEALOT) << std::endl;
+	
 
     bool parsingFailed = doc.Parse(config.c_str()).HasParseError();
     if (parsingFailed)
@@ -45,7 +44,7 @@ int main(int argc, char* argv[])
     std::string enemyRaceString;
     std::string mapString;
     int stepSize = 1;
-    sc2::Difficulty enemyDifficulty = sc2::Difficulty::Easy;
+	sc2::Difficulty enemyDifficulty = sc2::Difficulty::VeryHard;
 
     if (doc.HasMember("Game Info") && doc["Game Info"].IsObject())
     {

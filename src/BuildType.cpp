@@ -27,6 +27,8 @@ BuildType::BuildType(const std::string & name, CCBot & bot)
     if (m_upgrade)
     {
         m_type = BuildTypes::Upgrade;
+		std::cout << "upgrade " << m_name << std::endl;
+		std::cout << "id = " << m_upgrade << std::endl;
         return;
     }
 

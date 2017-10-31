@@ -67,8 +67,25 @@ void Micro::SmartTrain(const sc2::Unit * builder, const sc2::UnitTypeID & buildi
     bot.Actions()->UnitCommand(builder, bot.Data(buildingType).buildAbility);
 }
 
+void Micro::SmartWarp(const sc2::Unit * builder, const sc2::UnitTypeID & buildingType, const sc2::Point2D& point, CCBot & bot)
+{
+	BOT_ASSERT(builder != nullptr, "Builder is null");
+	bot.Actions()->UnitCommand(builder, bot.Data(buildingType).warpAbility, point);
+}
 void Micro::SmartAbility(const sc2::Unit * builder, const sc2::AbilityID & abilityID, CCBot & bot)
 {
     BOT_ASSERT(builder != nullptr, "Builder is null");
     bot.Actions()->UnitCommand(builder, abilityID);
+}
+
+void Micro::SmartAbility(const sc2::Unit * builder, const sc2::AbilityID & abilityID,  const sc2::Unit * target, CCBot & bot)
+{
+	BOT_ASSERT(builder != nullptr, "Builder is null");
+	bot.Actions()->UnitCommand(builder, abilityID, target);
+}
+
+void Micro::SmartAbility(const sc2::Unit * builder, const sc2::AbilityID & abilityID, const sc2::Point2D& point, CCBot & bot)
+{
+	BOT_ASSERT(builder != nullptr, "Builder is null");
+	bot.Actions()->UnitCommand(builder, abilityID, point);
 }

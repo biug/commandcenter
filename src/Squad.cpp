@@ -236,6 +236,7 @@ sc2::Point2D Squad::calcRegroupPosition() const
     }
 }
 
+
 const sc2::Unit * Squad::unitClosestToEnemy() const
 {
     const sc2::Unit * closest = nullptr;
@@ -244,15 +245,16 @@ const sc2::Unit * Squad::unitClosestToEnemy() const
     for (auto unit : m_units)
     {
         BOT_ASSERT(unit, "null unit");
+		
+			// the distance to the order position
+			int dist = m_bot.Map().getGroundDistance(unit->pos, m_order.getPosition());
 
-        // the distance to the order position
-        int dist = m_bot.Map().getGroundDistance(unit->pos, m_order.getPosition());
-
-        if (dist != -1 && (!closest || dist < closestDist))
-        {
-            closest = unit;
-            closestDist = (float)dist;
-        }
+			if (dist != -1 && (!closest || dist < closestDist))
+			{
+				closest = unit;
+				closestDist = (float)dist;
+			}
+		
     }
 
     return closest;

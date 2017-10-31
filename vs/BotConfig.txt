@@ -1,0 +1,80 @@
+{
+    "Bot Info" :
+    {
+        "BotName"                   : "CommandCenter",
+        "Authors"                   : "David Churchill",
+        "PrintInfoOnStart"          : false
+    },
+
+    "Game Info" :
+    {
+        "BotRace"                   : "Protoss",
+        "EnemyDifficulty"           : 2,
+        "EnemyRace"                 : "Terran",
+        "MapFile"                   : "C:\\Program Files (x86)\\StarCraft II\\maps\\Ladder2017Season1\\AbyssalReefLE.SC2Map",
+        "StepSize"                  : 1
+    },
+        
+    "Micro" :
+    {
+        "KiteWithRangedUnits"       : false,
+        "ScoutHarassEnemy"          : false,
+        "CombatUnitsForAttack"      : 5
+    },
+    
+    "Macro" :
+    {
+        "WorkersPerRefinery"        : 3,
+        "BuildingSpacing"           : 0,
+        "PylonSpacing"              : 8
+    },
+
+    "Debug" :
+    {
+        "DrawGameInfo"              : true, 
+        "DrawProductionInfo"        : true, 
+        "DrawBaseLocationInfo"      : false,
+        "DrawTileInfo"              : false,
+        "DrawWalkableSectors"       : false,
+        "DrawScoutInfo"             : false,
+        "DrawEnemyUnitInfo"         : false,
+        "DrawResourceInfo"          : false,
+        "DrawUnitTargetInfo"        : false,
+        "DrawLastSeenTileInfo"      : false,
+        "DrawSquadInfo"             : false,
+        "DrawWorkerInfo"            : false,
+        "DrawBuildingInfo"          : false,
+        "DrawReservedBuildingTiles" : false
+    },
+    
+    "Modules" :
+    {
+        "UseAutoObserver"           : false
+    },
+    
+    "Strategy" :
+    {
+        "Protoss"                   : "Protoss_DTRush",
+        "Terran"                    : "Terran_MarineRush",
+        "Zerg"                      : "Zerg_2HatchRoach",
+        
+        "ScoutHarassEnemy"          : false,
+        
+        "Strategies" :
+        {
+            "Protoss_ZealotRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Pylon", "Probe", "Gateway", "Probe", "Gateway", "Pylon", "Probe", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot"]},
+
+            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon", "Stalker", "Stalker", "Pylon", "Stalker", "Stalker", "WarpGateResearch", "Pylon", "Gateway", "Gateway", "MothershipCore", "Pylon", "Pylon", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
+
+            "Protoss_ImmortalRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Probe","Pylon", "Probe", "Probe", "Gateway","Assimilator","Probe", "Probe",  "Assimilator","Probe", "Probe",  "Gateway",  "CyberneticsCore", "Probe","Probe","Pylon","Probe", "WarpGateResearch", "Pylon", "RoboticsFacility", "Stalker", "Stalker", "Pylon", "Gateway", "Pylon", "Immortal", "MothershipCore", "Pylon", "Stalker", "Stalker", "Stalker", "Immortal", "Adept", "Immortal", "Adept", "Immortal", "Adept"]},
+
+            "Protoss_DTRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe","Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway","Assimilator","Probe", "Probe",  "Assimilator","Probe", "Probe",  "Gateway",  "CyberneticsCore", "Probe","Probe","Pylon","Probe", "WarpGateResearch","TwilightCouncil", "Stalker", "Stalker", "DarkShrine", "Gateway","Stalker" ,"Stalker","Gateway", "Pylon", "DarkTemplar", "DarkTemplar", "DarkTemplar", "DarkTemplar", "Stalker", "Stalker", "Stalker", "Stalker"]},
+
+            "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["SCV", "SCV", "SupplyDepot", "SCV", "SCV", "Barracks", "Barracks", "Barracks", "Barracks", "SupplyDepot", "SupplyDepot", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
+
+            "Zerg_ZerglingRush"     : { "Race" : "Zerg",    "OpeningBuildOrder" : ["SpawningPool", "Drone", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling"] },
+
+            "Zerg_2HatchRoach"      : { "Race" : "Zerg",    "OpeningBuildOrder" : ["Drone", "Drone", "SpawningPool", "Drone", "Drone", "Overlord", "Drone", "Extractor", "Drone", "Drone", "Hatchery", "Drone", "Overlord", "Drone", "RoachWarren", "Drone", "Drone", "Overlord", "Drone", "Drone", "Roach", "Overlord", "Roach", "Roach", "Roach", "Roach", "Overlord", "Roach", "Roach", "Roach", "Roach", "Roach", "Roach", "Roach"] }
+        }
+    }
+}

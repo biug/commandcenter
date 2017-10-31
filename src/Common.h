@@ -9,8 +9,6 @@
 #include <fstream>
 #include <streambuf>
 #include <string>
-#include <cctype>
-#include <algorithm>
 
 typedef uint64_t UnitTag;
 
@@ -20,4 +18,3 @@ namespace Players
 }
 
 int GetIntFromString(const std::string & s);
-bool EqualIgnoreCase(const std::string & s1, const std::string & s2);

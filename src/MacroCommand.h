@@ -26,6 +26,7 @@ enum class MacroCommandType
 	, KeepBuildSunken
 	, RallyAtNatural
 	, StopRally
+	, BuildFieldPylon
 };
 
 class MacroCommand
@@ -59,6 +60,7 @@ public:
 			, MacroCommandType::KeepBuildSunken
 			, MacroCommandType::RallyAtNatural
 			, MacroCommandType::StopRally
+			, MacroCommandType::BuildFieldPylon
 		};
 	}
 
@@ -189,7 +191,9 @@ public:
 		{
 			return "go stop rally";
 		}
-
+		if (t == MacroCommandType::BuildFieldPylon) {
+			return "go build field pylon";
+		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";
 	}
