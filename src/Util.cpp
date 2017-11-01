@@ -490,3 +490,28 @@ bool Util::UnitCanBuildTypeNow(const sc2::Unit * unit, const sc2::UnitTypeID & t
 
     return false;
 }
+
+const sc2::Unit* Util::getClosestPylon(CCBot & bot)
+{
+	auto enemyStartLoc = bot.Bases().getPlayerStartingBaseLocation(Players::Enemy);
+	if (!enemyStartLoc) return nullptr;
+
+	const sc2::Unit * closest = nullptr;
+	float closestDist = 0;
+
+	for (auto unit : bot.UnitInfo().getUnits(Players::Self))
+	{
+		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_PYLON)
+		{
+			// the distance to the order position
+			int dist = Util::PlanerDist(unit->pos, enemyStartLoc->getPosition());
+
+			if (!closest || dist < closestDist)
+			{
+				closest = unit;
+				closestDist = dist;
+			}
+		}
+	}
+	return closest;
+}

@@ -21,7 +21,8 @@ enum class MacroCommandType
 	, ReleaseWorkers
 	, UntilFindEnemy
 	, WaitWarpGate
-	, RallyAtThird
+	, RallyAtPylon
+	, StartAttack
 };
 
 class MacroCommand
@@ -50,7 +51,8 @@ public:
 			, MacroCommandType::ReleaseWorkers
 			, MacroCommandType::UntilFindEnemy
 			, MacroCommandType::WaitWarpGate
-			, MacroCommandType::RallyAtThird
+			, MacroCommandType::RallyAtPylon
+			, MacroCommandType::StartAttack
 		};
 	}
 
@@ -160,9 +162,13 @@ public:
 		{
 			return "go wait warpgate";
 		}
-		if (t == MacroCommandType::RallyAtThird)
+		if (t == MacroCommandType::RallyAtPylon)
 		{
-			return "go rally at third";
+			return "go rally at pylon";
+		}
+		if (t == MacroCommandType::StartAttack)
+		{
+			return "go start attack";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";

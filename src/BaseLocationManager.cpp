@@ -201,7 +201,6 @@ void BaseLocationManager::onFrame()
 		{
 			for (auto & startLocation : m_startingBaseLocations)
 			{
-				m_bot.Map().drawSphere(startLocation->getDepotPosition(), 8, sc2::Colors::Purple);
 				if (Util::PlanerDist(startLocation->getDepotPosition(), selfStartBase->pos) < 10)
 				{
 					m_playerStartingBaseLocations[Players::Self] = startLocation;
@@ -340,13 +339,11 @@ void BaseLocationManager::onFrame()
 	if (m_playerStartingBaseLocations[Players::Self])
 	{
 		auto pos = m_playerStartingBaseLocations[Players::Self]->getDepotPosition();
-		m_bot.Map().drawSphere(pos, 8, sc2::Colors::White);
 	}
 
 	if (m_playerStartingBaseLocations[Players::Enemy])
 	{
 		auto pos = m_playerStartingBaseLocations[Players::Enemy]->getDepotPosition();
-		m_bot.Map().drawSphere(pos, 8, sc2::Colors::Yellow);
 	}
 }
 

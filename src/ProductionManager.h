@@ -28,7 +28,6 @@ class ProductionManager
 public:
 
     ProductionManager(CCBot & bot);
-	const sc2::Unit * pylonClosestToEnemy();
     void    onStart();
     void    onFrame();
     void    onUnitDestroy(const sc2::Unit * unit);

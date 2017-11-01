@@ -250,8 +250,6 @@ void WorkerManager::drawResourceDebugInfo()
     {
         if (!worker) { continue; }
 
-        m_bot.Map().drawText(worker->pos, m_workerData.getJobCode(worker));
-
         auto depot = m_workerData.getWorkerDepot(worker);
         if (depot)
         {

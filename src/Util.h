@@ -59,6 +59,8 @@ namespace Util
     bool    Placement(const sc2::GameInfo& info, const sc2::Point2D& point);
     bool    Pathable(const sc2::GameInfo& info, const sc2::Point2D& point);
 
+	const sc2::Unit*	getClosestPylon(CCBot & bot);
+
 	template<typename P1, typename P2>
 	float PlanerDist(const P1 & p1, const P2 & p2)
 	{

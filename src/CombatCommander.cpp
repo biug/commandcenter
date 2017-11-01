@@ -41,10 +41,7 @@ bool CombatCommander::isSquadUpdateFrame()
 
 void CombatCommander::onFrame(const std::vector<const sc2::Unit *> & combatUnits)
 {
-    if (!m_attackStarted)
-    {
-        m_attackStarted = shouldWeStartAttacking();
-    }
+	m_attackStarted = m_bot.State().m_startAttack;
 
     m_combatUnits = combatUnits;
 
@@ -81,9 +78,26 @@ void CombatCommander::updateIdleSquad()
 
 void CombatCommander::updateAttackSquads()
 {
+	if (m_bot.State().m_rallyAtPylon)
+	{
+		auto closestPylon = Util::getClosestPylon(m_bot);
+		if (closestPylon)
+		{
+			bool allRally = false;
+			sc2::Point2D rallyPos = closestPylon->pos + sc2::Point2D(5, 0);
+			for (auto & unit : m_combatUnits)
+			{
+				Micro::SmartAttackMove(unit, rallyPos, m_bot);
+				if (Util::PlanerDist(unit->pos, rallyPos) > 5) allRally = false;
+			}
+			// must all rally
+			if (!allRally) return;
+		}
+	}
+
     if (!m_attackStarted)
     {
-        return;
+		return;
     }
 
     Squad & mainAttackSquad = m_squadData.getSquad("MainAttack");

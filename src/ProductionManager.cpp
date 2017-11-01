@@ -42,7 +42,7 @@ void ProductionManager::onFrame()
     m_buildingManager.onFrame();
 
 	// add time buff on BC
-	if (!m_bot.warpgateComplete())
+	if (!m_bot.State().m_rschWarpGate)
 	{
 		const sc2::Unit * nexus = nullptr;
 		const sc2::Unit * cyber = nullptr;
@@ -68,7 +68,8 @@ void ProductionManager::onFrame()
 			}
 		}
 	}
-	else {
+	else
+	{
 		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
 		{
 			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS &&
@@ -108,16 +109,15 @@ void ProductionManager::manageBuildOrderQueue()
     {
 		if (currentItem.type.isUnit())
 		{
-			// wait for warpgate researched
-			if (m_bot.State().m_waitWarpGate && !m_bot.warpgateComplete())
-			{
-				std::cout << "wait for a warpgate" << std::endl;
-				break;
-			}
-
 			// this is the unit which can produce the currentItem
 			
 			const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
+
+			// if we're waiting for a warpgate, we should shutdown our training
+			if (producer && producer->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.State().m_waitWarpGate)
+			{
+				break;
+			}
 			
 			// check to see if we can make it right now
 			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
@@ -165,9 +165,19 @@ void ProductionManager::manageBuildOrderQueue()
 		}
 		else if (currentItem.type.isCommand())
 		{
-			if (currentItem.type.getCommandType().getType() == MacroCommandType::WaitWarpGate)
+			auto command = currentItem.type.getCommandType().getType();
+			if (command == MacroCommandType::WaitWarpGate)
 			{
 				m_bot.State().m_waitWarpGate = true;
+			}
+			else if (command == MacroCommandType::RallyAtPylon)
+			{
+				m_bot.State().m_rallyAtPylon = true;
+			}
+			else if (command == MacroCommandType::StartAttack)
+			{
+				m_bot.State().m_startAttack = true;
+				m_bot.State().m_rallyAtPylon = false;
 			}
 			m_queue.removeCurrentHighestPriorityItem();
 			break;
@@ -197,7 +207,6 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         if (unit->build_progress < 1.0f) { continue; }
         if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
         if (unit->is_flying) { continue; }
-		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.warpgateComplete()) { continue; }
         // TODO: if unit is not powered continue
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
@@ -244,28 +253,6 @@ const sc2::Unit * ProductionManager::getClosestUnitToPosition(const std::vector<
     return closestUnit;
 }
 
-const sc2::Unit * ProductionManager::pylonClosestToEnemy()
-{
-	const sc2::Unit * closest = nullptr;
-	float closestDist = std::numeric_limits<float>::max();
-	
-	for (auto unit : m_bot.UnitInfo().getUnits(Players::Self))
-	{
-		BOT_ASSERT(unit, "null unit");
-		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
-			// the distance to the order position
-			int dist = m_bot.Map().getGroundDistance(unit->pos, m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition());
-
-			if (dist != -1 && (!closest || dist < closestDist))
-			{
-				closest = unit;
-				closestDist = (float)dist;
-			}
-		}
-	}
-
-	return closest;
-}
 // this function will check to see if all preconditions are met and then create a unit
 void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item)
 {
@@ -286,12 +273,17 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
-		if (producer->unit_type == sc2::UNIT_TYPEID::PROTOSS_WARPGATE) {
-			
-			Micro::SmartWarp(producer, item.type.getUnitType(), pylonClosestToEnemy()->pos + sc2::Point2D((float)rand() / RAND_MAX * 5.0f, (float)rand() / RAND_MAX * 5.0f), m_bot);
+		if (producer->unit_type == sc2::UNIT_TYPEID::PROTOSS_WARPGATE)
+		{
+			auto closestPylon = Util::getClosestPylon(m_bot);
+			if (closestPylon)
+			{
+				Micro::SmartWarp(producer, item.type.getUnitType(), closestPylon->pos + sc2::Point2D((float)rand() / RAND_MAX * 5.0f, (float)rand() / RAND_MAX * 5.0f), m_bot);
+			}
 			
 		}
-		else {
+		else
+		{
 			Micro::SmartTrain(producer, item.type.getUnitType(), m_bot);
 		}
     }

@@ -11,8 +11,6 @@ CCBot::CCBot()
     , m_gameCommander(*this)
     , m_strategy(*this)
     , m_techTree(*this)
-	, m_warpgateResearched(false)
-	, m_blinkResearched(false)
 	, m_state(*this)
 {
     
@@ -64,16 +62,7 @@ void CCBot::OnStep()
 
 void CCBot::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 {
-	switch (upgradeID.ToType()) {
-	case sc2::UPGRADE_ID::WARPGATERESEARCH: {
-		m_warpgateResearched = true;
-	}
-	case sc2::UPGRADE_ID::BLINKTECH: {
-		m_blinkResearched = true;
-	}
-	default:
-		break;
-	}
+	m_state.OnUpgradeCompleted(upgradeID);
 }
 
 // TODO: Figure out my race
@@ -131,16 +120,6 @@ WorkerManager & CCBot::Workers()
 const sc2::Unit * CCBot::GetUnit(const UnitTag & tag) const
 {
     return Observation()->GetUnit(tag);
-}
-
-const bool CCBot::warpgateComplete() const
-{
-	return m_warpgateResearched;
-}
-
-const bool CCBot::blinkComplete() const
-{
-	return m_blinkResearched;
 }
 
 StateManager & CCBot::State()

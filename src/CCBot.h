@@ -29,9 +29,6 @@ class CCBot : public sc2::Agent
 
     GameCommander           m_gameCommander;
 
-	bool					m_warpgateResearched;
-	bool					m_blinkResearched;
-
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
 
@@ -54,7 +51,5 @@ public:
     const sc2::Race & GetPlayerRace(int player) const;
     sc2::Point2D GetStartLocation() const;
     const sc2::Unit * GetUnit(const UnitTag & tag) const;
-	const bool warpgateComplete() const;
-	const bool blinkComplete() const;
 	StateManager & State();
 };
