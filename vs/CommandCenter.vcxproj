@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{D4AC5062-8BEA-46D8-9231-57241C214F1C}</ProjectGUID>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
     <ProjectName>CommandCenter</ProjectName>
@@ -308,6 +308,7 @@
     <ClCompile Include="..\src\Squad.cpp" />
     <ClCompile Include="..\src\SquadData.cpp" />
     <ClCompile Include="..\src\SquadOrder.cpp" />
+    <ClCompile Include="..\src\StateManager.cpp" />
     <ClCompile Include="..\src\StrategyManager.cpp" />
     <ClCompile Include="..\src\TechTree.cpp" />
     <ClCompile Include="..\src\UnitData.cpp" />
@@ -346,6 +347,7 @@
     <ClInclude Include="..\src\Squad.h" />
     <ClInclude Include="..\src\SquadData.h" />
     <ClInclude Include="..\src\SquadOrder.h" />
+    <ClInclude Include="..\src\StateManager.h" />
     <ClInclude Include="..\src\StrategyManager.h" />
     <ClInclude Include="..\src\TechTree.h" />
     <ClInclude Include="..\src\Timer.hpp" />

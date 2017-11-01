@@ -104,8 +104,6 @@ void GameCommander::setScoutUnits()
 
 bool GameCommander::shouldSendInitialScout()
 {
-    
-	
     switch (m_bot.GetPlayerRace(Players::Self))
     {
         case sc2::Race::Terran:  return m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT, true) > 0;

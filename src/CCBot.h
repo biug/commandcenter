@@ -12,6 +12,7 @@
 #include "StrategyManager.h"
 #include "TechTree.h"
 #include "BuildType.h"
+#include "StateManager.h"
 
 class CCBot : public sc2::Agent 
 {
@@ -22,6 +23,7 @@ class CCBot : public sc2::Agent
     UnitInfoManager         m_unitInfo;
     WorkerManager           m_workers;
     StrategyManager         m_strategy;
+	StateManager			m_state;
     BotConfig               m_config;
     TechTree                m_techTree;
 
@@ -52,7 +54,7 @@ public:
     const sc2::Race & GetPlayerRace(int player) const;
     sc2::Point2D GetStartLocation() const;
     const sc2::Unit * GetUnit(const UnitTag & tag) const;
-	bool warpgateComplete() {
-		return m_warpgateResearched;
-	}
+	const bool warpgateComplete() const;
+	const bool blinkComplete() const;
+	StateManager & State();
 };

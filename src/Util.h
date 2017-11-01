@@ -59,4 +59,9 @@ namespace Util
     bool    Placement(const sc2::GameInfo& info, const sc2::Point2D& point);
     bool    Pathable(const sc2::GameInfo& info, const sc2::Point2D& point);
 
+	template<typename P1, typename P2>
+	float PlanerDist(const P1 & p1, const P2 & p2)
+	{
+		return fabs(p1.x - p2.x) + fabs(p1.y - p2.y);
+	}
 };

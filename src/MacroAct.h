@@ -14,7 +14,9 @@ enum class MacroLocation
 	, Hidden       // gas expansion hatchery far from both main bases
 	, Main         // starting base
 	, Natural      // "natural" first expansion base
+	, Third
 	, EnemyNatural // enemy natural base
+	, EnemyThird
 };
 
 namespace MacroActs
@@ -58,7 +60,7 @@ public:
 	const sc2::UnitTypeID & getUnitType() const;
 	const sc2::UpgradeID & getUpgradeType() const;
 	const MacroCommand getCommandType() const;
-	const MacroLocation getMacroLocation() const;
+	const sc2::Point2D getMacroLocation(CCBot & bot) const;
 
 	int supplyRequired(CCBot & bot) const;
 	int mineralPrice(CCBot & bot)   const;

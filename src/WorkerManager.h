@@ -33,9 +33,11 @@ public:
     void        setBuildingWorker(const sc2::Unit * worker, Building & b);
     void        setRepairWorker(const sc2::Unit * worker,const sc2::Unit * unitToRepair);
     void        stopRepairing(const sc2::Unit * worker);
+	void		setWaitWorker(const sc2::Unit * worker);
 
-    int         getNumMineralWorkers();
-    int         getNumGasWorkers();
+    int         getNumMineralWorkers() const;
+    int         getNumGasWorkers() const;
+	int			getNumWorkers(int job) const;
     bool        isWorkerScout(const sc2::Unit * worker) const;
     bool        isFree(const sc2::Unit * worker) const;
     bool        isBuilder(const sc2::Unit * worker) const;
@@ -44,5 +46,6 @@ public:
     const sc2::Unit * getClosestDepot(const sc2::Unit * worker) const;
     const sc2::Unit * getGasWorker(const sc2::Unit * refinery) const;
     const sc2::Unit * getClosestMineralWorkerTo(const sc2::Point2D & pos) const;
+	const sc2::Unit * getClosestBuildableWorkerTo(const sc2::Point2D & pos) const;
 };
 

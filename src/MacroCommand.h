@@ -27,6 +27,7 @@ enum class MacroCommandType
 	, RallyAtNatural
 	, StopRally
 	, BuildFieldPylon
+	, WaitWarpGate
 };
 
 class MacroCommand
@@ -61,6 +62,7 @@ public:
 			, MacroCommandType::RallyAtNatural
 			, MacroCommandType::StopRally
 			, MacroCommandType::BuildFieldPylon
+			, MacroCommandType::WaitWarpGate
 		};
 	}
 
@@ -191,8 +193,13 @@ public:
 		{
 			return "go stop rally";
 		}
-		if (t == MacroCommandType::BuildFieldPylon) {
+		if (t == MacroCommandType::BuildFieldPylon)
+		{
 			return "go build field pylon";
+		}
+		if (t == MacroCommandType::WaitWarpGate)
+		{
+			return "go wait warpgate";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";

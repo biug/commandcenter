@@ -15,6 +15,8 @@ class BaseLocationManager
     std::map<int, const BaseLocation *>             m_playerStartingBaseLocations;
     std::map<int, std::set<const BaseLocation *>>   m_occupiedBaseLocations;
     std::vector<std::vector<BaseLocation *>>        m_tileBaseLocations;
+	std::map<int, const BaseLocation *>				m_playerNaturalLocations;
+	std::map<int, const BaseLocation *>				m_playerThirdLocations;
 
     BaseLocation * getBaseLocation(const sc2::Point2D & pos) const;
 
@@ -30,6 +32,8 @@ public:
     const std::vector<const BaseLocation *> & getStartingBaseLocations() const;
     const std::set<const BaseLocation *> & getOccupiedBaseLocations(int player) const;
     const BaseLocation * getPlayerStartingBaseLocation(int player) const;
+	const BaseLocation * getPlayerNaturalLocation(int player) const;
+	const BaseLocation * getPlayerThirdLocation(int player) const;
     
     sc2::Point2D getNextExpansion(int player) const;
 

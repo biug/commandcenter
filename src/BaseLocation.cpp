@@ -20,9 +20,6 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
     m_isPlayerOccupying[0] = false;
     m_isPlayerOccupying[1] = false;
 
-    float resourceCenterX = 0;
-    float resourceCenterY = 0;
-
     // add each of the resources to its corresponding container
     for (auto resource : resources)
     {
@@ -30,19 +27,11 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
         {
             m_minerals.push_back(resource);
             m_mineralPositions.push_back(resource->pos);
-
-            // add the position of the minerals to the center
-            resourceCenterX += resource->pos.x;
-            resourceCenterY += resource->pos.y;
         }
         else
         {
             m_geysers.push_back(resource);
             m_geyserPositions.push_back(resource->pos);
-
-            // pull the resource center toward the geyser if it exists
-            resourceCenterX += resource->pos.x;
-            resourceCenterY += resource->pos.y;
         }
 
         // set the limits of the base location bounding box
@@ -65,34 +54,25 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
     m_distanceMap = m_bot.Map().getDistanceMap(m_centerOfResources);
 
     // check to see if this is a start location for the map
-    for (auto & pos : m_bot.Observation()->GetGameInfo().enemy_start_locations)
+    for (auto & pos : m_bot.Observation()->GetGameInfo().start_locations)
     {
-        if (containsPosition(pos))
+        if (Util::PlanerDist(pos, m_centerOfResources) < 10)
         {
             m_isStartLocation = true;
             m_depotPosition = pos;
+			break;
         }
     }
     
     // if this base location position is near our own resource depot, it's our start location
     for (auto & unit : m_bot.Observation()->GetUnits())
     {
-        if (Util::GetPlayer(unit) == Players::Self && Util::IsTownHall(unit) && containsPosition(unit->pos))
+        if (Util::GetPlayer(unit) == Players::Self && Util::IsTownHall(unit) && Util::PlanerDist(unit->pos, m_centerOfResources) < 10)
         {
-            m_isPlayerStartLocation[Players::Self] = true;
-            m_isStartLocation = true;
+            m_isPlayerStartLocation[Players::Self] = isStartLocation();
             m_isPlayerOccupying[Players::Self] = true;
+			m_depotPosition = unit->pos;
             break;
-        }
-    }
-    
-    // if it's not a start location, we need to calculate the depot position
-    if (!isStartLocation())
-    {
-        // the position of the depot will be the closest spot we can build one from the resource center
-        for (auto & tile : getClosestTiles())
-        {
-            // TODO: m_depotPosition = depot position for this base location
         }
     }
 }
@@ -108,7 +88,7 @@ void BaseLocation::setPlayerOccupying(int player, bool occupying)
     m_isPlayerOccupying[player] = occupying;
 
     // if this base is a start location that's occupied by the enemy, it's that enemy's start location
-    if (occupying && player == Players::Enemy && isStartLocation() && m_isPlayerStartLocation[player] == false)
+    if (occupying && isStartLocation() && m_isPlayerStartLocation[player] == false)
     {
         m_isPlayerStartLocation[player] = true;
     }
@@ -121,7 +101,8 @@ bool BaseLocation::isInResourceBox(int x, int y) const
 
 bool BaseLocation::isOccupiedByPlayer(int player) const
 {
-    return m_isPlayerOccupying.at(player);
+	auto itr = m_isPlayerOccupying.find(player);
+	return itr != m_isPlayerOccupying.end() && itr->second;
 }
 
 bool BaseLocation::isExplored() const
@@ -131,7 +112,8 @@ bool BaseLocation::isExplored() const
 
 bool BaseLocation::isPlayerStartLocation(int player) const
 {
-    return m_isPlayerStartLocation.at(player);
+	auto itr = m_isPlayerStartLocation.find(player);
+	return itr != m_isPlayerStartLocation.end() && itr->second;
 }
 
 bool BaseLocation::containsPosition(const sc2::Point2D & pos) const

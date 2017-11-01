@@ -5,7 +5,7 @@ class CCBot;
 
 namespace WorkerJobs
 {
-    enum { Minerals, Gas, Build, Combat, Idle, Repair, Move, Scout, None, Num };
+    enum { Minerals, Gas, Build, Combat, Idle, Repair, Move, Scout, Wait, None, Num };
 }
 
 class WorkerData
@@ -30,7 +30,7 @@ public:
     void    workerDestroyed(const sc2::Unit * unit);
     void    updateAllWorkerData();
     void    updateWorker(const sc2::Unit * unit);
-    void    setWorkerJob(const sc2::Unit * unit, int job, const sc2::Unit * jobUnit = 0);
+    void    setWorkerJob(const sc2::Unit * unit, int job, const sc2::Unit * jobUnit = nullptr);
     void    drawDepotDebugInfo();
     size_t  getNumWorkers() const;
     int     getWorkerJobCount(int job) const;

@@ -29,9 +29,17 @@ MacroLocation MacroAct::getMacroLocationFromString(std::string & s)
 	{
 		return MacroLocation::Natural;
 	}
+	if (s == "third")
+	{
+		return MacroLocation::Third;
+	}
 	if (s == "enemy natural")
 	{
 		return MacroLocation::EnemyNatural;
+	}
+	if (s == "enemy third")
+	{
+		return MacroLocation::EnemyThird;
 	}
 
 	BOT_ASSERT(false, "config file - bad location '%s' after @", s.c_str());
@@ -94,7 +102,8 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 																	  // It's meaningless and ignored for anything except a building.
 																	  // Here we parse out the building and its location.
 																	  // Since buildings are units, only UnitType below sets _macroLocation.
-	std::regex macroLocationRegex("([a-z_ ]+[a-z])\\s*\\@\\s*([a-z][a-z ]+)");
+
+	std::regex macroLocationRegex("([a-z_ ]+[a-z])\\s+\\@\\s+([a-z][a-z ]+)");
 	std::smatch m;
 	if (std::regex_match(inputName, m, macroLocationRegex)) {
 		specifiedMacroLocation = getMacroLocationFromString(m[2].str());
@@ -212,9 +221,25 @@ const MacroCommand MacroAct::getCommandType() const
 	return _macroCommandType;
 }
 
-const MacroLocation MacroAct::getMacroLocation() const
+const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
 {
-	return _macroLocation;
+	if (_macroLocation == MacroLocation::Natural) {
+		auto loc = bot.Bases().getPlayerNaturalLocation(Players::Self);
+		if (loc) return loc->getDepotPosition();
+	}
+	else if (_macroLocation == MacroLocation::Third) {
+		auto loc = bot.Bases().getPlayerThirdLocation(Players::Self);
+		if (loc) return loc->getDepotPosition();
+	}
+	else if (_macroLocation == MacroLocation::EnemyNatural) {
+		auto loc = bot.Bases().getPlayerNaturalLocation(Players::Enemy);
+		if (loc) return loc->getDepotPosition();
+	}
+	else if (_macroLocation == MacroLocation::EnemyThird) {
+		auto loc = bot.Bases().getPlayerThirdLocation(Players::Enemy);
+		if (loc) return loc->getDepotPosition();
+	}
+	return sc2::Point2D(0, 0);
 }
 
 int MacroAct::supplyRequired(CCBot & bot) const

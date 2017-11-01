@@ -40,38 +40,7 @@ void BuildingManager::onFrame()
 	checkForDeadTerranBuilders();           // if we are terran and a building is under construction without a worker, assign a new one    
 	checkForCompletedBuildings();           // check to see if any buildings have completed and update data structures
 	
-	if (!m_bot.warpgateComplete()) {
-
-		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
-		{
-			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
-			{
-				for (auto c : m_bot.UnitInfo().getUnits(Players::Self)) {
-					if (c->unit_type == sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE)
-						Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, c, m_bot);
-				}
-			}
-		}
-	}
-	else {
-		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
-		{
-			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
-			{
-				Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, b, m_bot);
-			}
-		}
-		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
-		{
-			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY) {
-				Micro::SmartAbility(b, sc2::ABILITY_ID::MORPH_WARPGATE, m_bot);
-			}
-
-		}
-	}
 	drawBuildingInformation();
-		
-	
 }
 
 bool BuildingManager::isBeingBuilt(sc2::UnitTypeID type)

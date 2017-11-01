@@ -168,7 +168,7 @@ void StrategyManager::readStrategyFile(const std::string & filename)
                     {
                         if (build[b].IsString())
                         {
-                            BuildType buildType(build[b].GetString(), m_bot);
+                            MacroAct buildType(build[b].GetString(), m_bot);
                             buildOrder.add(buildType);
                         }
                         else

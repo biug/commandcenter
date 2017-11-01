@@ -34,5 +34,5 @@ public:
     void    onUnitDestroy(const sc2::Unit * unit);
     void    drawProductionInformation();
 	
-    const sc2::Unit * getProducer(const BuildType & type, sc2::Point2D closestTo = sc2::Point2D(0, 0));
+    const sc2::Unit * getProducer(const MacroAct & type, sc2::Point2D closestTo = sc2::Point2D(0, 0));
 };

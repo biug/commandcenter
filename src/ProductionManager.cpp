@@ -40,6 +40,49 @@ void ProductionManager::onFrame()
     // TODO: triggers for game things like cloaked units etc
 
     m_buildingManager.onFrame();
+
+	// add time buff on BC
+	if (!m_bot.warpgateComplete())
+	{
+		const sc2::Unit * nexus = nullptr;
+		const sc2::Unit * cyber = nullptr;
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			switch (b->unit_type.ToType())
+			{
+			case sc2::UNIT_TYPEID::PROTOSS_NEXUS:
+				nexus = b;
+				break;
+			case sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE:
+				cyber = b;
+				break;
+			}
+		}
+		if (nexus && cyber)
+		{
+			auto itr = std::find(cyber->buffs.begin(), cyber->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION);
+			// if cyber no buff
+			if (itr == cyber->buffs.end())
+			{
+				Micro::SmartAbility(nexus, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, cyber, m_bot);
+			}
+		}
+	}
+	else {
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS &&
+				std::find(b->buffs.begin(), b->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION) == b->buffs.end())
+			{
+				Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, b, m_bot);
+			}
+			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY)
+			{
+				Micro::SmartAbility(b, sc2::ABILITY_ID::MORPH_WARPGATE, m_bot);
+			}
+		}
+	}
+
     drawProductionInformation();
 }
 
@@ -65,11 +108,16 @@ void ProductionManager::manageBuildOrderQueue()
     {
 		if (currentItem.type.isUnit())
 		{
-			
+			// wait for warpgate researched
+			if (m_bot.State().m_waitWarpGate && !m_bot.warpgateComplete())
+			{
+				std::cout << "wait for a warpgate" << std::endl;
+				break;
+			}
+
 			// this is the unit which can produce the currentItem
 			
-			
-				const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
+			const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
 			
 			// check to see if we can make it right now
 			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
@@ -88,7 +136,6 @@ void ProductionManager::manageBuildOrderQueue()
 			}
 			else
 			{
-				
 				// so break out
 				break;
 			}
@@ -112,23 +159,30 @@ void ProductionManager::manageBuildOrderQueue()
 			}
 			else
 			{
-			
 				// so break out
 				break;
 			}
 		}
+		else if (currentItem.type.isCommand())
+		{
+			if (currentItem.type.getCommandType().getType() == MacroCommandType::WaitWarpGate)
+			{
+				m_bot.State().m_waitWarpGate = true;
+			}
+			m_queue.removeCurrentHighestPriorityItem();
+			break;
+		}
     }
 }
 
-const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Point2D closestTo)
+const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Point2D closestTo)
 {
     // get all the types of units that can build this type
-    auto & producerTypes = m_bot.Data(type).whatBuilds;
+	BuildType buildType = type.isUnit() ? BuildType(type.getUnitType()) : BuildType(type.getUpgradeType());
+    auto & producerTypes = m_bot.Data(buildType).whatBuilds;
 	warpGate = m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_WARPGATE, true);
-	if (type.getUnitTypeID() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY&&m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PYLON, false) == 3) {
-		closestTo = sc2::Point2D(10, 15) + sc2::Point2D(m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition().x / 2 + m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition().x / 2, m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition().y / 2 + m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition().y / 2);
-		
-	}
+	auto macroLocation = type.getMacroLocation(m_bot);
+	if (macroLocation != sc2::Point2D(0, 0)) closestTo = macroLocation;
     // make a set of all candidate producers
     std::vector<const sc2::Unit *> candidateProducers;
 
@@ -139,7 +193,7 @@ const sc2::Unit * ProductionManager::getProducer(const BuildType & type, sc2::Po
         if (unit->build_progress < 1.0f) { continue; }
         if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
         if (unit->is_flying) { continue; }
-		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY&&m_bot.warpgateComplete()) { continue; }
+		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.warpgateComplete()) { continue; }
         // TODO: if unit is not powered continue
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
@@ -221,14 +275,16 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     if (item.type.isBuilding(m_bot))
     {
         // send the building task to the building manager
-        m_buildingManager.addBuildingTask(item.type.getUnitType(), m_bot.GetStartLocation());
+		auto macroLocation = item.type.getMacroLocation(m_bot);
+        m_buildingManager.addBuildingTask(item.type.getUnitType(),
+			macroLocation != sc2::Point2D(0, 0) ? macroLocation : m_bot.GetStartLocation());
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
     {
 		if (producer->unit_type == sc2::UNIT_TYPEID::PROTOSS_WARPGATE) {
 			
-					Micro::SmartWarp(producer, item.type.getUnitType(), pylonClosestToEnemy()->pos + sc2::Point2D(rand()%5+1,rand()%5+1) - sc2::Point2D(rand() % 5, rand() % 5), m_bot);
+			Micro::SmartWarp(producer, item.type.getUnitType(), pylonClosestToEnemy()->pos + sc2::Point2D((float)rand() / RAND_MAX * 5.0f, (float)rand() / RAND_MAX * 5.0f), m_bot);
 			
 		}
 		else {

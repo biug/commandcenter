@@ -12,14 +12,14 @@ BuildOrder::BuildOrder(const sc2::Race & race)
 
 }
 
-BuildOrder::BuildOrder(const sc2::Race & race, const std::vector<BuildType> & vec)
+BuildOrder::BuildOrder(const sc2::Race & race, const std::vector<MacroAct> & vec)
     : m_race(race)
     , m_buildOrder(vec)
 {
 
 }
 
-void BuildOrder::add(const BuildType & type)
+void BuildOrder::add(const MacroAct & type)
 {
     m_buildOrder.push_back(type);
 }
@@ -34,12 +34,12 @@ size_t BuildOrder::size() const
     return m_buildOrder.size();
 }
 
-const BuildType & BuildOrder::operator [] (const size_t & index) const
+const MacroAct & BuildOrder::operator [] (const size_t & index) const
 {
     return m_buildOrder[index];
 }
 
-BuildType & BuildOrder::operator [] (const size_t & index)
+MacroAct & BuildOrder::operator [] (const size_t & index)
 {
     return m_buildOrder[index];
 }

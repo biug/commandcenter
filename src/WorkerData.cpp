@@ -122,6 +122,10 @@ void WorkerData::setWorkerJob(const sc2::Unit * unit, int job, const sc2::Unit *
     {
 
     }
+	else if (job == WorkerJobs::Wait)
+	{
+
+	}
 }
 
 void WorkerData::clearPreviousJob(const sc2::Unit * unit)
@@ -256,6 +260,7 @@ const char * WorkerData::getJobCode(const sc2::Unit * unit)
     if (j == WorkerJobs::Repair)    return "R";
     if (j == WorkerJobs::Move)      return "O";
     if (j == WorkerJobs::Scout)     return "S";
+	if (j == WorkerJobs::Wait)		return "W";
     return "X";
 }
 

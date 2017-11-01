@@ -19,7 +19,7 @@ void UnitInfoManager::onFrame()
 {
     updateUnitInfo();
     drawUnitInformation(100, 100);
-    drawSelectedUnitDebugInfo();
+    //drawSelectedUnitDebugInfo();
 }
 
 void UnitInfoManager::updateUnitInfo()

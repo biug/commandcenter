@@ -103,6 +103,9 @@
     <ClCompile Include="..\src\Common.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\StateManager.cpp">
+      <Filter>global</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="..\src\MacroAct.h">
       <Filter>macro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\StateManager.h">
+      <Filter>global</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
