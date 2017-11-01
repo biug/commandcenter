@@ -76,6 +76,10 @@ void WorkerManager::handleIdleWorkers()
         {
             continue;
         }
+		if (m_workerData.getWorkerJob(worker) == WorkerJobs::Wait)
+		{
+			continue;
+		}
 
         // if it is idle
         if (Util::IsIdle(worker) || m_workerData.getWorkerJob(worker) == WorkerJobs::Idle)
@@ -119,8 +123,14 @@ const sc2::Unit * WorkerManager::getClosestMineralWorkerTo(const sc2::Point2D & 
 const sc2::Unit * WorkerManager::getClosestBuildableWorkerTo(const sc2::Point2D & pos) const
 {
 	const sc2::Unit * closestWorker = nullptr;
-	double closestDist = std::numeric_limits<double>::max();
+	float closestDist = std::numeric_limits<float>::max();
 
+	bool inThird = false;
+	if (m_bot.Bases().getPlayerThirdLocation(Players::Enemy) &&
+		Util::PlanerDist(pos, m_bot.Bases().getPlayerThirdLocation(Players::Enemy)->getDepotPosition()) < 10)
+	{
+		inThird = true;
+	}
 	// for each of our workers
 	for (auto worker : m_workerData.getWorkers())
 	{
@@ -129,12 +139,12 @@ const sc2::Unit * WorkerManager::getClosestBuildableWorkerTo(const sc2::Point2D 
 		// if it is a mineral worker
 		if (m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals || m_workerData.getWorkerJob(worker) == WorkerJobs::Wait)
 		{
-			double dist = Util::DistSq(worker->pos, pos);
+			float dist = Util::PlanerDist(worker->pos, pos);
 
 			if (!closestWorker || dist < closestDist)
 			{
 				closestWorker = worker;
-				dist = closestDist;
+				closestDist = dist;
 			}
 		}
 	}

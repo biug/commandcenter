@@ -182,7 +182,11 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
     auto & producerTypes = m_bot.Data(buildType).whatBuilds;
 	warpGate = m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_WARPGATE, true);
 	auto macroLocation = type.getMacroLocation(m_bot);
-	if (macroLocation != sc2::Point2D(0, 0)) closestTo = macroLocation;
+	if (macroLocation != sc2::Point2D(0, 0))
+	{
+		std::cout << "macrolocation found for " << buildType.getName() << std::endl;
+		closestTo = macroLocation;
+	}
     // make a set of all candidate producers
     std::vector<const sc2::Unit *> candidateProducers;
 

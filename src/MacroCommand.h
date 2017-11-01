@@ -20,14 +20,8 @@ enum class MacroCommandType
 	, PullWorkersLeaving
 	, ReleaseWorkers
 	, UntilFindEnemy
-	, DroneEnemyNatural
-	, IgnoreScoutWorker
-	, WaitMineralUntil
-	, KeepBuildSunken
-	, RallyAtNatural
-	, StopRally
-	, BuildFieldPylon
 	, WaitWarpGate
+	, RallyAtThird
 };
 
 class MacroCommand
@@ -55,14 +49,8 @@ public:
 			, MacroCommandType::PullWorkersLeaving
 			, MacroCommandType::ReleaseWorkers
 			, MacroCommandType::UntilFindEnemy
-			, MacroCommandType::DroneEnemyNatural
-			, MacroCommandType::IgnoreScoutWorker
-			, MacroCommandType::WaitMineralUntil
-			, MacroCommandType::KeepBuildSunken
-			, MacroCommandType::RallyAtNatural
-			, MacroCommandType::StopRally
-			, MacroCommandType::BuildFieldPylon
 			, MacroCommandType::WaitWarpGate
+			, MacroCommandType::RallyAtThird
 		};
 	}
 
@@ -103,8 +91,7 @@ public:
 		return
 			t == MacroCommandType::GasUntil ||
 			t == MacroCommandType::PullWorkers ||
-			t == MacroCommandType::PullWorkersLeaving ||
-			t == MacroCommandType::WaitMineralUntil;
+			t == MacroCommandType::PullWorkersLeaving;
 	}
 
 	static const std::string getName(MacroCommandType t)
@@ -169,37 +156,13 @@ public:
 		{
 			return "go until find enemy";
 		}
-		if (t == MacroCommandType::DroneEnemyNatural)
-		{
-			return "go enemy natural";
-		}
-		if (t == MacroCommandType::IgnoreScoutWorker)
-		{
-			return "go ignore scout worker";
-		}
-		if (t == MacroCommandType::WaitMineralUntil)
-		{
-			return "go wait mineral until";
-		}
-		if (t == MacroCommandType::KeepBuildSunken)
-		{
-			return "go keep build sunken";
-		}
-		if (t == MacroCommandType::RallyAtNatural)
-		{
-			return "go rally at natural";
-		}
-		if (t == MacroCommandType::StopRally)
-		{
-			return "go stop rally";
-		}
-		if (t == MacroCommandType::BuildFieldPylon)
-		{
-			return "go build field pylon";
-		}
 		if (t == MacroCommandType::WaitWarpGate)
 		{
 			return "go wait warpgate";
+		}
+		if (t == MacroCommandType::RallyAtThird)
+		{
+			return "go rally at third";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";

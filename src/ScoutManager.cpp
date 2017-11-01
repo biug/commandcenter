@@ -78,7 +78,6 @@ void ScoutManager::moveScouts()
 
 				if (fabs(m_scoutUnit->pos.x - enemyThirdPos.x) + fabs(m_scoutUnit->pos.y - enemyThirdPos.y) < 10) {
 					m_bot.Workers().setWaitWorker(m_scoutUnit);
-					std::cout << "a wait worker" << std::endl;
 					m_scoutUnit = nullptr;
 					return;
 				}

@@ -86,7 +86,6 @@ void BaseLocationManager::onStart()
             m_baseLocationData.push_back(BaseLocation(m_bot, baseID++, cluster));
         }
     }
-	std::cout << "total " << baseID << " base" << std::endl;
 
     // construct the vectors of base location pointers, this is safe since they will never change
     for (auto & baseLocation : m_baseLocationData)

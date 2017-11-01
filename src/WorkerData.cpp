@@ -52,6 +52,11 @@ void WorkerData::updateAllWorkerData()
     {
         workerDestroyed(worker);
     }
+
+	for (auto worker : m_workers)
+	{
+		m_bot.Map().drawText(sc2::Point2D(worker->pos.x, worker->pos.y), getJobCode(worker), sc2::Colors::Green);
+	}
 }
 
 void WorkerData::workerDestroyed(const sc2::Unit * unit)
