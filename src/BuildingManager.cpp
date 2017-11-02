@@ -424,6 +424,10 @@ sc2::Point2D BuildingManager::getBuildingLocation(const Building & b)
         // TODO: fix this so we can actually expand
         //return m_bot.Bases().getNextExpansion(Players::Self);
     }
+	if (Util::IsSupplyProviderType(b.type))
+	{
+		return m_buildingPlacer.getBuildLocationNear(b, 2);
+	}
 
     // get a position within our region
     // TODO: put back in special pylon / cannon spacing

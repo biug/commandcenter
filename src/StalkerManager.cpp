@@ -78,7 +78,6 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 						auto p1 = target->pos, p2 = stalker->pos;
 						auto tp = p2 * 2 - p1;
 						Micro::SmartAbility(stalker, sc2::ABILITY_ID::EFFECT_BLINK, tp, m_bot);
-						std::cout << "blink one" << std::endl;
 					}
 					continue;
 				}
