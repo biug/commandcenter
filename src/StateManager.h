@@ -8,8 +8,10 @@ struct StateManager
 {
 	CCBot & m_bot;
 	bool m_waitWarpGate;
+	bool m_waitBlink;
 	bool m_rallyAtPylon;
 	bool m_startAttack;
+	bool m_startBlink;
 
 	bool m_rschWarpGate;
 	bool m_rschBlink;
@@ -19,4 +21,6 @@ public:
 	void clear();
 	void onFrame();
 	void OnUpgradeCompleted(sc2::UpgradeID upgradeID);
+
+	bool shouldAttack();
 };

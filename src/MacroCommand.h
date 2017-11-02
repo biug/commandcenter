@@ -23,6 +23,8 @@ enum class MacroCommandType
 	, WaitWarpGate
 	, RallyAtPylon
 	, StartAttack
+	, WaitBlink
+	, StartBlink
 };
 
 class MacroCommand
@@ -53,6 +55,8 @@ public:
 			, MacroCommandType::WaitWarpGate
 			, MacroCommandType::RallyAtPylon
 			, MacroCommandType::StartAttack
+			, MacroCommandType::WaitBlink
+			, MacroCommandType::StartBlink
 		};
 	}
 
@@ -169,6 +173,14 @@ public:
 		if (t == MacroCommandType::StartAttack)
 		{
 			return "go start attack";
+		}
+		if (t == MacroCommandType::WaitBlink)
+		{
+			return "go wait blink";
+		}
+		if (t == MacroCommandType::StartBlink)
+		{
+			return "go start blink";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";

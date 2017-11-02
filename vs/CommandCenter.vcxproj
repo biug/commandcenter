@@ -308,6 +308,7 @@
     <ClCompile Include="..\src\Squad.cpp" />
     <ClCompile Include="..\src\SquadData.cpp" />
     <ClCompile Include="..\src\SquadOrder.cpp" />
+    <ClCompile Include="..\src\StalkerManager.cpp" />
     <ClCompile Include="..\src\StateManager.cpp" />
     <ClCompile Include="..\src\StrategyManager.cpp" />
     <ClCompile Include="..\src\TechTree.cpp" />
@@ -347,6 +348,7 @@
     <ClInclude Include="..\src\Squad.h" />
     <ClInclude Include="..\src\SquadData.h" />
     <ClInclude Include="..\src\SquadOrder.h" />
+    <ClInclude Include="..\src\StalkerManager.h" />
     <ClInclude Include="..\src\StateManager.h" />
     <ClInclude Include="..\src\StrategyManager.h" />
     <ClInclude Include="..\src\TechTree.h" />

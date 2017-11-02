@@ -41,7 +41,7 @@ bool CombatCommander::isSquadUpdateFrame()
 
 void CombatCommander::onFrame(const std::vector<const sc2::Unit *> & combatUnits)
 {
-	m_attackStarted = m_bot.State().m_startAttack;
+	m_attackStarted = m_bot.State().shouldAttack();
 
     m_combatUnits = combatUnits;
 

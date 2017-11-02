@@ -9,6 +9,8 @@
 #include <fstream>
 #include <streambuf>
 #include <string>
+#include <unordered_set>
+#include <unordered_map>
 
 typedef uint64_t UnitTag;
 

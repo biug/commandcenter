@@ -10,6 +10,7 @@ Squad::Squad(CCBot & bot)
     , m_name("Default")
     , m_meleeManager(bot)
     , m_rangedManager(bot)
+	, m_stalkerManager(bot)
 {
 
 }
@@ -23,6 +24,7 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
     , m_priority(priority)
     , m_meleeManager(bot)
     , m_rangedManager(bot)
+	, m_stalkerManager(bot)
 {
 }
 
@@ -43,11 +45,13 @@ void Squad::onFrame()
 
         m_meleeManager.regroup(regroupPosition);
         m_rangedManager.regroup(regroupPosition);
+		m_stalkerManager.regroup(regroupPosition);
     }
     else // otherwise, execute micro
     {
         m_meleeManager.execute(m_order);
         m_rangedManager.execute(m_order);
+		m_stalkerManager.execute(m_order);
 
         //_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
         //_detectorManager.execute(_order);
@@ -110,22 +114,22 @@ void Squad::addUnitsToMicroManagers()
     std::vector<const sc2::Unit *> rangedUnits;
     std::vector<const sc2::Unit *> detectorUnits;
     std::vector<const sc2::Unit *> transportUnits;
-    std::vector<const sc2::Unit *> tankUnits;
+	std::vector<const sc2::Unit *> stalkerUnits;
 
     // add _units to micro managers
     for (auto unit : m_units)
     {
         BOT_ASSERT(unit, "null unit in addUnitsToMicroManagers()");
 
-        if (unit->unit_type == sc2::UNIT_TYPEID::TERRAN_SIEGETANK || unit->unit_type == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED)
-        {
-            tankUnits.push_back(unit);
-        }
-        // TODO: detectors
-        else if (Util::IsDetector(unit) && !m_bot.Data(unit->unit_type).isBuilding)
+        if (Util::IsDetector(unit) && !m_bot.Data(unit->unit_type).isBuilding)
         {
             detectorUnits.push_back(unit);
         }
+		// stalker
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_STALKER)
+		{
+			stalkerUnits.push_back(unit);
+		}
         // select ranged _units
         else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
         {
@@ -140,6 +144,7 @@ void Squad::addUnitsToMicroManagers()
 
     m_meleeManager.setUnits(meleeUnits);
     m_rangedManager.setUnits(rangedUnits);
+	m_stalkerManager.setUnits(stalkerUnits);
     //m_detectorManager.setUnits(detectorUnits);
     //m_tankManager.setUnits(tankUnits);
 }

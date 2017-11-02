@@ -71,6 +71,10 @@ void MapTools::onFrame()
         }
     }
 
+	drawTextScreen(sc2::Point2D(100, 100), std::to_string(m_frame), sc2::Colors::Green);
+	drawTextScreen(sc2::Point2D(100, 110), std::to_string(m_frame), sc2::Colors::Green);
+	drawTextScreen(sc2::Point2D(100, 120), std::to_string(m_frame), sc2::Colors::Green);
+
     draw();
 }
 
@@ -378,6 +382,11 @@ int MapTools::width() const
 int MapTools::height() const
 {
     return m_height;
+}
+
+int MapTools::frame() const
+{
+	return m_frame;
 }
 
 const std::vector<sc2::Point2D> & MapTools::getClosestTilesTo(const sc2::Point2D & pos) const

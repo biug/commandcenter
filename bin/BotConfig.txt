@@ -54,7 +54,7 @@
     
     "Strategy" :
     {
-        "Protoss"                   : "Protoss_ImmortalRush",
+        "Protoss"                   : "Protoss_StalkerRush",
         "Terran"                    : "Terran_MarineRush",
         "Zerg"                      : "Zerg_2HatchRoach",
         
@@ -64,7 +64,7 @@
         {
             "Protoss_ZealotRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Pylon", "Probe", "Gateway", "Probe", "Gateway", "Pylon", "Probe", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot"]},
 
-            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon", "Stalker", "Stalker", "Pylon @ enemy third", "Stalker", "Stalker", "WarpGateResearch", "Pylon", "Gateway", "Gateway", "MothershipCore", "Pylon", "Pylon", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
+            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon", "Stalker", "Stalker", "TwilightCouncil", "Pylon @ enemy third", "Stalker", "Stalker", "WarpGateResearch", "Pylon", "BlinkTech", "Gateway", "Gateway", "MothershipCore", "Pylon", "go wait warpgate", "go rally at pylon", "Pylon", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "go start attack", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
 
             "Protoss_ImmortalRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon", "Pylon @ enemy third", "Stalker", "Stalker", "WarpGateResearch", "RoboticsFacility", "Stalker", "Stalker", "go rally at pylon", "Pylon", "Gateway", "Pylon", "Immortal", "MothershipCore", "go wait warpgate", "Pylon", "Immortal", "Stalker", "Stalker", "Stalker", "Adept", "Immortal", "Adept", "Adept", "Adept", "Stalker", "Immortal", "go start attack"]},
 

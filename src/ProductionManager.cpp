@@ -170,6 +170,10 @@ void ProductionManager::manageBuildOrderQueue()
 			{
 				m_bot.State().m_waitWarpGate = true;
 			}
+			else if (command == MacroCommandType::WaitBlink)
+			{
+				m_bot.State().m_waitBlink = true;
+			}
 			else if (command == MacroCommandType::RallyAtPylon)
 			{
 				m_bot.State().m_rallyAtPylon = true;
@@ -178,6 +182,10 @@ void ProductionManager::manageBuildOrderQueue()
 			{
 				m_bot.State().m_startAttack = true;
 				m_bot.State().m_rallyAtPylon = false;
+			}
+			else if (command == MacroCommandType::StartBlink)
+			{
+				m_bot.State().m_startBlink = true;
 			}
 			m_queue.removeCurrentHighestPriorityItem();
 			break;

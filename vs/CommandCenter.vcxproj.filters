@@ -106,6 +106,9 @@
     <ClCompile Include="..\src\StateManager.cpp">
       <Filter>global</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\StalkerManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="..\src\StateManager.h">
       <Filter>global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\StalkerManager.h">
+      <Filter>micro</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -43,6 +43,7 @@ public:
 
     int     width() const;
     int     height() const;
+	int		frame() const;
     float   terrainHeight(float x, float y) const;
 
     void    drawLine(float x1, float y1, float x2, float y2, const sc2::Color & color = sc2::Colors::White) const;

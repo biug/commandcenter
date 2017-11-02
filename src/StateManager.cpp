@@ -9,8 +9,10 @@ StateManager::StateManager(CCBot & bot)
 void StateManager::clear()
 {
 	m_waitWarpGate = false;
+	m_waitBlink = false;
 	m_rallyAtPylon = false;
 	m_startAttack = false;
+	m_startBlink = false;
 
 	m_rschWarpGate = false;
 	m_rschBlink = false;
@@ -32,4 +34,9 @@ void StateManager::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 	default:
 		break;
 	}
+}
+
+bool StateManager::shouldAttack()
+{
+	return m_startAttack && (!m_waitBlink || m_rschBlink);
 }
