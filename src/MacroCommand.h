@@ -25,6 +25,7 @@ enum class MacroCommandType
 	, StartAttack
 	, WaitBlink
 	, StartBlink
+	, KeepTrainWorker
 };
 
 class MacroCommand
@@ -57,6 +58,7 @@ public:
 			, MacroCommandType::StartAttack
 			, MacroCommandType::WaitBlink
 			, MacroCommandType::StartBlink
+			, MacroCommandType::KeepTrainWorker
 		};
 	}
 
@@ -181,6 +183,10 @@ public:
 		if (t == MacroCommandType::StartBlink)
 		{
 			return "go start blink";
+		}
+		if (t == MacroCommandType::KeepTrainWorker)
+		{
+			return "go keep train worker";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";

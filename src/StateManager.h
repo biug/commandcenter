@@ -12,7 +12,7 @@ struct StateManager
 	bool m_rallyAtPylon;
 	bool m_startAttack;
 	bool m_startBlink;
-
+	bool m_keepTrainWorker;
 	bool m_rschWarpGate;
 	bool m_rschBlink;
 

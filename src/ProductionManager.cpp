@@ -40,7 +40,27 @@ void ProductionManager::onFrame()
     // TODO: triggers for game things like cloaked units etc
 
     m_buildingManager.onFrame();
+	if (m_bot.State().m_keepTrainWorker) {
+		
+			for (auto b : m_bot.UnitInfo().getUnits(Players::Self)) {
+				switch (m_bot.GetPlayerRace(Players::Self))
+				{
+				case sc2::Race::Protoss:
+					if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS) {
+						if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
+							Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
+						}
+					}
 
+				default:
+					break;
+				}
+			}
+			if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) + m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_NEXUS) > 22) {
+				m_bot.State().m_keepTrainWorker = false;
+			}
+		}
+	
 	// add time buff on BC
 	if (!m_bot.State().m_rschWarpGate)
 	{
@@ -58,6 +78,7 @@ void ProductionManager::onFrame()
 				break;
 			}
 		}
+		
 		if (nexus && cyber)
 		{
 			auto itr = std::find(cyber->buffs.begin(), cyber->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION);
@@ -123,7 +144,7 @@ void ProductionManager::manageBuildOrderQueue()
 			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
 
 			// TODO: if it's a building and we can't make it yet, predict the worker movement to the location
-
+			
 			// if we can make the current item
 			if (producer && canMake)
 			{
@@ -166,7 +187,11 @@ void ProductionManager::manageBuildOrderQueue()
 		else if (currentItem.type.isCommand())
 		{
 			auto command = currentItem.type.getCommandType().getType();
-			if (command == MacroCommandType::WaitWarpGate)
+			if (command == MacroCommandType::KeepTrainWorker) 
+			{
+				m_bot.State().m_keepTrainWorker = true;
+			}
+			else if (command == MacroCommandType::WaitWarpGate)
 			{
 				m_bot.State().m_waitWarpGate = true;
 			}
@@ -215,6 +240,7 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         if (unit->build_progress < 1.0f) { continue; }
         if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
         if (unit->is_flying) { continue; }
+		
         // TODO: if unit is not powered continue
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
@@ -376,7 +402,7 @@ void ProductionManager::drawProductionInformation()
     {
         if (unit->build_progress < 1.0f)
         {
-            //ss << sc2::UnitTypeToName(unit.unit_type) << " " << unit.build_progress << "\n";
+            ss << sc2::UnitTypeToName(unit->unit_type) << " " << unit->build_progress << "\n";
         }
     }
 

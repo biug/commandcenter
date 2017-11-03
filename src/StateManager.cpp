@@ -13,7 +13,7 @@ void StateManager::clear()
 	m_rallyAtPylon = false;
 	m_startAttack = false;
 	m_startBlink = false;
-
+	m_keepTrainWorker = false;
 	m_rschWarpGate = false;
 	m_rschBlink = false;
 }
