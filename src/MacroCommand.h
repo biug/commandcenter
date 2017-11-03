@@ -99,7 +99,8 @@ public:
 		return
 			t == MacroCommandType::GasUntil ||
 			t == MacroCommandType::PullWorkers ||
-			t == MacroCommandType::PullWorkersLeaving;
+			t == MacroCommandType::PullWorkersLeaving ||
+			t == MacroCommandType::KeepTrainWorker;
 	}
 
 	static const std::string getName(MacroCommandType t)

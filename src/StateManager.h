@@ -16,6 +16,8 @@ struct StateManager
 	bool m_rschWarpGate;
 	bool m_rschBlink;
 
+	int m_numKeepTrainWorker;
+
 public:
 	StateManager(CCBot & bot);
 	void clear();

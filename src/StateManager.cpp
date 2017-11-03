@@ -16,6 +16,8 @@ void StateManager::clear()
 	m_keepTrainWorker = false;
 	m_rschWarpGate = false;
 	m_rschBlink = false;
+
+	m_numKeepTrainWorker = 0;
 }
 
 void StateManager::onFrame()

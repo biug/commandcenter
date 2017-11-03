@@ -42,24 +42,24 @@ void ProductionManager::onFrame()
     m_buildingManager.onFrame();
 	if (m_bot.State().m_keepTrainWorker) {
 		
-			for (auto b : m_bot.UnitInfo().getUnits(Players::Self)) {
-				switch (m_bot.GetPlayerRace(Players::Self))
-				{
-				case sc2::Race::Protoss:
-					if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS) {
-						if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
-							Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
-						}
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self)) {
+			switch (m_bot.GetPlayerRace(Players::Self))
+			{
+			case sc2::Race::Protoss:
+				if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS) {
+					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
+						Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
 					}
-
-				default:
-					break;
 				}
-			}
-			if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) + m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_NEXUS) > 22) {
-				m_bot.State().m_keepTrainWorker = false;
+
+			default:
+				break;
 			}
 		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+	}
 	
 	// add time buff on BC
 	if (!m_bot.State().m_rschWarpGate)
@@ -187,9 +187,11 @@ void ProductionManager::manageBuildOrderQueue()
 		else if (currentItem.type.isCommand())
 		{
 			auto command = currentItem.type.getCommandType().getType();
+			auto amount = currentItem.type.getCommandType().getAmount();
 			if (command == MacroCommandType::KeepTrainWorker) 
 			{
 				m_bot.State().m_keepTrainWorker = true;
+				m_bot.State().m_numKeepTrainWorker = amount;
 			}
 			else if (command == MacroCommandType::WaitWarpGate)
 			{
