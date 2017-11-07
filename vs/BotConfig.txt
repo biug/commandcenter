@@ -9,7 +9,7 @@
     "Game Info" :
     {
         "BotRace"                   : "Protoss",
-        "EnemyDifficulty"           : 5,
+        "EnemyDifficulty"           : 4,
         "EnemyRace"                 : "Terran",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season1\\AbyssalReefLE.SC2Map",
         "StepSize"                  : 1
@@ -64,7 +64,7 @@
         {
             "Protoss_ZealotRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 16", "Pylon",  "Gateway", "Pylon",  "Gateway", "Gateway", "Pylon",  "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot"]},
 
-            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 23", "Pylon", "Gateway" ,"Assimilator", "Assimilator",  "Gateway", "CyberneticsCore", "Pylon", "WarpGateResearch", "Stalker", "Stalker", "TwilightCouncil", "Pylon @ enemy third", "Stalker", "Stalker", "Pylon", "BlinkTech", "Gateway", "Gateway", "MothershipCore", "Pylon", "go wait warpgate", "go rally at pylon", "Pylon","Stalker" ,"Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker",  "go start attack", "Stalker", "Stalker","Stalker", "Stalker"]},
+            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 23", "Pylon", "Gateway" ,"Assimilator", "Assimilator",  "Gateway", "CyberneticsCore", "Pylon", "WarpGateResearch", "Stalker", "Stalker", "TwilightCouncil", "Pylon @ enemy third", "Stalker", "Stalker", "BlinkTech", "Pylon", "Gateway", "Gateway", "MothershipCore", "Pylon", "go wait warpgate", "go rally at pylon", "Pylon","Stalker" ,"Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "go start attack", "Stalker", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
 
             "Protoss_ImmortalRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon @ enemy third", "WarpGateResearch",  "Stalker", "Stalker","RoboticsFacility", "Stalker", "Stalker", "go rally at pylon", "Pylon", "Gateway", "Pylon", "Immortal", "MothershipCore", "go wait warpgate", "Pylon", "Immortal", "Stalker", "Stalker", "Stalker", "Adept", "Immortal", "Adept", "Adept", "Adept", "Stalker", "Immortal", "go start attack"]},
 

@@ -191,19 +191,21 @@ const sc2::Unit * WorkerData::getMineralToMine(const sc2::Unit * unit) const
 {
     const sc2::Unit * bestMineral = nullptr;
     double bestDist = 100000;
+	for (auto base : m_bot.Bases().getOccupiedBaseLocations(Players::Self))
+	{
+		for (auto mineral : base->getMinerals())
+		{
+			if (!Util::IsMineral(mineral)) continue;
 
-    for (auto mineral : m_bot.Observation()->GetUnits())
-    {
-        if (!Util::IsMineral(mineral)) continue;
+			double dist = Util::Dist(mineral->pos, unit->pos);
 
-        double dist = Util::Dist(mineral->pos, unit->pos);
-
-        if (dist < bestDist)
-        {
-            bestMineral = mineral;
-            bestDist = dist;
-        }
-    }
+			if (dist < bestDist)
+			{
+				bestMineral = mineral;
+				bestDist = dist;
+			}
+		}
+	}
 
     return bestMineral;
 }

@@ -45,7 +45,6 @@ public:
     const sc2::Unit * getBuilder(Building & b,bool setJobAsBuilder = true) const;
     const sc2::Unit * getClosestDepot(const sc2::Unit * worker) const;
     const sc2::Unit * getGasWorker(const sc2::Unit * refinery) const;
-    const sc2::Unit * getClosestMineralWorkerTo(const sc2::Point2D & pos) const;
 	const sc2::Unit * getClosestBuildableWorkerTo(const sc2::Point2D & pos) const;
 };
 

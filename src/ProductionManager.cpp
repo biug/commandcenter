@@ -122,102 +122,69 @@ void ProductionManager::manageBuildOrderQueue()
         return;
     }
 
-    // the current item to be used
-    BuildOrderItem & currentItem = m_queue.getHighestPriorityItem();
+	BuildOrderItem currentItem = m_queue.getHighestPriorityItem();
+	if (detectSupplyDeadlock())
+	{
+		// we need build supply depot
+		currentItem.type = MacroAct(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+	}
+	if (currentItem.type.isUnit())
+	{
+		// this is the unit which can produce the currentItem
+		const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
 
-    // while there is still something left in the queue
-    while (!m_queue.isEmpty())
-    {
-		if (currentItem.type.isUnit())
+		// if we're waiting for a warpgate, we should shutdown our training
+		if (producer && producer->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.State().m_waitWarpGate)
 		{
-			// this is the unit which can produce the currentItem
-			
-			const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
-
-			// if we're waiting for a warpgate, we should shutdown our training
-			if (producer && producer->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.State().m_waitWarpGate)
-			{
-				break;
-			}
-			
-			// check to see if we can make it right now
-			bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
-
-			// TODO: if it's a building and we can't make it yet, predict the worker movement to the location
-			
-			// if we can make the current item
-			if (producer && canMake)
-			{
-				// create it and remove it from the _queue
-				create(producer, currentItem);
-				m_queue.removeCurrentHighestPriorityItem();
-
-				// don't actually loop around in here
-				break;
-			}
-			else
-			{
-				// so break out
-				break;
-			}
+			return;
 		}
-		else if (currentItem.type.isUpgrade())
+			
+		// check to see if we can make it right now
+		bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
+			
+		// if we can make the current item
+		if (producer && canMake)
 		{
-			// this is the unit which can produce the currentItem
-			const sc2::Unit * producer = getProducer(currentItem.type.getUpgradeType());
-
-			// check to see if we can make it right now
-			bool canMake = canMakeNow(producer, currentItem.type.getUpgradeType());
-			// if we can make the current item
-			if (producer && canMake)
-			{
-				// create it and remove it from the _queue
-				create(producer, currentItem);
-				m_queue.removeCurrentHighestPriorityItem();
-
-				// don't actually loop around in here
-				break;
-			}
-			else
-			{
-				// so break out
-				break;
-			}
-		}
-		else if (currentItem.type.isCommand())
-		{
-			auto command = currentItem.type.getCommandType().getType();
-			auto amount = currentItem.type.getCommandType().getAmount();
-			if (command == MacroCommandType::KeepTrainWorker) 
-			{
-				m_bot.State().m_keepTrainWorker = true;
-				m_bot.State().m_numKeepTrainWorker = amount;
-			}
-			else if (command == MacroCommandType::WaitWarpGate)
-			{
-				m_bot.State().m_waitWarpGate = true;
-			}
-			else if (command == MacroCommandType::WaitBlink)
-			{
-				m_bot.State().m_waitBlink = true;
-			}
-			else if (command == MacroCommandType::RallyAtPylon)
-			{
-				m_bot.State().m_rallyAtPylon = true;
-			}
-			else if (command == MacroCommandType::StartAttack)
-			{
-				m_bot.State().m_startAttack = true;
-				m_bot.State().m_rallyAtPylon = false;
-			}
-			else if (command == MacroCommandType::StartBlink)
-			{
-				m_bot.State().m_startBlink = true;
-			}
+			// create it and remove it from the _queue
+			create(producer, currentItem);
 			m_queue.removeCurrentHighestPriorityItem();
-			break;
 		}
-    }
+	}
+	else if (currentItem.type.isUpgrade())
+	{
+		// this is the unit which can produce the currentItem
+		const sc2::Unit * producer = getProducer(currentItem.type.getUpgradeType());
+
+		// check to see if we can make it right now
+		bool canMake = canMakeNow(producer, currentItem.type.getUpgradeType());
+		// if we can make the current item
+		if (producer && canMake)
+		{
+			// create it and remove it from the _queue
+			create(producer, currentItem);
+			m_queue.removeCurrentHighestPriorityItem();
+		}
+	}
+	else if (currentItem.type.isCommand())
+	{
+		auto command = currentItem.type.getCommandType().getType();
+		auto amount = currentItem.type.getCommandType().getAmount();
+		switch (command)
+		{
+		case MacroCommandType::KeepTrainWorker:
+			m_bot.State().m_keepTrainWorker = true;
+			m_bot.State().m_numKeepTrainWorker = amount;
+			break;
+		case MacroCommandType::StartAttack:
+			m_bot.State().m_startAttack = true;
+			m_bot.State().m_rallyAtPylon = false;
+		case MacroCommandType::WaitWarpGate: m_bot.State().m_waitWarpGate = true; break;
+		case MacroCommandType::WaitBlink: m_bot.State().m_waitBlink = true; break;
+		case MacroCommandType::RallyAtPylon: m_bot.State().m_rallyAtPylon = true; break;
+		case MacroCommandType::StartBlink: m_bot.State().m_startBlink = true; break;
+		}
+		m_queue.removeCurrentHighestPriorityItem();
+	}
 }
 
 const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Point2D closestTo)
@@ -371,6 +338,52 @@ bool ProductionManager::detectBuildOrderDeadlock()
 {
     // TODO: detect build order deadlocks here
     return false;
+}
+
+bool ProductionManager::detectSupplyDeadlock()
+{
+	auto race = m_bot.GetPlayerRace(Players::Self);
+	auto supply = m_bot.Observation()->GetFoodCap();
+	if (m_queue.isEmpty() || supply >= 200) return false;
+
+	// If supply is being built now, there's no block. Return right away.
+	// Terran and protoss calculation:
+	if (m_buildingManager.isBeingBuilt(Util::GetSupplyProvider(race)))
+	{
+		return false;
+	}
+	auto supplyAvailable = supply - m_bot.Observation()->GetFoodUsed();
+
+	if (race == sc2::Race::Protoss) {
+		supplyAvailable = -m_bot.Observation()->GetFoodUsed();
+		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_PYLON)
+			{
+				if (unit->build_progress < 1.0f)
+				{
+					return false;
+				}
+				supplyAvailable += 8;
+			}
+			else if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS && unit->build_progress == 1.0f)
+			{
+				supplyAvailable += 10;
+			}
+		}
+	}
+
+	int supplyCost = m_queue.getHighestPriorityItem().type.supplyRequired(m_bot);
+	// Available supply can be negative, which breaks the test below. Fix it.
+	supplyAvailable = std::max(0, supplyAvailable);
+
+	// if we don't have enough supply, we're supply blocked
+	if (supplyAvailable < supplyCost)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 int ProductionManager::getFreeMinerals()

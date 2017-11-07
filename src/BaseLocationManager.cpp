@@ -149,10 +149,10 @@ void BaseLocationManager::onFrame()
     for (auto & unit : m_bot.Observation()->GetUnits())
     {
         // we only care about buildings on the ground
-        if (!m_bot.Data(unit->unit_type).isBuilding || unit->is_flying)
-        {
-            continue;
-        }
+		if (!Util::IsTownHall(unit) || unit->is_flying)
+		{
+			continue;
+		}
 
         BaseLocation * baseLocation = getBaseLocation(unit->pos);
 

@@ -94,32 +94,6 @@ void WorkerManager::handleRepairWorkers()
     // TODO
 }
 
-const sc2::Unit * WorkerManager::getClosestMineralWorkerTo(const sc2::Point2D & pos) const
-{
-    const sc2::Unit * closestMineralWorker = nullptr;
-    double closestDist = std::numeric_limits<double>::max();
-
-    // for each of our workers
-    for (auto worker : m_workerData.getWorkers())
-    {
-        if (!worker) { continue; }
-
-        // if it is a mineral worker
-        if (m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals)
-        {
-            double dist = Util::DistSq(worker->pos, pos);
-
-            if (!closestMineralWorker || dist < closestDist)
-            {
-                closestMineralWorker = worker;
-                dist = closestDist;
-            }
-        }
-    }
-
-    return closestMineralWorker;
-}
-
 const sc2::Unit * WorkerManager::getClosestBuildableWorkerTo(const sc2::Point2D & pos) const
 {
 	const sc2::Unit * closestWorker = nullptr;
@@ -199,7 +173,7 @@ void WorkerManager::finishedWithWorker(const sc2::Unit * unit)
 
 const sc2::Unit * WorkerManager::getGasWorker(const sc2::Unit * refinery) const
 {
-    return getClosestMineralWorkerTo(refinery->pos);
+    return getClosestBuildableWorkerTo(refinery->pos);
 }
 
 void WorkerManager::setBuildingWorker(const sc2::Unit * worker, Building & b)
