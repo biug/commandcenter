@@ -279,7 +279,39 @@ const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
 	}
 	else if (_macroLocation == MacroLocation::EnemyThird) {
 		auto loc = bot.Bases().getPlayerThirdLocation(Players::Enemy);
-		if (loc) return loc->getDepotPosition();
+		if (loc)
+		{
+			float mineralCenterX = 0.0f, mineralCenterY = 0.0f;
+			for (auto & mineral : loc->getMinerals())
+			{
+				mineralCenterX += mineral->pos.x;
+				mineralCenterY += mineral->pos.y;
+			}
+			sc2::Point2D mineralCenter(mineralCenterX / loc->getMinerals().size(), mineralCenterY / loc->getMinerals().size());
+
+			const sc2::Unit * m = nullptr;
+			for (auto & mineral : loc->getMinerals())
+			{
+				if (!m || Util::PlanerDist(m->pos, mineralCenter) > Util::PlanerDist(mineral->pos, mineralCenter))
+				{
+					m = mineral;
+				}
+			}
+			sc2::Point2D mPos(m->pos.x, m->pos.y);
+
+			const sc2::Unit * g = nullptr;
+			auto enemyBasePos = bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition();
+			for (auto & geyser : loc->getGeysers())
+			{
+				if (!g || Util::PlanerDist(g->pos, enemyBasePos) < Util::PlanerDist(geyser->pos, enemyBasePos))
+				{
+					g = geyser;
+				}
+			}
+			sc2::Point2D gPos(g->pos.x, g->pos.y);
+
+			return mPos + gPos - mineralCenter;
+		}
 	}
 	return sc2::Point2D(0, 0);
 }
