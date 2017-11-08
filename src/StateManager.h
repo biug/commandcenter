@@ -18,6 +18,8 @@ struct StateManager
 
 	int m_numKeepTrainWorker;
 
+	sc2::UnitTypeID m_chronoTarget;
+
 public:
 	StateManager(CCBot & bot);
 	void clear();

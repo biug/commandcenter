@@ -11,27 +11,24 @@ enum class MacroCommandType
 	, StartGas
 	, StopGas
 	, GasUntil
-	, StealGas
-	, ExtractorTrickDrone
-	, ExtractorTrickZergling
-	, Aggressive
-	, Defensive
 	, PullWorkers
 	, PullWorkersLeaving
 	, ReleaseWorkers
-	, UntilFindEnemy
 	, WaitWarpGate
 	, RallyAtPylon
 	, StartAttack
 	, WaitBlink
 	, StartBlink
 	, KeepTrainWorker
+	, ChronoBoost
 };
 
 class MacroCommand
 {
 	MacroCommandType	_type;
 	int                 _amount;
+	sc2::UNIT_TYPEID	_target;
+	sc2::Point2D		_position;
 
 public:
 
@@ -44,21 +41,16 @@ public:
 			, MacroCommandType::StartGas
 			, MacroCommandType::StopGas
 			, MacroCommandType::GasUntil
-			, MacroCommandType::StealGas
-			, MacroCommandType::ExtractorTrickDrone
-			, MacroCommandType::ExtractorTrickZergling
-			, MacroCommandType::Aggressive
-			, MacroCommandType::Defensive
 			, MacroCommandType::PullWorkers
 			, MacroCommandType::PullWorkersLeaving
 			, MacroCommandType::ReleaseWorkers
-			, MacroCommandType::UntilFindEnemy
 			, MacroCommandType::WaitWarpGate
 			, MacroCommandType::RallyAtPylon
 			, MacroCommandType::StartAttack
 			, MacroCommandType::WaitBlink
 			, MacroCommandType::StartBlink
 			, MacroCommandType::KeepTrainWorker
+			, MacroCommandType::ChronoBoost
 		};
 	}
 
@@ -66,12 +58,16 @@ public:
 	MacroCommand()
 		: _type(MacroCommandType::None)
 		, _amount(0)
+		, _target(sc2::UNIT_TYPEID::INVALID)
+		, _position(0, 0)
 	{
 	}
 
 	MacroCommand(MacroCommandType type)
 		: _type(type)
 		, _amount(0)
+		, _target(sc2::UNIT_TYPEID::INVALID)
+		, _position(0, 0)
 	{
 		BOT_ASSERT(!hasArgument(type), "missing MacroCommand argument");
 	}
@@ -79,13 +75,43 @@ public:
 	MacroCommand(MacroCommandType type, int amount)
 		: _type(type)
 		, _amount(amount)
+		, _target(sc2::UNIT_TYPEID::INVALID)
+		, _position(0, 0)
 	{
-		BOT_ASSERT(hasArgument(type), "extra MacroCommand argument");
+		BOT_ASSERT(hasAmount(type), "extra MacroCommand argument");
+	}
+
+	MacroCommand(MacroCommandType type, sc2::UnitTypeID target)
+		: _type(type)
+		, _amount(0)
+		, _target(target)
+		, _position(0, 0)
+	{
+		BOT_ASSERT(hasTarget(type), "extra MacroCommand argument");
+	}
+
+	MacroCommand(MacroCommandType type, const sc2::Point2D & position)
+		: _type(type)
+		, _amount(0)
+		, _target(sc2::UNIT_TYPEID::INVALID)
+		, _position(position)
+	{
+		BOT_ASSERT(hasPosition(type), "extra MacroCommand argument");
 	}
 
 	const int getAmount() const
 	{
 		return _amount;
+	}
+
+	const sc2::UnitTypeID getTarget() const
+	{
+		return _target;
+	}
+
+	const sc2::Point2D getPosition() const
+	{
+		return _position;
 	}
 
 	const MacroCommandType & getType() const
@@ -94,13 +120,28 @@ public:
 	}
 
 	// The command has a numeric argument, the _amount.
-	static const bool hasArgument(MacroCommandType t)
+	static const bool hasAmount(MacroCommandType t)
 	{
 		return
 			t == MacroCommandType::GasUntil ||
 			t == MacroCommandType::PullWorkers ||
 			t == MacroCommandType::PullWorkersLeaving ||
 			t == MacroCommandType::KeepTrainWorker;
+	}
+
+	static const bool hasTarget(MacroCommandType t)
+	{
+		return t == MacroCommandType::ChronoBoost;
+	}
+
+	static const bool hasPosition(MacroCommandType t)
+	{
+		return false;
+	}
+
+	static const bool hasArgument(MacroCommandType t)
+	{
+		return hasAmount(t) || hasTarget(t) || hasPosition(t);
 	}
 
 	static const std::string getName(MacroCommandType t)
@@ -129,26 +170,6 @@ public:
 		{
 			return "go gas until";
 		}
-		if (t == MacroCommandType::StealGas)
-		{
-			return "go steal gas";
-		}
-		if (t == MacroCommandType::ExtractorTrickDrone)
-		{
-			return "go extractor trick drone";
-		}
-		if (t == MacroCommandType::ExtractorTrickZergling)
-		{
-			return "go extractor trick zergling";
-		}
-		if (t == MacroCommandType::Aggressive)
-		{
-			return "go aggressive";
-		}
-		if (t == MacroCommandType::Defensive)
-		{
-			return "go defensive";
-		}
 		if (t == MacroCommandType::PullWorkers)
 		{
 			return "go pull workers";
@@ -160,10 +181,6 @@ public:
 		if (t == MacroCommandType::ReleaseWorkers)
 		{
 			return "go release workers";
-		}
-		if (t == MacroCommandType::UntilFindEnemy)
-		{
-			return "go until find enemy";
 		}
 		if (t == MacroCommandType::WaitWarpGate)
 		{
@@ -189,18 +206,35 @@ public:
 		{
 			return "go keep train worker";
 		}
+		if (t == MacroCommandType::ChronoBoost)
+		{
+			return "go chrono boost";
+		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";
 	}
 
 	const std::string getName() const
 	{
-		if (hasArgument(_type))
+		if (hasAmount(_type))
 		{
 			// Include the amount.
 			std::stringstream name;
 			name << getName(_type) << " " << _amount;
 			return name.str();
+		}
+		else if (hasTarget(_type))
+		{
+			std::stringstream name;
+			std::string type = sc2::UnitTypeToName(_target);
+			std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+			name << getName(_type) << " " << type;
+			return name.str();
+		}
+		else if (hasPosition(_type))
+		{
+			std::stringstream name;
+			name << getName(_type) << " " << _position.x << "," << _position.y;
 		}
 		else {
 			return getName(_type);

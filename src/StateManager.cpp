@@ -18,6 +18,8 @@ void StateManager::clear()
 	m_rschBlink = false;
 
 	m_numKeepTrainWorker = 0;
+
+	m_chronoTarget = sc2::UNIT_TYPEID::INVALID;
 }
 
 void StateManager::onFrame()

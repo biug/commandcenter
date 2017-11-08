@@ -1,5 +1,6 @@
 #include "MacroAct.h"
 #include "CCBot.h"
+#include "Util.h"
 
 #include <regex>
 
@@ -72,14 +73,41 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 			if (MacroCommand::hasArgument(t))
 			{
 				// There's an argument. Match the command name and parse out the argument.
-				std::regex commandWithArgRegex(commandName + " (\\d+)");
+				std::regex commandWithArgRegex(commandName + " ([^\\s]+)");
 				std::smatch m;
 				if (std::regex_match(inputName, m, commandWithArgRegex)) {
-					int amount = GetIntFromString(m[1].str());
-					if (amount >= 0) {
-						*this = MacroAct(t, amount);
-						_type = MacroActs::Command;
-						return;
+					if (MacroCommand::hasAmount(t))
+					{
+						int amount = atoi(m[1].str().c_str());
+						if (amount >= 0)
+						{
+							*this = MacroAct(t, amount);
+							_type = MacroActs::Command;
+							return;
+						}
+					}
+					else if (MacroCommand::hasTarget(t))
+					{
+						auto target = sc2::UnitTypeID(Util::GetUnitTypeIDFromName(m[1].str(), bot));
+						if (target != sc2::UNIT_TYPEID::INVALID)
+						{
+							*this = MacroAct(t, target);
+							_type = MacroActs::Command;
+							return;
+						}
+					}
+					else if (MacroCommand::hasPosition(t))
+					{
+						std::string pos = m[1].str();
+						std::string pos_x = pos.substr(0, pos.find(','));
+						std::string pos_y = pos.substr(pos.find(',') + 1);
+						float x = atof(pos_x.c_str()), y = atof(pos_y.c_str());
+						if (x > 0.0f && y > 0.0f)
+						{
+							*this = MacroAct(t, sc2::Point2D(x, y));
+							_type = MacroActs::Command;
+							return;
+						}
 					}
 				}
 			}
@@ -154,6 +182,20 @@ MacroAct::MacroAct(MacroCommandType t)
 
 MacroAct::MacroAct(MacroCommandType t, int amount)
 	: _macroCommandType(t, amount)
+	, _type(MacroActs::Command)
+	, _macroLocation(MacroLocation::Anywhere)
+{
+}
+
+MacroAct::MacroAct(MacroCommandType t, sc2::UnitTypeID target)
+	: _macroCommandType(t, target)
+	, _type(MacroActs::Command)
+	, _macroLocation(MacroLocation::Anywhere)
+{
+}
+
+MacroAct::MacroAct(MacroCommandType t, sc2::Point2D position)
+	: _macroCommandType(t, position)
 	, _type(MacroActs::Command)
 	, _macroLocation(MacroLocation::Anywhere)
 {
@@ -253,14 +295,6 @@ int MacroAct::supplyRequired(CCBot & bot) const
 
 int MacroAct::mineralPrice(CCBot & bot) const
 {
-	if (isCommand()) {
-		if (_macroCommandType.getType() == MacroCommandType::ExtractorTrickDrone ||
-			_macroCommandType.getType() == MacroCommandType::ExtractorTrickZergling) {
-			// 50 for the extractor and 50 for the unit. Never mind that you get some back.
-			return 100;
-		}
-		return 0;
-	}
 	return isUnit() ?
 		bot.Data(_buildType.getUnitTypeID()).mineralCost :
 		bot.Data(_buildType.getUpgradeID()).mineralCost;

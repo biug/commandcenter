@@ -60,44 +60,48 @@ void ProductionManager::onFrame()
 			m_bot.State().m_keepTrainWorker = false;
 		}
 	}
-	
-	// add time buff on BC
-	if (!m_bot.State().m_rschWarpGate)
+
+	// chrono boost target
+	if (m_bot.State().m_chronoTarget != sc2::UNIT_TYPEID::INVALID)
 	{
 		const sc2::Unit * nexus = nullptr;
-		const sc2::Unit * cyber = nullptr;
+		const sc2::Unit * target = nullptr;
 		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
 		{
-			switch (b->unit_type.ToType())
+			if (b->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
 			{
-			case sc2::UNIT_TYPEID::PROTOSS_NEXUS:
-				nexus = b;
-				break;
-			case sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE:
-				cyber = b;
-				break;
+				bool canBoost = false;
+				for (const auto & ability : m_bot.Query()->GetAbilitiesForUnit(b).abilities)
+				{
+					if (ability.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_CHRONOBOOST)
+					{
+						canBoost = true;
+					}
+				}
+				if (canBoost)
+				{
+					nexus = b;
+				}
+			}
+			else if (b->unit_type == m_bot.State().m_chronoTarget && b->build_progress == 1.0f)
+			{
+				if (std::find(b->buffs.begin(), b->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION) == b->buffs.end())
+				{
+					target = b;
+				}
 			}
 		}
-		
-		if (nexus && cyber)
+		if (nexus && target)
 		{
-			auto itr = std::find(cyber->buffs.begin(), cyber->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION);
-			// if cyber no buff
-			if (itr == cyber->buffs.end())
-			{
-				Micro::SmartAbility(nexus, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, cyber, m_bot);
-			}
+			Micro::SmartAbility(nexus, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, target, m_bot);
 		}
 	}
-	else
+	
+	// train warp gate
+	if (m_bot.State().m_rschWarpGate)
 	{
 		for (auto b : m_bot.UnitInfo().getUnits(Players::Self))
 		{
-			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS &&
-				std::find(b->buffs.begin(), b->buffs.end(), sc2::BUFF_ID::TIMEWARPPRODUCTION) == b->buffs.end())
-			{
-				Micro::SmartAbility(b, sc2::ABILITY_ID::EFFECT_CHRONOBOOST, b, m_bot);
-			}
 			if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_GATEWAY)
 			{
 				Micro::SmartAbility(b, sc2::ABILITY_ID::MORPH_WARPGATE, m_bot);
@@ -167,13 +171,12 @@ void ProductionManager::manageBuildOrderQueue()
 	}
 	else if (currentItem.type.isCommand())
 	{
-		auto command = currentItem.type.getCommandType().getType();
-		auto amount = currentItem.type.getCommandType().getAmount();
-		switch (command)
+		auto command = currentItem.type.getCommandType();
+		switch (command.getType())
 		{
 		case MacroCommandType::KeepTrainWorker:
 			m_bot.State().m_keepTrainWorker = true;
-			m_bot.State().m_numKeepTrainWorker = amount;
+			m_bot.State().m_numKeepTrainWorker = command.getAmount();
 			break;
 		case MacroCommandType::StartAttack:
 			m_bot.State().m_startAttack = true;
@@ -182,6 +185,7 @@ void ProductionManager::manageBuildOrderQueue()
 		case MacroCommandType::WaitBlink: m_bot.State().m_waitBlink = true; break;
 		case MacroCommandType::RallyAtPylon: m_bot.State().m_rallyAtPylon = true; break;
 		case MacroCommandType::StartBlink: m_bot.State().m_startBlink = true; break;
+		case MacroCommandType::ChronoBoost: m_bot.State().m_chronoTarget = command.getTarget(); break;
 		}
 		m_queue.removeCurrentHighestPriorityItem();
 	}

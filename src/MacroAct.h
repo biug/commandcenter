@@ -46,6 +46,8 @@ public:
 	MacroAct(sc2::UpgradeID t);
 	MacroAct(MacroCommandType t);
 	MacroAct(MacroCommandType t, int amount);
+	MacroAct(MacroCommandType t, sc2::UnitTypeID target);
+	MacroAct(MacroCommandType t, sc2::Point2D position);
 
 	bool    isUnit()		const;
 	bool    isUpgrade()	    const;
