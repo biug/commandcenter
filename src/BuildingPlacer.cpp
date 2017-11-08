@@ -239,46 +239,41 @@ sc2::Point2D BuildingPlacer::getRefineryPosition()
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
     sc2::Point2D homePosition = m_bot.GetStartLocation();
 
-    for (auto & unit : m_bot.Observation()->GetUnits())
-    {
-        if (!Util::IsGeyser(unit))
-        {
-            continue;
-        }
-
-        sc2::Point2D geyserPos(unit->pos);
-
-		if (std::find(m_geysers.begin(), m_geysers.end(), geyserPos) != m_geysers.end())
+	std::unordered_set<const sc2::Unit*> refineries;
+	for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		if (unit && Util::IsRefinery(unit))
 		{
-			continue;
+			refineries.insert(unit);
 		}
+	}
 
-        // check to see if it's next to one of our depots
-        bool nearDepot = false;
-        for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
-        {
-            if (Util::IsTownHall(unit) && Util::Dist(unit->pos, geyserPos) < 10)
-            {
-                nearDepot = true;
-            }
-        }
+    for (auto & base : m_bot.Bases().getOccupiedBaseLocations(Players::Self))
+    {
+		if (!base) continue;
+		for (const auto & geyser : base->getGeysers())
+		{
+			bool check = true;
+			for (auto & refinery : refineries)
+			{
+				if (refinery->pos.x == geyser->pos.x && refinery->pos.y == geyser->pos.y)
+				{
+					check = false;
+					break;
+				}
+			}
+			if (!check) continue;
 
-        if (nearDepot)
-        {
-            double homeDistance = Util::Dist(unit->pos, homePosition);
+			double homeDistance = Util::PlanerDist(geyser->pos, homePosition);
 
-            if (homeDistance < minGeyserDistanceFromHome)
-            {
-                minGeyserDistanceFromHome = homeDistance;
-                closestGeyser = unit->pos;
-            }
-        }
+			if (homeDistance < minGeyserDistanceFromHome)
+			{
+				minGeyserDistanceFromHome = homeDistance;
+				closestGeyser = geyser->pos;
+			}
+		}
     }
 
-	if (closestGeyser != sc2::Point2D(0, 0) && std::find(m_geysers.begin(), m_geysers.end(), closestGeyser) == m_geysers.end())
-	{
-		m_geysers.emplace_back(closestGeyser);
-	}
     return closestGeyser;
 }
 
