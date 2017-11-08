@@ -282,35 +282,26 @@ const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
 		if (loc)
 		{
 			float mineralCenterX = 0.0f, mineralCenterY = 0.0f;
-			for (auto & mineral : loc->getMinerals())
-			{
-				mineralCenterX += mineral->pos.x;
-				mineralCenterY += mineral->pos.y;
-			}
-			sc2::Point2D mineralCenter(mineralCenterX / loc->getMinerals().size(), mineralCenterY / loc->getMinerals().size());
 
-			const sc2::Unit * m = nullptr;
-			for (auto & mineral : loc->getMinerals())
-			{
-				if (!m || Util::PlanerDist(m->pos, mineralCenter) > Util::PlanerDist(mineral->pos, mineralCenter))
-				{
-					m = mineral;
-				}
-			}
-			sc2::Point2D mPos(m->pos.x, m->pos.y);
-
-			const sc2::Unit * g = nullptr;
+			const sc2::Unit * g1 = nullptr, * g2 = nullptr;
 			auto enemyBasePos = bot.Bases().getPlayerStartingBaseLocation(Players::Enemy)->getPosition();
 			for (auto & geyser : loc->getGeysers())
 			{
-				if (!g || Util::PlanerDist(g->pos, enemyBasePos) < Util::PlanerDist(geyser->pos, enemyBasePos))
+				if (!g1)
 				{
-					g = geyser;
+					g1 = geyser;
+				}
+				else if (Util::PlanerDist(g1->pos, enemyBasePos) < Util::PlanerDist(geyser->pos, enemyBasePos))
+				{
+					g2 = g1;
+					g1 = geyser;
 				}
 			}
-			sc2::Point2D gPos(g->pos.x, g->pos.y);
-
-			return mPos + gPos - mineralCenter;
+			if (g1 && g2)
+			{
+				sc2::Point2D g1Pos(g1->pos.x, g1->pos.y), g2Pos(g2->pos.x, g2->pos.y);
+				return g1Pos * 1.25f - g2Pos * 0.25f;
+			}
 		}
 	}
 	return sc2::Point2D(0, 0);
