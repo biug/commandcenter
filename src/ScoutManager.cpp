@@ -95,7 +95,7 @@ void ScoutManager::moveScouts()
 		{
 			m_scoutUnderAttack = false;
 		}
-
+		
 		// if the scout is in the enemy region
 		if (scoutInRangeOfenemy)
 		{

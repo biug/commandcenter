@@ -52,7 +52,7 @@ void WorkerManager::handleGasWorkers()
             int numAssigned = m_workerData.getNumAssignedWorkers(unit);
 
             // if it's less than we want it to be, fill 'er up
-            for (int i=0; i<(3-numAssigned); ++i)
+            for (int i=0; i<(m_bot.Config().WorkersPerRefinery-numAssigned); ++i)
             {
                 auto gasWorker = getGasWorker(unit);
                 if (gasWorker)

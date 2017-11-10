@@ -186,6 +186,7 @@ void ProductionManager::manageBuildOrderQueue()
 		case MacroCommandType::RallyAtPylon: m_bot.State().m_rallyAtPylon = true; break;
 		case MacroCommandType::StartBlink: m_bot.State().m_startBlink = true; break;
 		case MacroCommandType::ChronoBoost: m_bot.State().m_chronoTarget = command.getTarget(); break;
+		case MacroCommandType::StartGas:m_bot.Config().WorkersPerRefinery = 3; break;
 		}
 		m_queue.removeCurrentHighestPriorityItem();
 	}
