@@ -216,6 +216,7 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         if (unit->is_flying) { continue; }
 		
         // TODO: if unit is not powered continue
+		if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Protoss && !unit->is_powered) { continue; }
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
 
