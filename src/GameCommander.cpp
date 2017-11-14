@@ -82,7 +82,7 @@ void GameCommander::setScoutUnits()
     if (m_scoutUnits.empty() && !m_initialScoutSet)
     {
         // if it exists
-        if (shouldSendInitialScout())
+        if (shouldSendInitialScout() && m_bot.State().m_scout)
         {
             // grab the closest worker to the supply provider to send to scout
             const sc2::Unit * workerScout = m_bot.Workers().getClosestBuildableWorkerTo(m_bot.GetStartLocation());

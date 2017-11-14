@@ -15,9 +15,10 @@ struct StateManager
 	bool m_keepTrainWorker;
 	bool m_rschWarpGate;
 	bool m_rschBlink;
-
+	bool m_scout;
+	bool m_patrol;
 	int m_numKeepTrainWorker;
-
+	
 	sc2::UnitTypeID m_chronoTarget;
 
 public:

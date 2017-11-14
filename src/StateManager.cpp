@@ -16,7 +16,8 @@ void StateManager::clear()
 	m_keepTrainWorker = false;
 	m_rschWarpGate = false;
 	m_rschBlink = false;
-
+	m_patrol = false;
+	m_scout = false;
 	m_numKeepTrainWorker = 0;
 
 	m_chronoTarget = sc2::UNIT_TYPEID::INVALID;

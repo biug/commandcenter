@@ -60,6 +60,7 @@ void ProductionManager::onFrame()
 			m_bot.State().m_keepTrainWorker = false;
 		}
 	}
+	
 
 	// chrono boost target
 	if (m_bot.State().m_chronoTarget != sc2::UNIT_TYPEID::INVALID)
@@ -125,18 +126,25 @@ void ProductionManager::manageBuildOrderQueue()
     {
         return;
     }
-
-	BuildOrderItem currentItem = m_queue.getHighestPriorityItem();
-	if (detectSupplyDeadlock())
+	
+	
+	
+	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 50)
 	{
 		// we need build supply depot
-		currentItem.type = MacroAct(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_PYLON),true);
 	}
+	BuildOrderItem currentItem = m_queue.getHighestPriorityItem();
+	if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Protoss && m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PYLON) == 0 && currentItem.type.isBuilding(m_bot) && currentItem.type.getUnitType() != sc2::UNIT_TYPEID::PROTOSS_PYLON){
+		return;
+	}
+	
 	if (currentItem.type.isUnit())
 	{
 		// this is the unit which can produce the currentItem
 		const sc2::Unit * producer = getProducer(currentItem.type.getUnitType());
 
+		
 		// if we're waiting for a warpgate, we should shutdown our training
 		if (producer && producer->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_GATEWAY && m_bot.State().m_waitWarpGate)
 		{
@@ -152,6 +160,7 @@ void ProductionManager::manageBuildOrderQueue()
 			// create it and remove it from the _queue
 			create(producer, currentItem);
 			m_queue.removeCurrentHighestPriorityItem();
+			
 		}
 	}
 	else if (currentItem.type.isUpgrade())
@@ -174,6 +183,7 @@ void ProductionManager::manageBuildOrderQueue()
 		auto command = currentItem.type.getCommandType();
 		switch (command.getType())
 		{
+		case MacroCommandType::Scout:m_bot.State().m_scout = true; break;
 		case MacroCommandType::KeepTrainWorker:
 			m_bot.State().m_keepTrainWorker = true;
 			m_bot.State().m_numKeepTrainWorker = command.getAmount();
@@ -187,6 +197,7 @@ void ProductionManager::manageBuildOrderQueue()
 		case MacroCommandType::StartBlink: m_bot.State().m_startBlink = true; break;
 		case MacroCommandType::ChronoBoost: m_bot.State().m_chronoTarget = command.getTarget(); break;
 		case MacroCommandType::StartGas:m_bot.Config().WorkersPerRefinery = 3; break;
+		case MacroCommandType::GoOnPatrol:m_bot.State().m_patrol = true; break;
 		}
 		m_queue.removeCurrentHighestPriorityItem();
 	}
@@ -216,7 +227,7 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         if (unit->is_flying) { continue; }
 		
         // TODO: if unit is not powered continue
-		if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Protoss && !unit->is_powered) { continue; }
+		
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
 
@@ -359,7 +370,7 @@ bool ProductionManager::detectSupplyDeadlock()
 		return false;
 	}
 	auto supplyAvailable = supply - m_bot.Observation()->GetFoodUsed();
-
+	
 	if (race == sc2::Race::Protoss) {
 		supplyAvailable = -m_bot.Observation()->GetFoodUsed();
 		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))

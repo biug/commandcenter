@@ -21,6 +21,7 @@ enum class MacroCommandType
 	, StartBlink
 	, KeepTrainWorker
 	, ChronoBoost
+	, GoOnPatrol
 };
 
 class MacroCommand
@@ -51,6 +52,7 @@ public:
 			, MacroCommandType::StartBlink
 			, MacroCommandType::KeepTrainWorker
 			, MacroCommandType::ChronoBoost
+			, MacroCommandType::GoOnPatrol
 		};
 	}
 
@@ -209,6 +211,10 @@ public:
 		if (t == MacroCommandType::ChronoBoost)
 		{
 			return "go chrono boost";
+		}
+		if (t == MacroCommandType::GoOnPatrol)
+		{
+			return "go on patrol";
 		}
 		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
 		return "go none";
