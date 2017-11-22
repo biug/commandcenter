@@ -172,6 +172,9 @@ void ProductionManager::manageBuildOrderQueue()
 
 		// check to see if we can make it right now
 		bool canMake = canMakeNow(producer, currentItem.type.getUpgradeType());
+		if (producer) {
+			m_bot.Map().drawSphere(producer->pos, 3.0);
+		}
 		// if we can make the current item
 		if (producer && canMake)
 		{
@@ -232,7 +235,7 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
 		
         // TODO: if the type is an addon, some special cases
         // TODO: if the type requires an addon and the producer doesn't have one
-
+		
         // if we haven't cut it, add it to the set of candidates
         candidateProducers.push_back(unit);
     }
