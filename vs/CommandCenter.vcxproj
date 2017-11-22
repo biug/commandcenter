@@ -298,6 +298,8 @@
     <ClCompile Include="..\src\MacroAct.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\MapTools.cpp" />
+    <ClCompile Include="..\src\MarineManager.cpp" />
+    <ClCompile Include="..\src\MarineManager.h" />
     <ClCompile Include="..\src\MeleeManager.cpp" />
     <ClCompile Include="..\src\BuildType.cpp" />
     <ClCompile Include="..\src\Micro.cpp" />

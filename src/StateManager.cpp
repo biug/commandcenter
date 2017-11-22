@@ -19,7 +19,7 @@ void StateManager::clear()
 	m_patrol = false;
 	m_scout = false;
 	m_numKeepTrainWorker = 0;
-
+	m_stimpack = false;
 	m_chronoTarget = sc2::UNIT_TYPEID::INVALID;
 }
 
@@ -35,6 +35,9 @@ void StateManager::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 	}
 	case sc2::UPGRADE_ID::BLINKTECH: {
 		m_rschBlink = true;
+	}
+	case sc2::UPGRADE_ID::STIMPACK: {
+		m_stimpack = true;
 	}
 	default:
 		break;

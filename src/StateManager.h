@@ -17,6 +17,7 @@ struct StateManager
 	bool m_rschBlink;
 	bool m_scout;
 	bool m_patrol;
+	bool m_stimpack;
 	int m_numKeepTrainWorker;
 	
 	sc2::UnitTypeID m_chronoTarget;

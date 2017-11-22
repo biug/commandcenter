@@ -1,97 +1,103 @@
-#include "StalkerManager.h"
+#include "MarineManager.h"
 #include "Util.h"
 #include "CCBot.h"
 
-StalkerInfo::StalkerInfo() :
+MarineInfo::MarineInfo() :
 	m_hpLastSecond(160)
 {
 
 }
 
-StalkerInfo::StalkerInfo(float hp) :
+MarineInfo::MarineInfo(float hp) :
 	m_hpLastSecond(hp)
 {
 
 }
 
-StalkerManager::StalkerManager(CCBot & bot)
+MarineManager::MarineManager(CCBot & bot)
 	: MicroManager(bot)
 {
 
 }
 
-void StalkerManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
+void MarineManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
 {
 	assignTargets(targets);
 }
 
-void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
+void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 {
-	const std::vector<const sc2::Unit *> & stalkers = getUnits();
+	const std::vector<const sc2::Unit *> & marines = getUnits();
 
 	// figure out targets
-	std::vector<const sc2::Unit *> stalkerTargets;
+	std::vector<const sc2::Unit *> marineTargets;
 	for (auto target : targets)
 	{
 		if (!target) { continue; }
 		if (target->unit_type == sc2::UNIT_TYPEID::ZERG_EGG) { continue; }
 		if (target->unit_type == sc2::UNIT_TYPEID::ZERG_LARVA) { continue; }
 
-		stalkerTargets.push_back(target);
+		marineTargets.push_back(target);
 	}
 
 	// for each meleeUnit
 	bool refreshInfo = m_bot.Map().frame() % 16;
-	for (auto stalker : stalkers)
+	for (auto marine : marines)
 	{
-		BOT_ASSERT(stalker, "ranged unit is null");
-		if (stalkerInfos.find(stalker) == stalkerInfos.end())
+		BOT_ASSERT(marine, "ranged unit is null");
+		if (marineInfos.find(marine) == marineInfos.end())
 		{
-			stalkerInfos[stalker] = StalkerInfo(stalker->health + stalker->shield);
+			marineInfos[marine] = MarineInfo(marine->health);
 		}
-		int currentHP = stalker->health + stalker->shield;
-		bool beingAttack = currentHP < stalkerInfos[stalker].m_hpLastSecond;
-		if (refreshInfo) stalkerInfos[stalker].m_hpLastSecond = currentHP;
+		int currentHP = marine->health;
+		bool beingAttack = currentHP < marineInfos[marine].m_hpLastSecond;
+		if (refreshInfo) marineInfos[marine].m_hpLastSecond = currentHP;
 
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
-			if (!stalkerTargets.empty())
+			if (!marineTargets.empty())
 			{
 				// find the best target for this meleeUnit
-				const sc2::Unit * target = getTarget(stalker, stalkerTargets);
+				const sc2::Unit * target = getTarget(marine, marineTargets);
 				if (!target) continue;
 
-				if (m_bot.State().m_rschBlink && stalker->health + stalker->shield < 50 && beingAttack)
+				if (m_bot.State().m_stimpack)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(stalker);
+					auto abilities = m_bot.Query()->GetAbilitiesForUnit(marine);
 					bool canBlink = false;
+					
 					for (auto & ab : abilities.abilities)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_BLINK)
+						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM_MARINE)
 						{
 							canBlink = true;
+							
+						}
+					}
+					for (auto buff : marine->buffs) {
+						if (buff == sc2::BUFF_ID::STIMPACK) {
+							canBlink = false;
 						}
 					}
 					if (canBlink)
 					{
-						auto p1 = target->pos, p2 = stalker->pos;
-						auto tp = p2 * 2 - p1;
-						Micro::SmartAbility(stalker, sc2::ABILITY_ID::EFFECT_BLINK, tp, m_bot);
+						
+						Micro::SmartAbility(marine, sc2::ABILITY_ID::EFFECT_STIM_MARINE,m_bot);
 					}
 					continue;
 				}
 				// kite attack it
-				Micro::SmartKiteTarget(stalker, target, m_bot);
+				Micro::SmartKiteTarget(marine, target, m_bot);
 			}
 			// if there are no targets
 			else
 			{
 				// if we're not near the order position
-				if (Util::Dist(stalker->pos, order.getPosition()) > 4)
+				if (Util::Dist(marine->pos, order.getPosition()) > 4)
 				{
 					// move to it
-					Micro::SmartMove(stalker, order.getPosition(), m_bot);
+					Micro::SmartMove(marine, order.getPosition(), m_bot);
 				}
 			}
 		}
@@ -105,7 +111,7 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 
 // get a target for the ranged unit to attack
 // TODO: this is the melee targeting code, replace it with something better for ranged units
-const sc2::Unit * StalkerManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
+const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
 {
 	BOT_ASSERT(rangedUnit, "null melee unit in getTarget");
 
@@ -134,7 +140,7 @@ const sc2::Unit * StalkerManager::getTarget(const sc2::Unit * rangedUnit, const 
 }
 
 // get the attack priority of a type in relation to a zergling
-int StalkerManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
+int MarineManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
 	if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_SENTRY) {
@@ -144,7 +150,7 @@ int StalkerManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Uni
 	{
 		return 10;
 	}
-	
+
 	if (Util::IsWorker(unit))
 	{
 		return 9;

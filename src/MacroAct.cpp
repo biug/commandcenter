@@ -273,6 +273,10 @@ const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
 		auto loc = bot.Bases().getPlayerThirdLocation(Players::Self);
 		if (loc) return loc->getDepotPosition();
 	}
+	else if (_macroLocation == MacroLocation::Main) {
+		auto loc = bot.Bases().getPlayerStartingBaseLocation(Players::Self);
+		if (loc) return loc->getDepotPosition();
+	}
 	else if (_macroLocation == MacroLocation::EnemyNatural) {
 		auto loc = bot.Bases().getPlayerNaturalLocation(Players::Enemy);
 		if (loc) return loc->getDepotPosition();

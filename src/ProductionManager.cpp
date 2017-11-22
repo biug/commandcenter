@@ -153,7 +153,9 @@ void ProductionManager::manageBuildOrderQueue()
 			
 		// check to see if we can make it right now
 		bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
-			
+		if (canMake) {
+			m_bot.Map().drawSphere(producer->pos, 3.0);
+		}
 		// if we can make the current item
 		if (producer && canMake)
 		{
@@ -280,15 +282,20 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     {
         return;
     }
-
+	
     // if we're dealing with a building
     // TODO: deal with morphed buildings & addons
     if (item.type.isBuilding(m_bot))
     {
+		if (producer->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BARRACKS) {
+			Micro::SmartAbility(producer, m_bot.Data(item.type.getUnitType()).buildAbility, m_bot);
+			return;
+		}
         // send the building task to the building manager
 		auto macroLocation = item.type.getMacroLocation(m_bot);
         m_buildingManager.addBuildingTask(item.type.getUnitType(),
 			macroLocation != sc2::Point2D(0, 0) ? macroLocation : m_bot.GetStartLocation());
+
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
@@ -311,6 +318,7 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     {
         Micro::SmartAbility(producer, m_bot.Data(item.type.getUpgradeType()).buildAbility, m_bot);
     }
+	
 }
 
 bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType & type)
@@ -325,6 +333,7 @@ bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType &
     // quick check if the unit can't do anything it certainly can't build the thing we want
     if (available_abilities.abilities.empty())
     {
+		
         return false;
     }
     else

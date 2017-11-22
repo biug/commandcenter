@@ -109,6 +109,12 @@
     <ClCompile Include="..\src\StalkerManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MarineManager.h">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MarineManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">

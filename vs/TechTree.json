@@ -61,7 +61,7 @@
     ["Observer", "Protoss", 25, 75, 1, 0, 1, 0, 0, 0, 0, 0, ["RoboticsFacility"], [], [] ],
     ["Immortal", "Protoss", 250, 100, 4, 0, 1, 0, 0, 0, 0, 0, ["RoboticsFacility"], [], [] ],
     ["Probe", "Protoss", 50, 0, 1, 0, 1, 0, 1, 0, 0, 0, ["Nexus"], [], [] ],
-    ["Interceptor", "Protoss", 10, 0, 0, 0, 1, 0, 0, 0, 0, 0, ["Carrier"], [], [] ],
+    ["Interceptor", "Protoss", 15, 0, 0, 0, 1, 0, 0, 0, 0, 0, ["Carrier"], [], [] ],
     ["Hatchery", "Zerg", 350, 0, 0, 0, 1, 1, 0, 0, 1, 0, ["Drone"], [], [] ],
     ["Extractor", "Zerg", 75, 0, 0, 0, 1, 1, 0, 0, 0, 0, ["Drone"], [], [] ],
     ["SpawningPool", "Zerg", 250, 0, 0, 0, 1, 1, 0, 0, 0, 0, ["Drone"], ["Hatchery", "Lair", "Hive"], [] ],
