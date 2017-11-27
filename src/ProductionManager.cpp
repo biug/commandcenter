@@ -307,15 +307,16 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     // TODO: deal with morphed buildings & addons
     if (item.type.isBuilding(m_bot))
     {
-		if (producer->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BARRACKS) {
+		
+		if (canMorph(producer)) {
 			Micro::SmartAbility(producer, m_bot.Data(item.type.getUnitType()).buildAbility, m_bot);
-			return;
 		}
-        // send the building task to the building manager
-		auto macroLocation = item.type.getMacroLocation(m_bot);
-        m_buildingManager.addBuildingTask(item.type.getUnitType(),
-			macroLocation != sc2::Point2D(0, 0) ? macroLocation : m_bot.GetStartLocation());
-
+		else {
+			// send the building task to the building manager
+			auto macroLocation = item.type.getMacroLocation(m_bot);
+			m_buildingManager.addBuildingTask(item.type.getUnitType(),
+				macroLocation != sc2::Point2D(0, 0) ? macroLocation : m_bot.GetStartLocation());
+		}
     }
     // if we're dealing with a non-building unit
     else if (item.type.isUnit())
@@ -386,6 +387,34 @@ bool ProductionManager::detectBuildOrderDeadlock()
     return false;
 }
 
+bool ProductionManager::canMorph(const sc2::Unit * producer) {
+	switch (producer->unit_type.ToType())
+	{
+	case sc2::UNIT_TYPEID::TERRAN_BARRACKS:	
+		return true;
+	
+	case sc2::UNIT_TYPEID::TERRAN_FACTORY: 
+		return true;
+	
+	case sc2::UNIT_TYPEID::TERRAN_STARPORT:
+		return true;
+	
+	case sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER:
+		return true;
+	
+	case sc2::UNIT_TYPEID::ZERG_LAIR:
+		return true;
+	
+	case sc2::UNIT_TYPEID::ZERG_HATCHERY:
+		return true;
+
+	case sc2::UNIT_TYPEID::ZERG_SPIRE:
+		return true;
+	
+	default:
+		return false;
+		}
+}
 bool ProductionManager::detectSupplyDeadlock()
 {
 	auto race = m_bot.GetPlayerRace(Players::Self);

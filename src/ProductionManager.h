@@ -20,6 +20,7 @@ class ProductionManager
     bool    canMakeNow(const sc2::Unit * producer, const BuildType & type);
     bool    detectBuildOrderDeadlock();
 	bool	detectSupplyDeadlock();
+	bool    canMorph(const sc2::Unit * producer);
     void    setBuildOrder(const BuildOrder & buildOrder);
     void    create(const sc2::Unit * producer, BuildOrderItem & item);
     void    manageBuildOrderQueue();

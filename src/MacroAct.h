@@ -55,7 +55,7 @@ public:
 	bool    isBuilding(CCBot & bot)	const;
 	bool    isRefinery(CCBot & bot)	const;
 	bool	isSupply()		const;
-
+	bool    isAddon(CCBot &bot) const;
 	const size_t & type() const;
 	const sc2::Race & getRace() const;
 
