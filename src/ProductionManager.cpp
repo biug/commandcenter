@@ -51,12 +51,29 @@ void ProductionManager::onFrame()
 						Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
 					}
 				}
-
+			case sc2::Race::Terran:
+				if (b->unit_type == sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER || b->unit_type == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND || b->unit_type == sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS) {
+					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
+						Micro::SmartTrain(b, sc2::UNIT_TYPEID::TERRAN_SCV, m_bot);
+					}
+				}
+				case sc2::Race::Zerg:
+					if (b->unit_type == sc2::UNIT_TYPEID::ZERG_HATCHERY || b->unit_type == sc2::UNIT_TYPEID::ZERG_LAIR || b->unit_type == sc2::UNIT_TYPEID::ZERG_HIVE){
+						if (!detectSupplyDeadlock()) {
+							Micro::SmartTrain(b, sc2::UNIT_TYPEID::ZERG_DRONE, m_bot);
+						}
+					}
 			default:
 				break;
 			}
 		}
 		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONE) + m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONEBURROWED) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::TERRAN_SCV) >= m_bot.State().m_numKeepTrainWorker - 2) {
 			m_bot.State().m_keepTrainWorker = false;
 		}
 	}
@@ -383,7 +400,13 @@ bool ProductionManager::detectSupplyDeadlock()
 	}
 	auto supplyAvailable = supply - m_bot.Observation()->GetFoodUsed();
 	
-	if (race == sc2::Race::Protoss) {
+	switch (race)
+	{
+	case sc2::Terran:
+		break;
+	case sc2::Zerg:
+		break;
+	case sc2::Protoss:
 		supplyAvailable = -m_bot.Observation()->GetFoodUsed();
 		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
 		{
@@ -400,7 +423,10 @@ bool ProductionManager::detectSupplyDeadlock()
 				supplyAvailable += 10;
 			}
 		}
-	}
+		break;
+	default:
+		break;
+	} 
 
 	int supplyCost = m_queue.getHighestPriorityItem().type.supplyRequired(m_bot);
 	// Available supply can be negative, which breaks the test below. Fix it.
