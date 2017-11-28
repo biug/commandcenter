@@ -149,7 +149,7 @@ void ProductionManager::manageBuildOrderQueue()
 	
 	
 	
-	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 30)
+	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 25)
 	{
 		// we need build supply depot
 		switch (m_bot.GetPlayerRace(Players::Self)) 
@@ -452,6 +452,7 @@ bool ProductionManager::canMorph(const sc2::Unit * producer) {
 }
 bool ProductionManager::detectSupplyDeadlock()
 {
+	
 	auto race = m_bot.GetPlayerRace(Players::Self);
 	auto supply = m_bot.Observation()->GetFoodCap();
 	if (m_queue.isEmpty() || supply >= 200) return false;
@@ -507,7 +508,7 @@ bool ProductionManager::detectSupplyDeadlock()
 	default:
 		break;
 	} 
-
+	
 	int supplyCost = m_queue.getHighestPriorityItem().type.supplyRequired(m_bot);
 	// Available supply can be negative, which breaks the test below. Fix it.
 	supplyAvailable = std::max(0, supplyAvailable);
@@ -517,8 +518,12 @@ bool ProductionManager::detectSupplyDeadlock()
 	{
 		return true;
 	}
-
+	if (supplyAvailable < 5) {
+		return true;
+	}
+	
 	return false;
+
 }
 
 int ProductionManager::getFreeMinerals()
