@@ -39,7 +39,7 @@ void BuildingManager::onFrame()
 	checkForStartedConstruction();          // check to see if any buildings have started construction and update data structures    
 	checkForDeadTerranBuilders();           // if we are terran and a building is under construction without a worker, assign a new one    
 	checkForCompletedBuildings();           // check to see if any buildings have completed and update data structures
-	
+	orbitalCallDownMule();
 	drawBuildingInformation();
 }
 
@@ -336,7 +336,45 @@ int BuildingManager::getReservedGas()
 {
     return m_reservedGas;
 }
+const sc2::Unit * BuildingManager::getMineralToMine(const sc2::Unit * unit) const
+{
+	const sc2::Unit * bestMineral = nullptr;
+	double bestDist = 100000;
+	for (auto base : m_bot.Bases().getOccupiedBaseLocations(Players::Self))
+	{
+		for (auto mineral : base->getMinerals())
+		{
+			if (!Util::IsMineral(mineral)) continue;
 
+			double dist = Util::Dist(mineral->pos, unit->pos);
+
+			if (dist < bestDist)
+			{
+				bestMineral = mineral;
+				bestDist = dist;
+			}
+		}
+	}
+
+	return bestMineral;
+}
+void BuildingManager::orbitalCallDownMule()
+{
+	for (auto orbital : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		if (orbital->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND)
+		{
+			sc2::AvailableAbilities available_abilities = m_bot.Query()->GetAbilitiesForUnit(orbital);
+			for (auto mule : available_abilities.abilities)
+			{
+				if (mule.ability_id == sc2::ABILITY_ID::EFFECT_CALLDOWNMULE)
+				{
+					Micro::SmartAbility(orbital, sc2::ABILITY_ID::EFFECT_CALLDOWNMULE, getMineralToMine(orbital), m_bot);
+				}
+			}
+		}
+	}
+}
 void BuildingManager::drawBuildingInformation()
 {
     m_buildingPlacer.drawReservedTiles();

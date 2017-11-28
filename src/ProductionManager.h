@@ -26,7 +26,7 @@ class ProductionManager
     void    manageBuildOrderQueue();
     int     getFreeMinerals();
     int     getFreeGas();
-
+	void    trainWarpGate();
 public:
 
     ProductionManager(CCBot & bot);

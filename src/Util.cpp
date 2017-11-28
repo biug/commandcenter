@@ -132,6 +132,10 @@ bool Util::IsIdle(const sc2::Unit * unit)
 
 int Util::GetUnitTypeMineralPrice(const sc2::UnitTypeID type, const CCBot & bot)
 {
+	if (type.ToType() == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND)
+	{
+		return 150;
+	}
     return bot.Observation()->GetUnitTypeData()[type].mineral_cost;
 }
 

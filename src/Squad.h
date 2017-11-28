@@ -5,6 +5,7 @@
 #include "RangedManager.h"
 #include "StalkerManager.h"
 #include "SquadOrder.h"
+#include "MarineManager.h"
 
 class CCBot;
 
@@ -23,6 +24,7 @@ class Squad
     MeleeManager        m_meleeManager;
     RangedManager       m_rangedManager;
 	StalkerManager		m_stalkerManager;
+	MarineManager       m_marineManager;
 
     std::map<const sc2::Unit *, bool> m_nearEnemy;
 

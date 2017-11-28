@@ -3,7 +3,7 @@
 #include "CCBot.h"
 
 MarineInfo::MarineInfo() :
-	m_hpLastSecond(160)
+	m_hpLastSecond(45)
 {
 
 }
@@ -65,25 +65,24 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				if (m_bot.State().m_stimpack)
 				{
 					auto abilities = m_bot.Query()->GetAbilitiesForUnit(marine);
-					bool canBlink = false;
+					bool stimpack = false;
 					
 					for (auto & ab : abilities.abilities)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM_MARINE)
+						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
 						{
-							canBlink = true;
+							stimpack = true;
 							
 						}
 					}
 					for (auto buff : marine->buffs) {
 						if (buff == sc2::BUFF_ID::STIMPACK) {
-							canBlink = false;
+							stimpack = false;
 						}
 					}
-					if (canBlink)
+					if (stimpack && beingAttack)
 					{
-						
-						Micro::SmartAbility(marine, sc2::ABILITY_ID::EFFECT_STIM_MARINE,m_bot);
+						Micro::SmartAbility(marine, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
 					}
 					continue;
 				}

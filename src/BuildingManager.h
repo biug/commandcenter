@@ -25,7 +25,7 @@ class BuildingManager
     void            checkForStartedConstruction();			// STEP 4
     void            checkForDeadTerranBuilders();			// STEP 5
     void            checkForCompletedBuildings();			// STEP 6
-
+	void            orbitalCallDownMule();
     char            getBuildingWorkerCode(const Building & b) const;
 
 public:
@@ -37,7 +37,7 @@ public:
     void                addBuildingTask(const sc2::UnitTypeID & type, const sc2::Point2D & desiredPosition);
     void                drawBuildingInformation();
     sc2::Point2D        getBuildingLocation(const Building & b);
-
+	const sc2::Unit *   getMineralToMine(const sc2::Unit * unit) const;
     int                 getReservedMinerals();
     int                 getReservedGas();
 

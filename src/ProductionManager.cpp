@@ -46,19 +46,20 @@ void ProductionManager::onFrame()
 			switch (m_bot.GetPlayerRace(Players::Self))
 			{
 			case sc2::Race::Protoss:
-				if (b->unit_type == sc2::UNIT_TYPEID::PROTOSS_NEXUS) {
+				if (m_bot.Data(b->unit_type).isTownHall) {
 					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
 						Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
 					}
 				}
 			case sc2::Race::Terran:
-				if (b->unit_type == sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER || b->unit_type == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND || b->unit_type == sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS) {
+				if (m_bot.Data(b->unit_type).isTownHall) {
 					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
 						Micro::SmartTrain(b, sc2::UNIT_TYPEID::TERRAN_SCV, m_bot);
 					}
 				}
-				case sc2::Race::Zerg:
-					if (b->unit_type == sc2::UNIT_TYPEID::ZERG_HATCHERY || b->unit_type == sc2::UNIT_TYPEID::ZERG_LAIR || b->unit_type == sc2::UNIT_TYPEID::ZERG_HIVE){
+				break;
+			case sc2::Race::Zerg:
+					if (m_bot.Data(b->unit_type).isTownHall){
 						if (!detectSupplyDeadlock()) {
 							Micro::SmartTrain(b, sc2::UNIT_TYPEID::ZERG_DRONE, m_bot);
 						}
@@ -115,6 +116,11 @@ void ProductionManager::onFrame()
 		}
 	}
 	
+	
+	trainWarpGate();
+    drawProductionInformation();
+}
+void ProductionManager::trainWarpGate() {
 	// train warp gate
 	if (m_bot.State().m_rschWarpGate)
 	{
@@ -126,10 +132,7 @@ void ProductionManager::onFrame()
 			}
 		}
 	}
-
-    drawProductionInformation();
 }
-
 // on unit destroy
 void ProductionManager::onUnitDestroy(const sc2::Unit * unit)
 {
@@ -146,10 +149,22 @@ void ProductionManager::manageBuildOrderQueue()
 	
 	
 	
-	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 50)
+	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 30)
 	{
 		// we need build supply depot
-		m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_PYLON),true);
+		switch (m_bot.GetPlayerRace(Players::Self)) 
+		{
+			case sc2::Race::Protoss:
+				m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_PYLON), true);
+				break;
+			case sc2::Race::Terran:
+				m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT), true);
+				break;
+			case sc2::Race::Zerg:
+				m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::ZERG_OVERLORD), true);
+				break;
+		}
+		
 	}
 	BuildOrderItem currentItem = m_queue.getHighestPriorityItem();
 	if (m_bot.GetPlayerRace(Players::Self) == sc2::Race::Protoss && m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PYLON) == 0 && currentItem.type.isBuilding(m_bot) && currentItem.type.getUnitType() != sc2::UNIT_TYPEID::PROTOSS_PYLON){
@@ -170,9 +185,8 @@ void ProductionManager::manageBuildOrderQueue()
 			
 		// check to see if we can make it right now
 		bool canMake = canMakeNow(producer, currentItem.type.getUnitType());
-		if (canMake) {
-			m_bot.Map().drawSphere(producer->pos, 3.0);
-		}
+		
+		
 		// if we can make the current item
 		if (producer && canMake)
 		{
@@ -189,9 +203,7 @@ void ProductionManager::manageBuildOrderQueue()
 
 		// check to see if we can make it right now
 		bool canMake = canMakeNow(producer, currentItem.type.getUpgradeType());
-		if (producer) {
-			m_bot.Map().drawSphere(producer->pos, 3.0);
-		}
+		
 		// if we can make the current item
 		if (producer && canMake)
 		{
@@ -247,7 +259,30 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         if (unit->build_progress < 1.0f) { continue; }
         if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
         if (unit->is_flying) { continue; }
-		
+		/*
+		if (m_bot.Data(type.getUnitType()).requiredUnits.size() != 0) 
+		{
+			bool flag1 = false;
+			bool flag2 = true;
+			for (auto req : m_bot.Data(type.getUnitType()).requiredUnits)
+			{
+				if (m_bot.Data(req).isAddon) {
+					flag2 = false;
+					for (auto addon : m_bot.UnitInfo().getUnits(Players::Self))
+					{
+						if (addon->unit_type.ToType() == req && unit->add_on_tag == addon->tag)
+						{
+							flag1 = true;
+							break;
+						}
+					}
+					
+				}
+				
+			}
+			if (flag1 + flag2 != 1)continue;
+		}
+		*/
         // TODO: if unit is not powered continue
 		
         // TODO: if the type is an addon, some special cases
@@ -275,7 +310,6 @@ const sc2::Unit * ProductionManager::getClosestUnitToPosition(const std::vector<
     // if we don't care where the unit is return the first one we have
     if (closestTo.x == 0 && closestTo.y == 0)
     {
-		
         return units[0];
     }
 
@@ -344,8 +378,10 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
 
 bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType & type)
 {
+	
     if (!producer || !meetsReservedResources(type))
     {
+		
         return false;
     }
 
@@ -354,7 +390,6 @@ bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType &
     // quick check if the unit can't do anything it certainly can't build the thing we want
     if (available_abilities.abilities.empty())
     {
-		
         return false;
     }
     else
@@ -377,7 +412,7 @@ bool ProductionManager::canMakeNow(const sc2::Unit * producer, const BuildType &
 			}
 		}
     }
-
+	
     return false;
 }
 
@@ -431,11 +466,27 @@ bool ProductionManager::detectSupplyDeadlock()
 	
 	switch (race)
 	{
-	case sc2::Terran:
+	case sc2::Race::Terran:
+		supplyAvailable = -m_bot.Observation()->GetFoodUsed();
+		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (m_bot.Data(unit->unit_type).isSupplyDepot)
+			{
+				if (unit->build_progress < 1.0f)
+				{
+					return false;
+				}
+				supplyAvailable += 8;
+			}
+			else if (m_bot.Data(unit->unit_type).isTownHall && unit->build_progress == 1.0f)
+			{
+				supplyAvailable += 15;
+			}
+		}
 		break;
-	case sc2::Zerg:
+	case sc2::Race::Zerg:
 		break;
-	case sc2::Protoss:
+	case sc2::Race::Protoss:
 		supplyAvailable = -m_bot.Observation()->GetFoodUsed();
 		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
 		{
@@ -473,6 +524,7 @@ bool ProductionManager::detectSupplyDeadlock()
 int ProductionManager::getFreeMinerals()
 {
     return m_bot.Observation()->GetMinerals() - m_buildingManager.getReservedMinerals();
+	//return m_bot.Observation()->GetMinerals();
 }
 
 int ProductionManager::getFreeGas()
@@ -484,6 +536,9 @@ int ProductionManager::getFreeGas()
 bool ProductionManager::meetsReservedResources(const BuildType & type)
 {
     // return whether or not we meet the resources
+	if (type.getUnitTypeID().ToType() == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND) {
+		return 0 <= getFreeMinerals();
+	}
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
 }
 
