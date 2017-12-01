@@ -34,11 +34,11 @@ void ProductionManager::onFrame()
 {
     // check the _queue for stuff we can build
     manageBuildOrderQueue();
-
+	
     // TODO: if nothing is currently building, get a new goal from the strategy manager
     // TODO: detect if there's a build order deadlock once per second
     // TODO: triggers for game things like cloaked units etc
-
+	
     m_buildingManager.onFrame();
 	if (m_bot.State().m_keepTrainWorker) {
 		
@@ -257,32 +257,11 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
         // reasons a unit can not train the desired type
         if (std::find(producerTypes.begin(), producerTypes.end(), unit->unit_type) == producerTypes.end()) { continue; }
         if (unit->build_progress < 1.0f) { continue; }
-        if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0) { continue; }
+        if (m_bot.Data(unit->unit_type).isBuilding && unit->orders.size() > 0 && !Util::hasReactor(unit,m_bot)) { continue; }
         if (unit->is_flying) { continue; }
-		/*
-		if (m_bot.Data(type.getUnitType()).requiredUnits.size() != 0) 
-		{
-			bool flag1 = false;
-			bool flag2 = true;
-			for (auto req : m_bot.Data(type.getUnitType()).requiredUnits)
-			{
-				if (m_bot.Data(req).isAddon) {
-					flag2 = false;
-					for (auto addon : m_bot.UnitInfo().getUnits(Players::Self))
-					{
-						if (addon->unit_type.ToType() == req && unit->add_on_tag == addon->tag)
-						{
-							flag1 = true;
-							break;
-						}
-					}
-					
-				}
-				
-			}
-			if (flag1 + flag2 != 1)continue;
-		}
-		*/
+		if (Util::hasReactor(unit, m_bot) && unit->orders.size() > 1) { continue; }
+		
+		
         // TODO: if unit is not powered continue
 		
         // TODO: if the type is an addon, some special cases

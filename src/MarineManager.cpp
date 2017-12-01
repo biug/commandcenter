@@ -142,7 +142,8 @@ const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const s
 int MarineManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
-	if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_SENTRY) {
+	if (Util::IsPsionicUnit(unit))
+	{
 		return 11;
 	}
 	if (Util::IsCombatUnit(unit, m_bot))

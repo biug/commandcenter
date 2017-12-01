@@ -46,5 +46,5 @@ void StateManager::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 
 bool StateManager::shouldAttack()
 {
-	return m_startAttack && (!m_waitBlink || m_rschBlink||m_stimpack);
+	return m_startAttack;// && (!m_waitBlink || m_rschBlink || m_stimpack);
 }

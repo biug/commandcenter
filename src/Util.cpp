@@ -249,6 +249,27 @@ bool Util::IsCombatUnitType(const sc2::UnitTypeID & type, CCBot & bot)
     return true;
 }
 
+bool Util::IsPsionicUnit(const sc2::Unit * unit)
+{
+	return unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_HIGHTEMPLAR || unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_SENTRY ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_ORACLE || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_GHOST ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_RAVEN || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_MEDIVAC ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_INFESTOR || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_INFESTORBURROWED ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_VIPER;
+}
+bool Util::hasReactor(const sc2::Unit * unit, CCBot &bot)
+{
+	for (auto & addon : bot.UnitInfo().getUnits(Players::Self))
+	{
+		if (addon->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BARRACKSREACTOR)
+		{
+			if (addon->tag == unit->add_on_tag) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 bool Util::IsCombatUnit(const sc2::Unit * unit, CCBot & bot)
 {
     BOT_ASSERT(unit, "Unit pointer was null");
