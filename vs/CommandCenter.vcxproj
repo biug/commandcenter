@@ -298,6 +298,7 @@
     <ClCompile Include="..\src\MacroAct.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\MapTools.cpp" />
+    <ClCompile Include="..\src\MarauderManager.cpp" />
     <ClCompile Include="..\src\MarineManager.cpp" />
     <ClCompile Include="..\src\MarineManager.h" />
     <ClCompile Include="..\src\MeleeManager.cpp" />
@@ -313,6 +314,7 @@
     <ClCompile Include="..\src\StalkerManager.cpp" />
     <ClCompile Include="..\src\StateManager.cpp" />
     <ClCompile Include="..\src\StrategyManager.cpp" />
+    <ClCompile Include="..\src\TankManager.cpp" />
     <ClCompile Include="..\src\TechTree.cpp" />
     <ClCompile Include="..\src\UnitData.cpp" />
     <ClCompile Include="..\src\UnitInfoManager.cpp" />
@@ -340,6 +342,7 @@
     <ClInclude Include="..\src\MacroAct.h" />
     <ClInclude Include="..\src\MacroCommand.h" />
     <ClInclude Include="..\src\MapTools.h" />
+    <ClInclude Include="..\src\MarauderManager.h" />
     <ClInclude Include="..\src\MeleeManager.h" />
     <ClInclude Include="..\src\BuildType.h" />
     <ClInclude Include="..\src\Micro.h" />
@@ -353,6 +356,7 @@
     <ClInclude Include="..\src\StalkerManager.h" />
     <ClInclude Include="..\src\StateManager.h" />
     <ClInclude Include="..\src\StrategyManager.h" />
+    <ClInclude Include="..\src\TankManager.h" />
     <ClInclude Include="..\src\TechTree.h" />
     <ClInclude Include="..\src\Timer.hpp" />
     <ClInclude Include="..\src\UnitData.h" />

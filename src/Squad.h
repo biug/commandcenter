@@ -6,7 +6,8 @@
 #include "StalkerManager.h"
 #include "SquadOrder.h"
 #include "MarineManager.h"
-
+#include "MarauderManager.h"
+#include "TankManager.h"
 class CCBot;
 
 class Squad
@@ -25,7 +26,8 @@ class Squad
     RangedManager       m_rangedManager;
 	StalkerManager		m_stalkerManager;
 	MarineManager       m_marineManager;
-
+	MarauderManager     m_marauderManager;
+	TankManager         m_tankManager;
     std::map<const sc2::Unit *, bool> m_nearEnemy;
 
     const sc2::Unit * unitClosestToEnemy() const;

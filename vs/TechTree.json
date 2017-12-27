@@ -26,7 +26,7 @@
     ["SCV", "Terran", 50, 0, 1, 0, 1, 0, 1, 0, 0, 0, ["CommandCenter"], [], [] ],
     ["Marine", "Terran", 50, 0, 1, 0, 1, 0, 0, 0, 0, 0, ["Barracks"], [], [] ],
     ["Reaper", "Terran", 50, 50, 1, 0, 1, 0, 0, 0, 0, 0, ["Barracks"], [], [] ],
-    ["Ghost", "Terran", 200, 100, 2, 0, 1, 0, 0, 0, 0, 0, ["Barracks"], [], [] ],
+    ["Ghost", "Terran", 150, 125, 2, 0, 1, 0, 0, 0, 0, 0, ["Barracks"], [], [] ],
     ["Marauder", "Terran", 100, 25, 2, 0, 1, 0, 0, 0, 0, 0, ["Barracks"], ["BarracksTechLab"], [] ],
     ["Thor", "Terran", 300, 200, 6, 0, 1, 0, 0, 0, 0, 0, ["Factory"], [], [] ],
     ["Hellion", "Terran", 100, 0, 2, 0, 1, 0, 0, 0, 0, 0, ["Factory"], [], [] ],

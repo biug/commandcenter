@@ -20,6 +20,7 @@ void StateManager::clear()
 	m_scout = false;
 	m_numKeepTrainWorker = 0;
 	m_stimpack = false;
+	m_shield = false;
 	m_chronoTarget = sc2::UNIT_TYPEID::INVALID;
 }
 
@@ -38,6 +39,9 @@ void StateManager::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 	}
 	case sc2::UPGRADE_ID::STIMPACK: {
 		m_stimpack = true;
+	}
+	case sc2::UPGRADE_ID::SHIELDWALL: {
+		m_shield = true;
 	}
 	default:
 		break;

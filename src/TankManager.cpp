@@ -1,104 +1,89 @@
-#include "MarineManager.h"
+#include "TankManager.h"
 #include "Util.h"
 #include "CCBot.h"
 
-MarineInfo::MarineInfo() :
+TankInfo::TankInfo() :
 m_hpLastSecond(45)
 {
 	
 }
 
-MarineInfo::MarineInfo(float hp) :
+TankInfo::TankInfo(float hp) :
 	m_hpLastSecond(hp)
 {
 
 }
 
-MarineManager::MarineManager(CCBot & bot)
+TankManager::TankManager(CCBot & bot)
 	: MicroManager(bot)
 {
 
 }
 
-void MarineManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
+void TankManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
 {
 	assignTargets(targets);
 }
 
-void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
+void TankManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 {
-	const std::vector<const sc2::Unit *> & marines = getUnits();
+	const std::vector<const sc2::Unit *> & tanks = getUnits();
 
 	// figure out targets
-	std::vector<const sc2::Unit *> marineTargets;
+	std::vector<const sc2::Unit *> tankTargets;
 	for (auto target : targets)
 	{
 		if (!target) { continue; }
 		if (target->unit_type == sc2::UNIT_TYPEID::ZERG_EGG) { continue; }
 		if (target->unit_type == sc2::UNIT_TYPEID::ZERG_LARVA) { continue; }
 
-		marineTargets.push_back(target);
+		tankTargets.push_back(target);
 	}
 
 	// for each meleeUnit
 	bool refreshInfo = m_bot.Map().frame() % 16;
-	for (auto marine : marines)
+	for (auto tank : tanks)
 	{
-		BOT_ASSERT(marine, "ranged unit is null");
-		if (marineInfos.find(marine) == marineInfos.end())
+		BOT_ASSERT(tank, "ranged unit is null");
+		if (tankInfos.find(tank) == tankInfos.end())
 		{
-			marineInfos[marine] = MarineInfo(marine->health);
+			tankInfos[tank] = TankInfo(tank->health);
 		}
-		int currentHP = marine->health;
-		bool beingAttack = currentHP < marineInfos[marine].m_hpLastSecond;
-		if (refreshInfo) marineInfos[marine].m_hpLastSecond = currentHP;
+		int currentHP = tank->health;
+		bool beingAttack = currentHP < tankInfos[tank].m_hpLastSecond;
+		if (refreshInfo) tankInfos[tank].m_hpLastSecond = currentHP;
 		
 		// if the order is to attack or defend
-		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
+		if (order.getType() == SquadOrderTypes::Attack )
 		{
-			if (!marineTargets.empty())
+			if (!tankTargets.empty())
 			{
 				// find the best target for this meleeUnit
-				const sc2::Unit * target = getTarget(marine, marineTargets);
+				const sc2::Unit * target = getTarget(tank, tankTargets);
 				if (!target) continue;
 
-				if (m_bot.State().m_stimpack)
-				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(marine);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
-					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
-					}
-					for (auto buff : marine->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || marine->weapon_cooldown >0))
-					{
-						Micro::SmartAbility(marine, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
-					}
-					continue;
+				float distance = Util::Dist(tank->pos, target->pos);
+				if (distance < 8.0) {
+					Micro::SmartAbility(tank, sc2::ABILITY_ID::MORPH_SIEGEMODE, m_bot);
 				}
 				// kite attack it
-				Micro::SmartAttackMove(marine, target->pos, m_bot);
+				Micro::SmartAttackMove(tank, target->pos, m_bot);
 			}
+			
 			// if there are no targets
 			else
 			{
 				// if we're not near the order position
-				if (Util::Dist(marine->pos, order.getPosition()) > 4)
+				if (Util::Dist(tank->pos, order.getPosition()) > 4)
 				{
 					// move to it
-					Micro::SmartMove(marine, order.getPosition(), m_bot);
+					Micro::SmartMove(tank, order.getPosition(), m_bot);
 				}
 			}
+		}
+		else if (order.getType() == SquadOrderTypes::Defend)
+		{
+			Micro::SmartAbility(tank, sc2::ABILITY_ID::MORPH_SIEGEMODE,m_bot);
 		}
 
 		if (m_bot.Config().DrawUnitTargetInfo)
@@ -110,7 +95,7 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 
 // get a target for the ranged unit to attack
 // TODO: this is the melee targeting code, replace it with something better for ranged units
-const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
+const sc2::Unit * TankManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
 {
 	BOT_ASSERT(rangedUnit, "null melee unit in getTarget");
 
@@ -139,7 +124,7 @@ const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const s
 }
 
 // get the attack priority of a type in relation to a zergling
-int MarineManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
+int TankManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
 	if (Util::IsPsionicUnit(unit))

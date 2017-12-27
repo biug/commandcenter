@@ -257,11 +257,42 @@ bool Util::IsPsionicUnit(const sc2::Unit * unit)
 		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_INFESTOR || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_INFESTORBURROWED ||
 		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_VIPER;
 }
+
+bool Util::IsHeavyArmor(const sc2::Unit * unit)
+{
+	return unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_COLOSSUS || unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_IMMORTAL ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_STALKER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_VOIDRAY ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_CARRIER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_TEMPEST ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANK || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_CYCLONE ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_MARAUDER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THOR ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THORAP || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_VIKINGASSAULT ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_VIKINGFIGHTER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BATTLECRUISER ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ROACH || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ROACHBURROWED ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_SWARMHOSTBURROWEDMP || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_SWARMHOSTMP ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ULTRALISK || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_CORRUPTOR;
+}
+bool Util::IsLightArmor(const sc2::Unit * unit)
+{
+
+}
 bool Util::hasReactor(const sc2::Unit * unit, CCBot &bot)
 {
 	for (auto & addon : bot.UnitInfo().getUnits(Players::Self))
 	{
 		if (addon->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BARRACKSREACTOR)
+		{
+			if (addon->tag == unit->add_on_tag) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool Util::hasTechlab(const sc2::Unit * unit, CCBot &bot)
+{
+	for (auto & addon : bot.UnitInfo().getUnits(Players::Self))
+	{
+		if (addon->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BARRACKSTECHLAB)
 		{
 			if (addon->tag == unit->add_on_tag) {
 				return true;

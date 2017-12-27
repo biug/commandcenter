@@ -443,7 +443,7 @@ bool ProductionManager::detectSupplyDeadlock()
 		return false;
 	}
 	auto supplyAvailable = supply - m_bot.Observation()->GetFoodUsed();
-	
+	/*
 	switch (race)
 	{
 	case sc2::Race::Terran:
@@ -487,7 +487,7 @@ bool ProductionManager::detectSupplyDeadlock()
 	default:
 		break;
 	} 
-	
+	*/
 	int supplyCost = m_queue.getHighestPriorityItem().type.supplyRequired(m_bot);
 	// Available supply can be negative, which breaks the test below. Fix it.
 	supplyAvailable = std::max(0, supplyAvailable);
@@ -497,10 +497,7 @@ bool ProductionManager::detectSupplyDeadlock()
 	{
 		return true;
 	}
-	if (supplyAvailable < 5) {
-		return true;
-	}
-	
+
 	return false;
 
 }

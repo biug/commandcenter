@@ -12,6 +12,8 @@ Squad::Squad(CCBot & bot)
 	, m_rangedManager(bot)
 	, m_stalkerManager(bot)
 	, m_marineManager(bot)
+	, m_marauderManager(bot)
+	, m_tankManager(bot)
 {
 }
 
@@ -26,6 +28,8 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
     , m_rangedManager(bot)
 	, m_stalkerManager(bot)
 	, m_marineManager(bot)
+	, m_marauderManager(bot)
+	, m_tankManager(bot)
 {
 }
 
@@ -48,6 +52,8 @@ void Squad::onFrame()
         m_rangedManager.regroup(regroupPosition);
 		m_stalkerManager.regroup(regroupPosition);
 		m_marineManager.regroup(regroupPosition);
+		m_marauderManager.regroup(regroupPosition);
+		m_tankManager.regroup(regroupPosition);
     }
     else // otherwise, execute micro
     {
@@ -55,6 +61,8 @@ void Squad::onFrame()
         m_rangedManager.execute(m_order);
 		m_stalkerManager.execute(m_order);
 		m_marineManager.execute(m_order);
+		m_marauderManager.execute(m_order);
+		m_tankManager.execute(m_order);
         //_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
         //_detectorManager.execute(_order);
     }
@@ -118,6 +126,8 @@ void Squad::addUnitsToMicroManagers()
     std::vector<const sc2::Unit *> transportUnits;
 	std::vector<const sc2::Unit *> stalkerUnits;
 	std::vector<const sc2::Unit *> marineUnits;
+	std::vector<const sc2::Unit *> marauderUnits;
+	std::vector<const sc2::Unit *> tankUnits;
     // add _units to micro managers
     for (auto unit : m_units)
     {
@@ -136,6 +146,14 @@ void Squad::addUnitsToMicroManagers()
 		{
 			marineUnits.push_back(unit);
 		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_MARAUDER)
+		{
+			marauderUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANK || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED)
+		{
+			tankUnits.push_back(unit);
+		}
         // select ranged _units
         else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
         {
@@ -152,8 +170,9 @@ void Squad::addUnitsToMicroManagers()
     m_rangedManager.setUnits(rangedUnits);
 	m_stalkerManager.setUnits(stalkerUnits);
 	m_marineManager.setUnits(marineUnits);
+	m_marauderManager.setUnits(marauderUnits);
     //m_detectorManager.setUnits(detectorUnits);
-    //m_tankManager.setUnits(tankUnits);
+    m_tankManager.setUnits(tankUnits);
 }
 
 // TODO: calculates whether or not to regroup

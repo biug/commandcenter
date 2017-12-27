@@ -115,6 +115,12 @@
     <ClCompile Include="..\src\MarineManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MarauderManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TankManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -228,6 +234,12 @@
       <Filter>global</Filter>
     </ClInclude>
     <ClInclude Include="..\src\StalkerManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MarauderManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TankManager.h">
       <Filter>micro</Filter>
     </ClInclude>
   </ItemGroup>
