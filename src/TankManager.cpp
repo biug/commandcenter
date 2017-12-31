@@ -3,7 +3,7 @@
 #include "CCBot.h"
 
 TankInfo::TankInfo() :
-m_hpLastSecond(45)
+m_hpLastSecond(150)
 {
 	
 }
@@ -63,11 +63,20 @@ void TankManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 				if (!target) continue;
 
 				float distance = Util::Dist(tank->pos, target->pos);
-				if (distance < 8.0) {
+				if (tank->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANK && distance < 8.0) {
 					Micro::SmartAbility(tank, sc2::ABILITY_ID::MORPH_SIEGEMODE, m_bot);
 				}
+				else if (tank->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED && distance > 8.0)
+				{
+					Micro::SmartAbility(tank,sc2::ABILITY_ID::MORPH_UNSIEGE, m_bot);
+				}else if(tank->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED && distance <8.0 &&target->display_type==1){
+					Micro::SmartAttackUnit(tank, target, m_bot);
+				}
+				else {
+					Micro::SmartMove(tank, target->pos, m_bot);
+				}
 				// kite attack it
-				Micro::SmartAttackMove(tank, target->pos, m_bot);
+				
 			}
 			
 			// if there are no targets
@@ -127,7 +136,7 @@ const sc2::Unit * TankManager::getTarget(const sc2::Unit * rangedUnit, const std
 int TankManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
-	if (Util::IsPsionicUnit(unit))
+	if (Util::IsHeavyArmor(unit))
 	{
 		return 11;
 	}

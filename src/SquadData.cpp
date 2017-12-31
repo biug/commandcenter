@@ -183,7 +183,7 @@ bool SquadData::canAssignUnitToSquad(const sc2::Unit * unit, const Squad & squad
     const Squad * unitSquad = getUnitSquad(unit);
 
     // make sure strictly less than so we don't reassign to the same squad etc
-    return !unitSquad || (unitSquad->getPriority() < squad.getPriority());
+	return !unitSquad|| (unitSquad->getPriority() < squad.getPriority());
 }
 
 Squad & SquadData::getSquad(const std::string & squadName)

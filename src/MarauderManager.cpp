@@ -76,7 +76,7 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 						}
 					}
 					for (auto buff : marauder->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
+						if (buff == sc2::BUFF_ID::STIMPACKMARAUDER) {
 							stimpack = false;
 						}
 					}

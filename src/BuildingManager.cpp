@@ -32,7 +32,12 @@ void BuildingManager::onFrame()
 			m_bot.Map().drawText(unit->pos, ss.str());
 		}
 	}
-
+	for (auto depot : m_bot.UnitInfo().getUnits(Players::Self)) {
+		if (depot->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT)
+		{
+			Micro::SmartAbility(depot, sc2::ABILITY_ID::MORPH_SUPPLYDEPOT_LOWER, m_bot);
+		}
+	}
 	validateWorkersAndBuildings();          // check to see if assigned workers have died en route or while constructing
 	assignWorkersToUnassignedBuildings();   // assign workers to the unassigned buildings and label them 'planned'    
 	constructAssignedBuildings();           // for each planned building, if the worker isn't constructing, send the command    
@@ -40,6 +45,7 @@ void BuildingManager::onFrame()
 	checkForDeadTerranBuilders();           // if we are terran and a building is under construction without a worker, assign a new one    
 	checkForCompletedBuildings();           // check to see if any buildings have completed and update data structures
 	orbitalCallDownMule();
+	
 	drawBuildingInformation();
 }
 
@@ -464,12 +470,13 @@ sc2::Point2D BuildingManager::getBuildingLocation(const Building & b)
     }
 	if (Util::IsSupplyProviderType(b.type))
 	{
-		return m_buildingPlacer.getBuildLocationNear(b, 2);
+		return m_buildingPlacer.getBuildLocationNear(b, 0);
 	}
-
+	int buildingSpacing = m_bot.Config().BuildingSpacing;
+	
     // get a position within our region
     // TODO: put back in special pylon / cannon spacing
-    return m_buildingPlacer.getBuildLocationNear(b, m_bot.Config().BuildingSpacing);
+    return m_buildingPlacer.getBuildLocationNear(b, buildingSpacing);
 }
 
 void BuildingManager::removeBuildings(const std::vector<Building> & toRemove)

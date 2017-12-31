@@ -40,7 +40,7 @@ void RangedManager::assignTargets(const std::vector<const sc2::Unit *> & targets
             {
                 // find the best target for this meleeUnit
                 const sc2::Unit * target = getTarget(rangedUnit, rangedUnitTargets);
-
+				
                 // attack it
                 if (m_bot.Config().KiteWithRangedUnits)
                 {

@@ -235,6 +235,7 @@ bool MacroAct::isAddon(CCBot &bot) const
 {
 	return _type == MacroActs::Unit && bot.Data(_buildType.getUnitTypeID()).isAddon;
 }
+
 bool MacroAct::isRefinery(CCBot & bot)	const
 {
 	return _type == MacroActs::Unit && bot.Data(_buildType.getUnitTypeID()).isRefinery;

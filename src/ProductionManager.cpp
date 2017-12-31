@@ -491,9 +491,12 @@ bool ProductionManager::detectSupplyDeadlock()
 	int supplyCost = m_queue.getHighestPriorityItem().type.supplyRequired(m_bot);
 	// Available supply can be negative, which breaks the test below. Fix it.
 	supplyAvailable = std::max(0, supplyAvailable);
-
+	if (m_queue.getHighestPriorityItem().type.isSupply())
+	{
+		return false;
+	}
 	// if we don't have enough supply, we're supply blocked
-	if (supplyAvailable < supplyCost)
+	if (supplyAvailable < 5)
 	{
 		return true;
 	}
