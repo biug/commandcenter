@@ -36,7 +36,6 @@ public:
     MicroManager(CCBot & bot);
 
     const std::vector<const sc2::Unit *> & getUnits() const;
-
     void setUnits(const std::vector<const sc2::Unit *> & u);
     void execute(const SquadOrder & order);
     void regroup(const sc2::Point2D & regroupPosition) const;

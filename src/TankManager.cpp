@@ -68,7 +68,22 @@ void TankManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 				}
 				else if (tank->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED && distance > 8.0)
 				{
-					Micro::SmartAbility(tank,sc2::ABILITY_ID::MORPH_UNSIEGE, m_bot);
+					bool flag = false;
+					for (auto & u : m_bot.Observation()->GetUnits())
+					{
+						if ((Util::GetPlayer(u) == Players::Enemy) && (Util::Dist(tank->pos, u->pos) < 8.0))
+						{
+							flag = true;
+
+						}
+					}
+					if (flag) { 
+						Micro::SmartAttackMove(tank, target->pos, m_bot);
+					}
+					else
+					{
+						Micro::SmartAbility(tank, sc2::ABILITY_ID::MORPH_UNSIEGE, m_bot);
+					}
 				}else if(tank->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_SIEGETANKSIEGED && distance <8.0 &&target->display_type==1){
 					Micro::SmartAttackUnit(tank, target, m_bot);
 				}
@@ -90,10 +105,7 @@ void TankManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 				}
 			}
 		}
-		else if (order.getType() == SquadOrderTypes::Defend)
-		{
-			Micro::SmartAbility(tank, sc2::ABILITY_ID::MORPH_SIEGEMODE,m_bot);
-		}
+		
 
 		if (m_bot.Config().DrawUnitTargetInfo)
 		{

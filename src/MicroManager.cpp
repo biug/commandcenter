@@ -113,6 +113,8 @@ const std::vector<const sc2::Unit *> & MicroManager::getUnits() const
     return m_units;
 }
 
+
+
 void MicroManager::regroup(const sc2::Point2D & regroupPosition) const
 {
     sc2::Point2D ourBasePosition = m_bot.GetStartLocation();
