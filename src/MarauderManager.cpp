@@ -87,7 +87,14 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 					continue;
 				}
 				// kite attack it
-				Micro::SmartAttackMove(marauder, target->pos, m_bot);
+				if (Util::IsMeleeUnit(target) && marauder->weapon_cooldown > 0) {
+					auto p1 = target->pos, p2 = marauder->pos;
+					auto tp = p2 * 2 - p1;
+					Micro::SmartMove(marauder, tp, m_bot);
+				}
+				else {
+					Micro::SmartAttackMove(marauder, target->pos, m_bot);
+				}
 			}
 			// if there are no targets
 			else

@@ -61,7 +61,7 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(marine, marineTargets);
 				if (!target) continue;
-
+				
 				if (m_bot.State().m_stimpack)
 				{
 					auto abilities = m_bot.Query()->GetAbilitiesForUnit(marine);
@@ -87,7 +87,14 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 					continue;
 				}
 				// kite attack it
-				Micro::SmartAttackMove(marine, target->pos, m_bot);
+				if (Util::IsMeleeUnit(target) && marine->weapon_cooldown > 0) {
+					auto p1 = target->pos, p2 = marine->pos;
+					auto tp = p2 * 2 - p1;
+					Micro::SmartMove(marine, tp, m_bot);
+				}
+				else {
+					Micro::SmartAttackMove(marine, target->pos, m_bot);
+				}
 			}
 			// if there are no targets
 			else
@@ -146,14 +153,18 @@ int MarineManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit
 	{
 		return 11;
 	}
-	if (Util::IsCombatUnit(unit, m_bot))
+	if (Util::IsMeleeUnit(unit))
 	{
 		return 10;
+	}
+	if (Util::IsCombatUnit(unit, m_bot))
+	{
+		return 9;
 	}
 
 	if (Util::IsWorker(unit))
 	{
-		return 9;
+		return 8;
 	}
 
 	return 1;

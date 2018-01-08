@@ -465,12 +465,11 @@ sc2::Point2D BuildingManager::getBuildingLocation(const Building & b)
 
     if (Util::IsTownHallType(b.type))
     {
-        // TODO: fix this so we can actually expand
-        //return m_bot.Bases().getNextExpansion(Players::Self);
+        return m_bot.Bases().getNextExpansion(Players::Self);
     }
-	if (Util::IsSupplyProviderType(b.type))
+	if (b.type.ToType() == sc2::UNIT_TYPEID::PROTOSS_PYLON) 
 	{
-		return m_buildingPlacer.getBuildLocationNear(b, 0);
+		return m_buildingPlacer.getBuildLocationNear(b, 3);
 	}
 	int buildingSpacing = m_bot.Config().BuildingSpacing;
 	

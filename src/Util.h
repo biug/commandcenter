@@ -17,6 +17,7 @@ namespace Util
 
     int GetPlayer(const sc2::Unit * unit);
 	bool IsPsionicUnit(const sc2::Unit * unit);
+	bool IsMeleeUnit(const sc2::Unit * unit);
 	bool IsHeavyArmor(const sc2::Unit * unit);
 	bool IsLightArmor(const sc2::Unit * unit);
 	bool hasReactor(const sc2::Unit * unit, CCBot &bot);

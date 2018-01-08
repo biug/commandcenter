@@ -275,6 +275,12 @@ bool Util::IsLightArmor(const sc2::Unit * unit)
 {
 
 }
+bool Util::IsMeleeUnit(const sc2::Unit * unit)
+{
+	return unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_ZEALOT || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ZERGLING || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ULTRALISK ||
+		unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_DARKTEMPLAR || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_HELLIONTANK;
+}
 bool Util::hasReactor(const sc2::Unit * unit, CCBot &bot)
 {
 	for (auto & addon : bot.UnitInfo().getUnits(Players::Self))
