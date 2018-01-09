@@ -255,8 +255,7 @@ void WorkerManager::drawWorkerInformation()
 bool WorkerManager::isFree(const sc2::Unit * worker) const
 {
     return m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals ||
-		m_workerData.getWorkerJob(worker) == WorkerJobs::Idle ||
-		m_workerData.getWorkerJob(worker) == WorkerJobs::Wait;
+		m_workerData.getWorkerJob(worker) == WorkerJobs::Idle;
 }
 
 bool WorkerManager::isWorkerScout(const sc2::Unit * worker) const

@@ -49,7 +49,7 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		{
 			marauderInfos[marauder] = MarauderInfo(marauder->health);
 		}
-		int currentHP = marauder->health;
+		float currentHP = marauder->health;
 		bool beingAttack = currentHP < marauderInfos[marauder].m_hpLastSecond;
 		if (refreshInfo) marauderInfos[marauder].m_hpLastSecond = currentHP;
 		

@@ -216,7 +216,7 @@ public:
 		{
 			return "go on patrol";
 		}
-		BOT_ASSERT(t == MacroCommandType::None, "unrecognized MacroCommandType");
+	
 		return "go none";
 	}
 

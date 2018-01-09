@@ -11,7 +11,7 @@ class BaseLocation
 {
     CCBot &                     m_bot;
     DistanceMap                 m_distanceMap;
-
+public:
     sc2::Point2D                m_depotPosition;
     sc2::Point2D                m_centerOfResources;
     std::vector<const sc2::Unit *> m_geysers;
@@ -30,7 +30,7 @@ class BaseLocation
     float                       m_bottom;
     bool                        m_isStartLocation;
     
-public:
+
 
     BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2::Unit *> & resources);
     

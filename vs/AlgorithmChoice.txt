@@ -1,0 +1,8 @@
+3
+
+
+0 = build-in
+1 = Even Split
+2 = Queue
+3 = PathFinding 
+4 = Queue + PathFinding

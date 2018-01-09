@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-
+#include "UnitType.h"
 class CCBot;
 class BuildType;
 

@@ -50,7 +50,7 @@ namespace Util
     std::string     GetStringFromRace(const sc2::Race & race);
     sc2::Race       GetRaceFromString(const std::string & race);
     sc2::Point2D    CalcCenter(const std::vector<const sc2::Unit *> & units);
-
+    sc2::UnitTypeID GetRefinery(const sc2::Race & race);
     sc2::UnitTypeID GetUnitTypeIDFromName(const std::string & name, CCBot & bot);
     sc2::UpgradeID  GetUpgradeIDFromName(const std::string & name, CCBot & bot);
     sc2::BuffID     GetBuffIDFromName(const std::string & name, CCBot & bot);

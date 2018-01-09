@@ -13,19 +13,20 @@ class ProductionManager
 
     BuildingManager m_buildingManager;
     BuildOrderQueue m_queue;
-	int warpGate;
+	size_t warpGate;
 	int used;
     const sc2::Unit * getClosestUnitToPosition(const std::vector<const sc2::Unit *> & units, sc2::Point2D closestTo);
     bool    meetsReservedResources(const BuildType & type);
     bool    canMakeNow(const sc2::Unit * producer, const BuildType & type);
     bool    detectBuildOrderDeadlock();
 	bool	detectSupplyDeadlock();
-	bool    canMorph(const sc2::Unit * producer);
+	bool    isMorphedBuilding(const sc2::UNIT_TYPEID t);
     void    setBuildOrder(const BuildOrder & buildOrder);
     void    create(const sc2::Unit * producer, BuildOrderItem & item);
     void    manageBuildOrderQueue();
     int     getFreeMinerals();
     int     getFreeGas();
+	void    fixBuildOrderDeadlock();
 	void    trainWarpGate();
 public:
 

@@ -33,6 +33,7 @@ void ProductionManager::onStart()
 void ProductionManager::onFrame()
 {
     // check the _queue for stuff we can build
+	fixBuildOrderDeadlock();
     manageBuildOrderQueue();
 	
     // TODO: if nothing is currently building, get a new goal from the strategy manager
@@ -237,6 +238,66 @@ void ProductionManager::manageBuildOrderQueue()
 	}
 }
 
+void ProductionManager::fixBuildOrderDeadlock()
+{
+	if (m_queue.isEmpty()) { return; }
+	BuildOrderItem & currentItem = m_queue.getHighestPriorityItem();
+	if (currentItem.type.isCommand()) {
+		return;
+	}
+	// check to see if we have the prerequisites for the topmost item
+	if (currentItem.type.isUnit()) {
+		bool hasRequired = m_bot.Data(currentItem.type.getUnitType()).requiredUnits.empty();
+		for (auto & required : m_bot.Data(currentItem.type.getUnitType()).requiredUnits)
+		{
+			if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, required, false) > 0 || m_buildingManager.isBeingBuilt(required))
+			{
+				hasRequired = true;
+				break;
+			}
+		}
+
+		if (!hasRequired)
+		{
+			//std::cout << currentItem.type.getName() << " needs " << m_bot.Data(currentItem.type.getUnitType()).requiredUnits[0].getName() << "\n";
+			m_queue.queueAsHighestPriority(MacroAct(m_bot.Data(currentItem.type.getUnitType()).requiredUnits[0].ToType()), true);
+			fixBuildOrderDeadlock();
+			return;
+		}
+
+		// build the producer of the unit if we don't have one
+		bool hasProducer = m_bot.Data(currentItem.type.getUnitType()).whatBuilds.empty();
+		for (auto & producer : m_bot.Data(currentItem.type.getUnitType()).whatBuilds)
+		{
+			if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, producer, false) > 0 || m_buildingManager.isBeingBuilt(producer))
+			{
+				hasProducer = true;
+				break;
+			}
+		}
+
+		if (!hasProducer)
+		{
+			m_queue.queueAsHighestPriority(MacroAct(m_bot.Data(currentItem.type.getUnitType()).whatBuilds[0].ToType()), true);
+			fixBuildOrderDeadlock();
+		}
+
+		// build a refinery if we don't have one and the thing costs gas
+		auto refinery = Util::GetRefinery(m_bot.GetPlayerRace(Players::Self));
+		if (m_bot.Data(currentItem.type.getUnitType()).gasCost > 0 && m_bot.UnitInfo().getUnitTypeCount(Players::Self, refinery, false) == 0)
+		{
+			m_queue.queueAsHighestPriority(MacroAct(refinery.ToType()), true);
+		}
+
+		// build supply if we need some
+		auto supplyProvider = Util::GetSupplyProvider(m_bot.GetPlayerRace(Players::Self));
+		if (m_bot.Data(currentItem.type.getUnitType()).supplyCost > (m_bot.GetMaxSupply() - m_bot.GetCurrentSupply()) && !m_buildingManager.isBeingBuilt(supplyProvider))
+		{
+			m_queue.queueAsHighestPriority(MacroAct(supplyProvider.ToType()), true);
+		}
+	}
+}
+
 const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Point2D closestTo)
 {
     // get all the types of units that can build this type
@@ -321,8 +382,11 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
     if (item.type.isBuilding(m_bot))
     {
 		
-		if (canMorph(producer)) {
-			Micro::SmartAbility(producer, m_bot.Data(item.type.getUnitType()).buildAbility, m_bot);
+		if (isMorphedBuilding(item.type.getUnitType()) ){
+			Micro::SmartMorph(producer, item.type.getUnitType(), m_bot);
+		}
+		else if (m_bot.Data(item.type.getUnitType()).isAddon){
+			Micro::SmartAddon(producer, item.type.getUnitType(), m_bot);
 		}
 		else {
 			// send the building task to the building manager
@@ -401,30 +465,25 @@ bool ProductionManager::detectBuildOrderDeadlock()
     return false;
 }
 
-bool ProductionManager::canMorph(const sc2::Unit * producer) {
-	switch (producer->unit_type.ToType())
+bool ProductionManager::isMorphedBuilding(const sc2::UNIT_TYPEID t) {
+	switch (t)
 	{
-	case sc2::UNIT_TYPEID::TERRAN_BARRACKS:	
-		return true;
 	
-	case sc2::UNIT_TYPEID::TERRAN_FACTORY: 
-		return true;
-	
-	case sc2::UNIT_TYPEID::TERRAN_STARPORT:
-		return true;
-	
-	case sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER:
+	case sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND:
 		return true;
 	
 	case sc2::UNIT_TYPEID::ZERG_LAIR:
 		return true;
 	
-	case sc2::UNIT_TYPEID::ZERG_HATCHERY:
+	case sc2::UNIT_TYPEID::ZERG_HIVE:
 		return true;
 
-	case sc2::UNIT_TYPEID::ZERG_SPIRE:
+	case sc2::UNIT_TYPEID::ZERG_GREATERSPIRE:
 		return true;
 	
+	case sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS:
+		return true;
+
 	default:
 		return false;
 		}
@@ -520,9 +579,7 @@ int ProductionManager::getFreeGas()
 bool ProductionManager::meetsReservedResources(const BuildType & type)
 {
     // return whether or not we meet the resources
-	if (type.getUnitTypeID().ToType() == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND) {
-		return 0 <= getFreeMinerals();
-	}
+	
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
 }
 

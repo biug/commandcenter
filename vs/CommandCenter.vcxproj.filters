@@ -121,6 +121,7 @@
     <ClCompile Include="..\src\TankManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\BaseManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -242,6 +243,7 @@
     <ClInclude Include="..\src\TankManager.h">
       <Filter>micro</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\BaseManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="global">

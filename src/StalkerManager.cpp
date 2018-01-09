@@ -49,7 +49,7 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			stalkerInfos[stalker] = StalkerInfo(stalker->health + stalker->shield);
 		}
-		int currentHP = stalker->health + stalker->shield;
+		float currentHP = stalker->health + stalker->shield;
 		bool beingAttack = currentHP < stalkerInfos[stalker].m_hpLastSecond;
 		if (refreshInfo) stalkerInfos[stalker].m_hpLastSecond = currentHP;
 

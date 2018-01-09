@@ -18,9 +18,7 @@ class MetaType
     UnitType        m_unitType;
     CCUpgrade       m_upgrade;
 
-#ifndef SC2API
-    BWAPI::TechType m_tech;
-#endif
+
     
 public:
 
@@ -42,10 +40,7 @@ public:
 
     std::vector<UnitType>   whatBuilds;
 
-#ifndef SC2API
-    MetaType(const BWAPI::TechType & tech, CCBot & bot);
-    const BWAPI::TechType & getTechType() const;
-#endif
+
 };
 
 

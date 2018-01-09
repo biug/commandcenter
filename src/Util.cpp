@@ -181,6 +181,18 @@ bool Util::IsDetector(const sc2::Unit * unit)
     return IsDetectorType(unit->unit_type);
 }
 
+sc2::UnitTypeID Util::GetRefinery(const sc2::Race & race)
+{
+
+	switch (race)
+	{
+	case sc2::Race::Terran: return sc2::UNIT_TYPEID::TERRAN_REFINERY;
+	case sc2::Race::Protoss: return sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
+	case sc2::Race::Zerg: return sc2::UNIT_TYPEID::ZERG_EXTRACTOR;
+	default: return sc2::UNIT_TYPEID::INVALID;
+	}
+
+}
 float Util::GetAttackRange(const sc2::UnitTypeID & type, CCBot & bot)
 {
     auto & weapons = bot.Observation()->GetUnitTypeData()[type].weapons;
@@ -566,7 +578,7 @@ const sc2::Unit* Util::getClosestPylon(CCBot & bot)
 		if (unit->unit_type == sc2::UNIT_TYPEID::PROTOSS_PYLON)
 		{
 			// the distance to the order position
-			int dist = Util::PlanerDist(unit->pos, enemyStartLoc->getPosition());
+			float dist = Util::PlanerDist(unit->pos, enemyStartLoc->getPosition());
 
 			if (!closest || dist < closestDist)
 			{

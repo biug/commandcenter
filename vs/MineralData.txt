@@ -1,0 +1,14 @@
+Current Frames: 250 Total Minerals: 40
+Current Frames: 500 Total Minerals: 120
+Current Frames: 750 Total Minerals: 215
+Current Frames: 1000 Total Minerals: 275
+Current Frames: 1250 Total Minerals: 420
+Current Frames: 1500 Total Minerals: 340
+Current Frames: 1750 Total Minerals: 430
+Current Frames: 2000 Total Minerals: 525
+Current Frames: 2250 Total Minerals: 635
+Current Frames: 2500 Total Minerals: 800
+Current Frames: 2750 Total Minerals: 760
+Current Frames: 3000 Total Minerals: 940
+Current Frames: 3250 Total Minerals: 1075
+Current Frames: 3500 Total Minerals: 1255

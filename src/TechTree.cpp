@@ -3,7 +3,7 @@
 #include "CCBot.h"
 #include "BuildType.h"
 #include "Timer.hpp"
-
+#include "UnitType.h"
 TechTree::TechTree(CCBot & bot)
     : m_bot(bot)
 {
@@ -75,8 +75,8 @@ void TechTree::initUnitTypeData()
     m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_BUNKER] =                   { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, false, sc2::ABILITY_ID::BUILD_BUNKER, 0, { sc2::UNIT_TYPEID::TERRAN_SCV }, { sc2::UNIT_TYPEID::TERRAN_BARRACKS, sc2::UNIT_TYPEID::TERRAN_BARRACKSFLYING }, {} };
     m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_ENGINEERINGBAY] =           { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, false, sc2::ABILITY_ID::BUILD_ENGINEERINGBAY, 0, { sc2::UNIT_TYPEID::TERRAN_SCV }, { sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER, sc2::UNIT_TYPEID::TERRAN_COMMANDCENTERFLYING, sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS, sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND, sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMANDFLYING }, {} }; 
     m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_MISSILETURRET] =            { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, false, sc2::ABILITY_ID::BUILD_MISSILETURRET, 0, { sc2::UNIT_TYPEID::TERRAN_SCV }, { sc2::UNIT_TYPEID::TERRAN_ENGINEERINGBAY }, {} };
-    m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND] =           { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, true, false, sc2::ABILITY_ID::MORPH_ORBITALCOMMAND, 0, { sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER }, {}, {} }; 
-    m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS] =        { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, true, false, sc2::ABILITY_ID::MORPH_PLANETARYFORTRESS, 0, { sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER }, {}, {} };
+	m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND] =           { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, false, sc2::ABILITY_ID::MORPH_ORBITALCOMMAND, 0,{ sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER },{ sc2::UNIT_TYPEID::TERRAN_BARRACKS },{} };
+	m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS] =        { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, false, sc2::ABILITY_ID::MORPH_PLANETARYFORTRESS, 0,{ sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER},{ sc2::UNIT_TYPEID::TERRAN_ENGINEERINGBAY},{} };
 
     // Terran Addons                                                                         m  g  s  t  unit  bld   wrk    rfn    sup    hall   add
     m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_BARRACKSREACTOR] =          { sc2::Race::Terran, 0, 0, 0, 0, true, true, false, false, false, false, true, sc2::ABILITY_ID::BUILD_REACTOR, 0, { sc2::UNIT_TYPEID::TERRAN_BARRACKS }, {}, {} };
@@ -160,6 +160,11 @@ void TechTree::initUnitTypeData()
         kv.second.mineralCost = m_bot.Observation()->GetUnitTypeData()[kv.first].mineral_cost;
         kv.second.gasCost     = m_bot.Observation()->GetUnitTypeData()[kv.first].vespene_cost;
     }
+	m_unitTypeData[sc2::UNIT_TYPEID::ZERG_HIVE].mineralCost -= getData(sc2::UNIT_TYPEID::ZERG_LAIR).mineralCost;
+	m_unitTypeData[sc2::UNIT_TYPEID::ZERG_LAIR].mineralCost -= getData(sc2::UNIT_TYPEID::ZERG_HATCHERY).mineralCost;
+	m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_PLANETARYFORTRESS].mineralCost -= getData(sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER).mineralCost;
+	m_unitTypeData[sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND].mineralCost -= getData(sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER).mineralCost;
+	m_unitTypeData[sc2::UNIT_TYPEID::ZERG_GREATERSPIRE].mineralCost -= getData(sc2::UNIT_TYPEID::ZERG_SPIRE).mineralCost;
 }
 
 void TechTree::initUpgradeData()
@@ -296,6 +301,8 @@ const TypeData & TechTree::getData(const BuildType & type) const
 
     return m_unitTypeData.at(0);
 }
+
+
 
 void TechTree::outputJSON(const std::string & filename) const
 {

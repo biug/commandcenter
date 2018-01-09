@@ -101,7 +101,7 @@ MacroAct::MacroAct(const std::string & name, CCBot & bot)
 						std::string pos = m[1].str();
 						std::string pos_x = pos.substr(0, pos.find(','));
 						std::string pos_y = pos.substr(pos.find(',') + 1);
-						float x = atof(pos_x.c_str()), y = atof(pos_y.c_str());
+						double x = atof(pos_x.c_str()), y = atof(pos_y.c_str());
 						if (x > 0.0f && y > 0.0f)
 						{
 							*this = MacroAct(t, sc2::Point2D(x, y));

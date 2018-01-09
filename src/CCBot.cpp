@@ -12,6 +12,7 @@ CCBot::CCBot()
     , m_strategy(*this)
     , m_techTree(*this)
 	, m_state(*this)
+	, m_baseMan(*this)
 {
     
 }
@@ -40,7 +41,7 @@ void CCBot::OnGameStart()
     m_unitInfo.onStart();
     m_bases.onStart();
     m_workers.onStart();
-
+	//m_baseMan.onStart(m_bases.getPlayerStartingBaseLocation(Players::Self));
     m_gameCommander.onStart();
 }
 
@@ -54,10 +55,15 @@ void CCBot::OnStep()
     m_workers.onFrame();
     m_strategy.onFrame();
 	m_state.onFrame();
-
+	//m_baseMan.onframe();
     m_gameCommander.onFrame();
 
     Debug()->SendDebug();
+}
+
+void CCBot::OnUnitCreated(const sc2::Unit * unit)
+{
+	m_baseMan.OnUnitCreated(unit);
 }
 
 void CCBot::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
@@ -112,6 +118,8 @@ const TypeData & CCBot::Data(const BuildType & type) const
     return m_techTree.getData(type);
 }
 
+
+
 WorkerManager & CCBot::Workers()
 {
     return m_workers;
@@ -135,4 +143,14 @@ sc2::Point2D CCBot::GetStartLocation() const
 void CCBot::OnError(const std::vector<sc2::ClientError> & client_errors, const std::vector<std::string> & protocol_errors)
 {
     
+}
+
+int CCBot::GetCurrentSupply() const
+{
+	return Observation()->GetFoodUsed();
+}
+
+int CCBot::GetMaxSupply() const
+{
+	return Observation()->GetFoodCap();
 }

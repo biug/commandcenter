@@ -13,7 +13,8 @@
 #include "TechTree.h"
 #include "BuildType.h"
 #include "StateManager.h"
-
+#include "BaseManager.h"
+#include "UnitType.h"
 class CCBot : public sc2::Agent 
 {
     sc2::Race               m_playerRace[2];
@@ -28,7 +29,7 @@ class CCBot : public sc2::Agent
     TechTree                m_techTree;
 
     GameCommander           m_gameCommander;
-
+	BaseManager      m_baseMan;
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
 
@@ -38,7 +39,7 @@ public:
     void OnGameStart() override;
     void OnStep() override;
 	void OnUpgradeCompleted(sc2::UpgradeID upgradeID) override;
-
+	void OnUnitCreated(const sc2::Unit* unit) override;
           BotConfig & Config();
           WorkerManager & Workers();
     const BaseLocationManager & Bases() const;
@@ -49,6 +50,8 @@ public:
     const TypeData & Data(const sc2::UpgradeID & type) const;
     const TypeData & Data(const BuildType & type) const;
     const sc2::Race & GetPlayerRace(int player) const;
+	int GetCurrentSupply() const;
+	int GetMaxSupply() const;
     sc2::Point2D GetStartLocation() const;
     const sc2::Unit * GetUnit(const UnitTag & tag) const;
 	StateManager & State();
