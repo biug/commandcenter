@@ -122,6 +122,18 @@
       <Filter>micro</Filter>
     </ClCompile>
     <ClCompile Include="..\src\BaseManager.cpp" />
+    <ClCompile Include="..\src\ReaperManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MedivacManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\HellionManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GhostManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -244,6 +256,18 @@
       <Filter>micro</Filter>
     </ClInclude>
     <ClInclude Include="..\src\BaseManager.h" />
+    <ClInclude Include="..\src\HellionManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ReaperManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MedivacManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GhostManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="global">

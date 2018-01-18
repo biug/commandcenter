@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{D4AC5062-8BEA-46D8-9231-57241C214F1C}</ProjectGUID>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
     <ProjectName>CommandCenter</ProjectName>
@@ -86,8 +86,8 @@
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>C:\Libraries\SC2AI\sc2api_precompiled\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Libraries\SC2AI\sc2api_precompiled\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Libraries\SC2AI\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\SC2AI\s2client-api\include;C:\Libraries\SC2AI\s2client-api\protocol;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>D:\scbots\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
@@ -295,6 +295,8 @@
     <ClCompile Include="..\src\Common.cpp" />
     <ClCompile Include="..\src\DistanceMap.cpp" />
     <ClCompile Include="..\src\GameCommander.cpp" />
+    <ClCompile Include="..\src\GhostManager.cpp" />
+    <ClCompile Include="..\src\HellionManager.cpp" />
     <ClCompile Include="..\src\JSONTools.cpp" />
     <ClCompile Include="..\src\MacroAct.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -302,12 +304,14 @@
     <ClCompile Include="..\src\MarauderManager.cpp" />
     <ClCompile Include="..\src\MarineManager.cpp" />
     <ClCompile Include="..\src\MarineManager.h" />
+    <ClCompile Include="..\src\MedivacManager.cpp" />
     <ClCompile Include="..\src\MeleeManager.cpp" />
     <ClCompile Include="..\src\BuildType.cpp" />
     <ClCompile Include="..\src\Micro.cpp" />
     <ClCompile Include="..\src\MicroManager.cpp" />
     <ClCompile Include="..\src\ProductionManager.cpp" />
     <ClCompile Include="..\src\RangedManager.cpp" />
+    <ClCompile Include="..\src\ReaperManager.cpp" />
     <ClCompile Include="..\src\ScoutManager.cpp" />
     <ClCompile Include="..\src\Squad.cpp" />
     <ClCompile Include="..\src\SquadData.cpp" />
@@ -340,17 +344,21 @@
     <ClInclude Include="..\src\BotConfig.h" />
     <ClInclude Include="..\src\DistanceMap.h" />
     <ClInclude Include="..\src\GameCommander.h" />
+    <ClInclude Include="..\src\GhostManager.h" />
+    <ClInclude Include="..\src\HellionManager.h" />
     <ClInclude Include="..\src\JSONTools.h" />
     <ClInclude Include="..\src\MacroAct.h" />
     <ClInclude Include="..\src\MacroCommand.h" />
     <ClInclude Include="..\src\MapTools.h" />
     <ClInclude Include="..\src\MarauderManager.h" />
+    <ClInclude Include="..\src\MedivacManager.h" />
     <ClInclude Include="..\src\MeleeManager.h" />
     <ClInclude Include="..\src\BuildType.h" />
     <ClInclude Include="..\src\Micro.h" />
     <ClInclude Include="..\src\MicroManager.h" />
     <ClInclude Include="..\src\ProductionManager.h" />
     <ClInclude Include="..\src\RangedManager.h" />
+    <ClInclude Include="..\src\ReaperManager.h" />
     <ClInclude Include="..\src\ScoutManager.h" />
     <ClInclude Include="..\src\Squad.h" />
     <ClInclude Include="..\src\SquadData.h" />

@@ -14,6 +14,10 @@ Squad::Squad(CCBot & bot)
 	, m_marineManager(bot)
 	, m_marauderManager(bot)
 	, m_tankManager(bot)
+	, m_hellionManager(bot)
+	, m_reaperManager(bot)
+	, m_medivacManager(bot)
+	, m_ghostManager(bot)
 {
 }
 
@@ -30,6 +34,10 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 	, m_marineManager(bot)
 	, m_marauderManager(bot)
 	, m_tankManager(bot)
+	, m_hellionManager(bot)
+	, m_reaperManager(bot)
+	, m_medivacManager(bot)
+	, m_ghostManager(bot)
 {
 }
 
@@ -54,6 +62,10 @@ void Squad::onFrame()
 		m_marineManager.regroup(regroupPosition);
 		m_marauderManager.regroup(regroupPosition);
 		m_tankManager.regroup(regroupPosition);
+		m_hellionManager.regroup(regroupPosition);
+		m_reaperManager.regroup(regroupPosition);
+		m_medivacManager.regroup(regroupPosition);
+		m_ghostManager.regroup(regroupPosition);
     }
     else // otherwise, execute micro
     {
@@ -63,6 +75,10 @@ void Squad::onFrame()
 		m_marineManager.execute(m_order);
 		m_marauderManager.execute(m_order);
 		m_tankManager.execute(m_order);
+		m_hellionManager.execute(m_order);
+		m_reaperManager.execute(m_order);
+		m_medivacManager.execute(m_order);
+		m_ghostManager.execute(m_order);
         //_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
         //_detectorManager.execute(_order);
     }
@@ -128,6 +144,10 @@ void Squad::addUnitsToMicroManagers()
 	std::vector<const sc2::Unit *> marineUnits;
 	std::vector<const sc2::Unit *> marauderUnits;
 	std::vector<const sc2::Unit *> tankUnits;
+	std::vector<const sc2::Unit *> hellionUnits;
+	std::vector<const sc2::Unit *> reaperUnits;
+	std::vector<const sc2::Unit *> medivacUnits;
+	std::vector<const sc2::Unit *> ghostUnits;
     // add _units to micro managers
     for (auto unit : m_units)
     {
@@ -154,6 +174,22 @@ void Squad::addUnitsToMicroManagers()
 		{
 			tankUnits.push_back(unit);
 		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_HELLION || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_HELLIONTANK)
+		{
+			hellionUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_REAPER)
+		{
+			reaperUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_MEDIVAC)
+		{
+			medivacUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_GHOST) // sc2::UNIT_TYPEID::TERRAN_GHOSTACADEMY
+		{
+			ghostUnits.push_back(unit);
+		}
         // select ranged _units
         else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
         {
@@ -173,6 +209,10 @@ void Squad::addUnitsToMicroManagers()
 	m_marauderManager.setUnits(marauderUnits);
     //m_detectorManager.setUnits(detectorUnits);
     m_tankManager.setUnits(tankUnits);
+	m_hellionManager.setUnits(hellionUnits);
+	m_reaperManager.setUnits(ghostUnits);
+	m_medivacManager.setUnits(medivacUnits);
+	m_ghostManager.setUnits(medivacUnits);
 }
 
 // TODO: calculates whether or not to regroup

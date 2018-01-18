@@ -8,6 +8,10 @@
 #include "MarineManager.h"
 #include "MarauderManager.h"
 #include "TankManager.h"
+#include "HellionManager.h"
+#include "ReaperManager.h"
+#include "MedivacManager.h"
+#include "GhostManager.h"
 class CCBot;
 
 class Squad
@@ -28,6 +32,10 @@ class Squad
 	MarineManager       m_marineManager;
 	MarauderManager     m_marauderManager;
 	TankManager         m_tankManager;
+	HellionManager		m_hellionManager;
+	ReaperManager		m_reaperManager;
+	MedivacManager      m_medivacManager;
+	GhostManager		m_ghostManager;
     std::map<const sc2::Unit *, bool> m_nearEnemy;
 
     const sc2::Unit * unitClosestToEnemy() const;
