@@ -3,15 +3,35 @@
 #include "Common.h"
 #include "MeleeManager.h"
 #include "RangedManager.h"
-#include "StalkerManager.h"
 #include "SquadOrder.h"
+
+//Terran micromanager
+
+//ground unit
 #include "MarineManager.h"
 #include "MarauderManager.h"
+#include "ReaperManager.h"
+#include "GhostManager.h"
+
+//mechanical unit
 #include "TankManager.h"
 #include "HellionManager.h"
-#include "ReaperManager.h"
+#include "ThorManager.h"
+
+//air unit
 #include "MedivacManager.h"
-#include "GhostManager.h"
+#include "VikingManager.h"
+#include "RavenManager.h"
+#include "BansheeManager.h"
+#include "BattlecruiserManager.h"
+
+//Zerg micromanager
+
+#include "ZerglingManager.h"
+//Protoss micromanager
+
+#include "StalkerManager.h"
+
 class CCBot;
 
 class Squad
@@ -36,6 +56,15 @@ class Squad
 	ReaperManager		m_reaperManager;
 	MedivacManager      m_medivacManager;
 	GhostManager		m_ghostManager;
+
+	ThorManager			m_thorManager;
+	VikingManager		m_vikingManager;
+	RavenManager		m_ravenManager;
+	BansheeManager		m_bansheeManager;
+	BattlecruiserManager m_battlecruiserManager;
+
+	ZerglingManager		m_zerglingManager;
+
     std::map<const sc2::Unit *, bool> m_nearEnemy;
 
     const sc2::Unit * unitClosestToEnemy() const;

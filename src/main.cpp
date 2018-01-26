@@ -85,6 +85,8 @@ int main(int argc, char* argv[])
     while (true) 
     {
         coordinator.Update();
+		// Slow down game speed for better look & feel while making experiments.
+		sc2::SleepFor(5);
     }
 
     return 0;

@@ -32,6 +32,7 @@ namespace Util
     bool IsRefineryType(const sc2::UnitTypeID & type);
     bool IsDetector(const sc2::Unit * type);
     bool IsDetectorType(const sc2::UnitTypeID & type);
+	bool canAttackSky(const sc2::UnitTypeID & type);
     bool IsGeyser(const sc2::Unit * unit);
     bool IsMineral(const sc2::Unit * unit);
     bool IsWorker(const sc2::Unit * unit);
@@ -39,7 +40,8 @@ namespace Util
     bool IsIdle(const sc2::Unit * unit);
     bool IsCompleted(const sc2::Unit * unit);
     float GetAttackRange(const sc2::UnitTypeID & type, CCBot & bot);
-    
+
+
     bool UnitCanBuildTypeNow(const sc2::Unit * unit, const sc2::UnitTypeID & type, CCBot & m_bot);
     int GetUnitTypeWidth(const sc2::UnitTypeID type, const CCBot & bot);
     int GetUnitTypeHeight(const sc2::UnitTypeID type, const CCBot & bot);

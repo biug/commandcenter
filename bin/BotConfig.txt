@@ -9,7 +9,7 @@
     "Game Info" :
     {
         "BotRace"                   : "Terran",
-        "EnemyDifficulty"           : 6,
+        "EnemyDifficulty"           : 5,
         "EnemyRace"                 : "Zerg",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season3\\AscensiontoAiurLE.SC2Map",
         "StepSize"                  : 1

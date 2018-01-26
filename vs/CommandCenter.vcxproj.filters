@@ -134,6 +134,75 @@
     <ClCompile Include="..\src\GhostManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\VikingManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ZerglingManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\QueenManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\HydraliskManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RoachManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MutaliskManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\UltraliskManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ViperManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RavagerManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LurkerManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SentryManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ImmortalManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ColossusManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhoenixManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CarrierManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MothershipManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AdeptManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\VoidRayManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ZealotManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BattlecruiserManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ThorManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BansheeManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RavenManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -266,6 +335,75 @@
       <Filter>micro</Filter>
     </ClInclude>
     <ClInclude Include="..\src\GhostManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ThorManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\VikingManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RavenManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BansheeManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BattlecruiserManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ZerglingManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\QueenManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HydraliskManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RoachManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MutaliskManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\UltraliskManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ViperManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RavagerManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LurkerManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SentryManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ImmortalManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ColossusManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PhoenixManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CarrierManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AdeptManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MothershipManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\VoidRayManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ZealotManager.h">
       <Filter>micro</Filter>
     </ClInclude>
   </ItemGroup>

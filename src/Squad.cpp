@@ -18,6 +18,12 @@ Squad::Squad(CCBot & bot)
 	, m_reaperManager(bot)
 	, m_medivacManager(bot)
 	, m_ghostManager(bot)
+	, m_thorManager(bot)
+	, m_vikingManager(bot)
+	, m_ravenManager(bot)
+	, m_bansheeManager(bot)
+	, m_battlecruiserManager(bot)
+	, m_zerglingManager(bot)
 {
 }
 
@@ -38,6 +44,12 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 	, m_reaperManager(bot)
 	, m_medivacManager(bot)
 	, m_ghostManager(bot)
+	, m_thorManager(bot)
+	, m_vikingManager(bot)
+	, m_ravenManager(bot)
+	, m_bansheeManager(bot)
+	, m_battlecruiserManager(bot)
+	, m_zerglingManager(bot)
 {
 }
 
@@ -66,6 +78,12 @@ void Squad::onFrame()
 		m_reaperManager.regroup(regroupPosition);
 		m_medivacManager.regroup(regroupPosition);
 		m_ghostManager.regroup(regroupPosition);
+		m_thorManager.regroup(regroupPosition);
+		m_vikingManager.regroup(regroupPosition);
+		m_ravenManager.regroup(regroupPosition);
+		m_bansheeManager.regroup(regroupPosition);
+		m_battlecruiserManager.regroup(regroupPosition);
+		m_zerglingManager.regroup(regroupPosition);
     }
     else // otherwise, execute micro
     {
@@ -79,6 +97,12 @@ void Squad::onFrame()
 		m_reaperManager.execute(m_order);
 		m_medivacManager.execute(m_order);
 		m_ghostManager.execute(m_order);
+		m_thorManager.execute(m_order);
+		m_vikingManager.execute(m_order);
+		m_ravenManager.execute(m_order);
+		m_bansheeManager.execute(m_order);
+		m_battlecruiserManager.execute(m_order);
+		m_zerglingManager.execute(m_order);
         //_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
         //_detectorManager.execute(_order);
     }
@@ -148,6 +172,12 @@ void Squad::addUnitsToMicroManagers()
 	std::vector<const sc2::Unit *> reaperUnits;
 	std::vector<const sc2::Unit *> medivacUnits;
 	std::vector<const sc2::Unit *> ghostUnits;
+	std::vector<const sc2::Unit *> thorUnits;
+	std::vector<const sc2::Unit *> vikingUnits;
+	std::vector<const sc2::Unit *> ravenUnits;
+	std::vector<const sc2::Unit *> bansheeUnits;
+	std::vector<const sc2::Unit *> battlecruiserUnits;
+	std::vector<const sc2::Unit *> zerglingUnits;
     // add _units to micro managers
     for (auto unit : m_units)
     {
@@ -190,6 +220,16 @@ void Squad::addUnitsToMicroManagers()
 		{
 			ghostUnits.push_back(unit);
 		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_VIKINGFIGHTER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_VIKINGASSAULT) // sc2::UNIT_TYPEID::TERRAN_GHOSTACADEMY
+		{
+			vikingUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ZERGLING || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) // sc2::UNIT_TYPEID::TERRAN_GHOSTACADEMY
+		{
+			zerglingUnits.push_back(unit);
+		}
+		//continue to add 
+
         // select ranged _units
         else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
         {
@@ -213,6 +253,8 @@ void Squad::addUnitsToMicroManagers()
 	m_reaperManager.setUnits(ghostUnits);
 	m_medivacManager.setUnits(medivacUnits);
 	m_ghostManager.setUnits(medivacUnits);
+	m_vikingManager.setUnits(vikingUnits);
+	m_zerglingManager.setUnits(zerglingUnits);
 }
 
 // TODO: calculates whether or not to regroup

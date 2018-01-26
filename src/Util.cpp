@@ -228,6 +228,27 @@ bool Util::IsDetectorType(const sc2::UnitTypeID & type)
     }
 }
 
+bool Util::canAttackSky(const sc2::UnitTypeID & type)
+{
+	switch (type.ToType())
+	{
+	case sc2::UNIT_TYPEID::TERRAN_MARINE: return true;
+	case sc2::UNIT_TYPEID::TERRAN_MARAUDER: return true;
+	case sc2::UNIT_TYPEID::TERRAN_GHOST: return true;
+	case sc2::UNIT_TYPEID::TERRAN_THOR: return true;
+	case sc2::UNIT_TYPEID::TERRAN_LIBERATOR: return true;
+	case sc2::UNIT_TYPEID::TERRAN_BATTLECRUISER: return true;
+
+	case sc2::UNIT_TYPEID::PROTOSS_STALKER: return true;
+	case sc2::UNIT_TYPEID::PROTOSS_SENTRY: return true;
+	case sc2::UNIT_TYPEID::PROTOSS_ARCHON: return true;
+
+	case sc2::UNIT_TYPEID::ZERG_QUEEN: return true;
+	case sc2::UNIT_TYPEID::ZERG_HYDRALISK: return true;
+	default: return false;
+	}
+}
+
 int Util::GetPlayer(const sc2::Unit * unit)
 {
     BOT_ASSERT(unit, "Unit pointer was null");
@@ -285,7 +306,10 @@ bool Util::IsHeavyArmor(const sc2::Unit * unit)
 }
 bool Util::IsLightArmor(const sc2::Unit * unit)
 {
-
+	if (Util::IsWorkerType(unit->unit_type.ToType())) { return false; }
+	if (Util::IsSupplyProviderType(unit->unit_type.ToType())) { return false; }
+	if (IsHeavyArmor(unit)) { return false; }
+	return true;
 }
 bool Util::IsMeleeUnit(const sc2::Unit * unit)
 {
