@@ -82,15 +82,19 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 					}
 					if (stimpack && (beingAttack || marauder->weapon_cooldown >0))
 					{
+						std::cout << "abality EFFECT_STIM " << std::endl;
 						Micro::SmartAbility(marauder, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
 					}
-					continue;
+					//continue;
 				}
+				//std::cout << "weapon_cooldown " << marauder->weapon_cooldown <<std::endl;
 				// kite attack it
 				if (Util::IsMeleeUnit(target) && marauder->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = marauder->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(marauder, tp, m_bot);
+					//auto p1 = target->pos, p2 = marauder->pos;
+					//auto tp = p2 * 2 - p1;
+					sc2::Point2D rp = RetreatPosition(marauder);
+					Micro::SmartMove(marauder, rp, m_bot);
+					std::cout << "kite attack" << std::endl;
 				}
 				else {
 					Micro::SmartAttackMove(marauder, target->pos, m_bot);
@@ -113,6 +117,27 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 			// TODO: draw the line to the unit's target
 		}
 	}
+}
+
+sc2::Point2D MarauderManager::RetreatPosition(const sc2::Unit * unit)
+{
+	auto pos = unit->pos;
+	sc2::Point2D base = m_bot.GetStartLocation();
+
+	double angle = atan(pos.y - base.y / (pos.x - base.x));
+	double step_size = 5;
+	double step_x = step_size * sin(angle);
+	double step_y = step_size * cos(angle);
+
+	std::stringstream ss;
+	ss << std::endl;
+	ss << "old position:      " << pos.x << " " << pos.y << std::endl;
+	ss << "new position:      " << (pos.x + step_x) << " " << pos.y + step_y << std::endl;
+	std::cout << ss.str();
+	m_bot.Debug()->DebugTextOut("x", sc2::Point2D(pos.x + step_x, pos.y + step_y), sc2::Colors::White);
+
+	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
+
 }
 
 // get a target for the ranged unit to attack

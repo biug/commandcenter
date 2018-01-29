@@ -84,7 +84,7 @@ void ColossusManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 					{
 						Micro::SmartAbility(Colossus, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
 					}
-					continue;
+					//continue;
 				}
 				// kite attack it
 				if (Util::IsMeleeUnit(target) && Colossus->weapon_cooldown > 0) {
