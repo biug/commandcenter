@@ -20,6 +20,9 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
     m_isPlayerOccupying[0] = false;
     m_isPlayerOccupying[1] = false;
 
+	CCPositionType resourceCenterX = 0;
+	CCPositionType resourceCenterY = 0;
+
     // add each of the resources to its corresponding container
     for (auto resource : resources)
     {
@@ -27,11 +30,15 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
         {
             m_minerals.push_back(resource);
             m_mineralPositions.push_back(resource->pos);
+			resourceCenterX += resource->pos.x;
+			resourceCenterY += resource->pos.y;
         }
         else
         {
             m_geysers.push_back(resource);
             m_geyserPositions.push_back(resource->pos);
+			resourceCenterX += resource->pos.x;
+			resourceCenterY += resource->pos.y;
         }
 
         // set the limits of the base location bounding box
@@ -56,31 +63,52 @@ BaseLocation::BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2:
     // check to see if this is a start location for the map
     for (auto & pos : m_bot.Observation()->GetGameInfo().start_locations)
     {
-        if (Util::PlanerDist(pos, m_centerOfResources) < 10)
+        if (containsPosition(pos))
         {
             m_isStartLocation = true;
-            m_depotPosition = pos;
-			break;
+			m_depotPosition = Util::GetTilePosition(pos);
+			
         }
     }
     
     // if this base location position is near our own resource depot, it's our start location
     for (auto & unit : m_bot.Observation()->GetUnits())
     {
-        if (Util::GetPlayer(unit) == Players::Self && Util::IsTownHall(unit) && Util::PlanerDist(unit->pos, m_centerOfResources) < 10)
+        if (Util::GetPlayer(unit) == Players::Self && Util::IsTownHall(unit) && containsPosition(unit->pos))
         {
-            m_isPlayerStartLocation[Players::Self] = isStartLocation();
-            m_isPlayerOccupying[Players::Self] = true;
-			m_depotPosition = unit->pos;
-            break;
+			m_isPlayerStartLocation[Players::Self] = true;
+			m_isStartLocation = true;
+			m_isPlayerOccupying[Players::Self] = true;
+			break;
         }
     }
+	if (!isStartLocation())
+	{
+		sc2::UnitTypeID depot = Util::GetTownHall(m_bot.GetPlayerRace(Players::Self));
+
+		int offsetX = 0;
+		int offsetY = 0;
+
+		// the position of the depot will be the closest spot we can build one from the resource center
+		for (auto & tile : getClosestTiles())
+		{
+			// the build position will be up-left of where this tile is
+			// this means we are positioning the center of the resouce depot
+			CCTilePosition buildTile(tile.x - offsetX, tile.y - offsetY);
+
+			if (m_bot.Map().canBuildTypeAtPosition(buildTile.x, buildTile.y, depot))
+			{
+				m_depotPosition = buildTile;
+				break;
+			}
+		}
+	}
 }
 
 // TODO: calculate the actual depot position
-const sc2::Point2D & BaseLocation::getDepotPosition() const
+const sc2::Point2DI & BaseLocation::getDepotPosition() const
 {
-    return getPosition();
+	return m_depotPosition;
 }
 
 void BaseLocation::setPlayerOccupying(int player, bool occupying)
@@ -147,12 +175,17 @@ int BaseLocation::getGroundDistance(const sc2::Point2D & pos) const
     return m_distanceMap.getDistance(pos);
 }
 
+int BaseLocation::getGroundDistance(const CCTilePosition & pos) const
+{
+	return m_distanceMap.getDistance(pos);
+}
+
 bool BaseLocation::isStartLocation() const
 {
     return m_isStartLocation;
 }
 
-const std::vector<sc2::Point2D> & BaseLocation::getClosestTiles() const
+const std::vector<sc2::Point2DI> & BaseLocation::getClosestTiles() const
 {
     return m_distanceMap.getSortedTiles();
 }
@@ -206,13 +239,13 @@ void BaseLocation::draw()
 
     if (m_isStartLocation)
     {
-        m_bot.Map().drawSphere(m_depotPosition, 1.0f, sc2::Colors::Red);
+        m_bot.Map().drawSphere(Util::GetPosition(m_depotPosition), 1.0f, sc2::Colors::Red);
     }
     
     float ccWidth = 5;
     float ccHeight = 4;
-    sc2::Point2D boxtl = m_depotPosition - sc2::Point2D(ccWidth/2, -ccHeight/2);
-    sc2::Point2D boxbr = m_depotPosition + sc2::Point2D(ccWidth/2, -ccHeight/2);
+    sc2::Point2D boxtl = Util::GetPosition(m_depotPosition) - sc2::Point2D(ccWidth/2, -ccHeight/2);
+    sc2::Point2D boxbr = Util::GetPosition(m_depotPosition) + sc2::Point2D(ccWidth/2, -ccHeight/2);
 
     m_bot.Map().drawBox(boxtl.x, boxtl.y, boxbr.x, boxbr.y, sc2::Colors::Red);
 

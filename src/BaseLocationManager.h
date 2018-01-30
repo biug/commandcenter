@@ -35,6 +35,6 @@ public:
 	const BaseLocation * getPlayerNaturalLocation(int player) const;
 	const BaseLocation * getPlayerThirdLocation(int player) const;
     
-    sc2::Point2D getNextExpansion(int player) const;
+    sc2::Point2DI getNextExpansion(int player) const;
 
 };

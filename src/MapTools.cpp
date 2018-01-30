@@ -176,15 +176,19 @@ int MapTools::getGroundDistance(const sc2::Point2D & src, const sc2::Point2D & d
 
 const DistanceMap & MapTools::getDistanceMap(const sc2::Point2D & tile) const
 {
-    std::pair<int, int> intTile((int)tile.x, (int)tile.y);
+	return getDistanceMap(Util::GetTilePosition(tile));
+}
+const DistanceMap & MapTools::getDistanceMap(const sc2::Point2DI & tile) const
+{
+	std::pair<int, int> intTile(tile.x, tile.y);
 
-    if (_allMaps.find(intTile) == _allMaps.end())
-    {
-        _allMaps[intTile] = DistanceMap();
-        _allMaps[intTile].computeDistanceMap(m_bot, tile);
-    }
+	if (_allMaps.find(intTile) == _allMaps.end())
+	{
+		_allMaps[intTile] = DistanceMap();
+		_allMaps[intTile].computeDistanceMap(m_bot, tile);
+	}
 
-    return _allMaps[intTile];
+	return _allMaps[intTile];
 }
 
 int MapTools::getSectorNumber(int x, int y) const
@@ -212,6 +216,15 @@ bool MapTools::isValid(const sc2::Point2D & pos) const
     return isValid((int)pos.x, (int)pos.y);
 }
 
+bool MapTools::isValidTile(int tileX, int tileY) const
+{
+	return tileX >= 0 && tileY >= 0 && tileX < m_width && tileY < m_height;
+}
+
+bool MapTools::isValidTile(const CCTilePosition & tile) const
+{
+	return isValidTile(tile.x, tile.y);
+}
 void MapTools::draw() const
 {
     sc2::Point2D camera = m_bot.Observation()->GetCameraPos();
@@ -305,6 +318,10 @@ bool MapTools::isConnected(int x1, int y1, int x2, int y2) const
 
     return s1 != 0 && (s1 == s2);
 }
+bool MapTools::isConnected(const CCTilePosition & p1, const CCTilePosition & p2) const
+{
+	return isConnected(p1.x, p1.y, p2.x, p2.y);
+}
 
 bool MapTools::isConnected(const sc2::Point2D & p1, const sc2::Point2D & p2) const
 {
@@ -389,12 +406,15 @@ int MapTools::frame() const
 	return m_frame;
 }
 
-const std::vector<sc2::Point2D> & MapTools::getClosestTilesTo(const sc2::Point2D & pos) const
+const std::vector<sc2::Point2DI> & MapTools::getClosestTilesTo(const sc2::Point2DI & pos) const
 {
     return getDistanceMap(pos).getSortedTiles();
 }
 
-
+bool MapTools::isWalkable(const CCTilePosition & tile) const
+{
+	return isWalkable(tile.x, tile.y);
+}
 void MapTools::drawBoxAroundUnit(const UnitTag & unitTag, sc2::Color color) const
 {
     const sc2::Unit * unit = m_bot.GetUnit(unitTag);
@@ -423,15 +443,15 @@ void MapTools::drawSphereAroundUnit(const UnitTag & unitTag, sc2::Color color) c
     drawSphere(unit->pos, 1, color);
 }
 
-sc2::Point2D MapTools::getLeastRecentlySeenPosition() const
+sc2::Point2DI MapTools::getLeastRecentlySeenPosition() const
 {
     int minSeen = std::numeric_limits<int>::max();
-    sc2::Point2D leastSeen(0.0f, 0.0f);
+    sc2::Point2DI leastSeen(0.0f, 0.0f);
     const BaseLocation * baseLocation = m_bot.Bases().getPlayerStartingBaseLocation(Players::Self);
 
     for (auto & tile : baseLocation->getClosestTiles())
     {
-        BOT_ASSERT(isValid(tile), "How is this tile not valid?");
+		BOT_ASSERT(isValidTile(tile), "How is this tile not valid?");
 
         int lastSeen = m_lastSeen[(int)tile.x][(int)tile.y];
         if (lastSeen < minSeen)
@@ -442,4 +462,8 @@ sc2::Point2D MapTools::getLeastRecentlySeenPosition() const
     }
 
     return leastSeen;
+}
+bool MapTools::isBuildable(CCTilePosition & tile) const
+{
+	return isBuildable(tile.x, tile.y);
 }

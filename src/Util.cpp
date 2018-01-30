@@ -153,8 +153,16 @@ int Util::GetUnitTypeHeight(const sc2::UnitTypeID type, const CCBot & bot)
 {
     return (int)(2 * bot.Observation()->GetAbilityData()[bot.Data(type).buildAbility].footprint_radius);
 }
+CCPosition Util::GetPosition(const CCTilePosition & tile)
+{
+	return CCPosition((float)tile.x, (float)tile.y);
+}
 
+CCTilePosition Util::GetTilePosition(const CCPosition & pos)
+{
+	return CCTilePosition((int)std::floor(pos.x), (int)std::floor(pos.y));
 
+}
 sc2::Point2D Util::CalcCenter(const std::vector<const sc2::Unit *> & units)
 {
     if (units.empty())

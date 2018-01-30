@@ -73,7 +73,7 @@
             
             "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Marine","Marine","Stimpack","Marauder", "Marine", "Marine","Factory","Marine", "Marine", "Marine", "Marine", "Marine", "FactoryTechlab", "Marine", "Marine","go start attack", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine",  "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
 
-             "Terran_MarineRush9"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 12","OrbitalCommand"]},
+             "Terran_MarineRush9"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 12","commandcenter"]},
 
             "Zerg_ZerglingRush"     : { "Race" : "Zerg",    "OpeningBuildOrder" : ["SpawningPool", "Drone", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling"] },
 

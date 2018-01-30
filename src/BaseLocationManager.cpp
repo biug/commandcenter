@@ -367,10 +367,10 @@ void BaseLocationManager::drawBaseLocations()
     }
 
     // draw a purple sphere at the next expansion location
-    sc2::Point2D nextExpansionPosition = getNextExpansion(Players::Self);
+    sc2::Point2DI nextExpansionPosition = getNextExpansion(Players::Self);
 
-    m_bot.Map().drawSphere(nextExpansionPosition, 1, sc2::Colors::Purple);
-    m_bot.Map().drawText(nextExpansionPosition, "Next Expansion Location", sc2::Colors::Purple);
+    //m_bot.Map().drawSphere(nextExpansionPosition, 1, sc2::Colors::Purple);
+    //m_bot.Map().drawText(nextExpansionPosition, "Next Expansion Location", sc2::Colors::Purple);
 }
 
 const std::vector<const BaseLocation *> & BaseLocationManager::getBaseLocations() const
@@ -407,7 +407,7 @@ const std::set<const BaseLocation *> & BaseLocationManager::getOccupiedBaseLocat
 }
 
 
-sc2::Point2D BaseLocationManager::getNextExpansion(int player) const
+sc2::Point2DI BaseLocationManager::getNextExpansion(int player) const
 {
     const BaseLocation * homeBase = getPlayerStartingBaseLocation(player);
     const BaseLocation * closestBase = nullptr;
@@ -449,5 +449,5 @@ sc2::Point2D BaseLocationManager::getNextExpansion(int player) const
         }
     }
 
-    return closestBase ? closestBase->getDepotPosition() : sc2::Point2D(0.0f, 0.0f);
+    return closestBase ? closestBase->getDepotPosition() : sc2::Point2DI(0.0f, 0.0f);
 }

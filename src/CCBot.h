@@ -13,7 +13,7 @@
 #include "TechTree.h"
 #include "BuildType.h"
 #include "StateManager.h"
-#include "BaseManager.h"
+
 #include "UnitType.h"
 class CCBot : public sc2::Agent 
 {
@@ -29,7 +29,7 @@ class CCBot : public sc2::Agent
     TechTree                m_techTree;
 
     GameCommander           m_gameCommander;
-	BaseManager      m_baseMan;
+
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
                  const std::vector<std::string> & protocol_errors = {}) override;
 

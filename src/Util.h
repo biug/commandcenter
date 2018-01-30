@@ -57,7 +57,8 @@ namespace Util
     sc2::UpgradeID  GetUpgradeIDFromName(const std::string & name, CCBot & bot);
     sc2::BuffID     GetBuffIDFromName(const std::string & name, CCBot & bot);
     sc2::AbilityID  GetAbilityIDFromName(const std::string & name, CCBot & bot);
-
+	CCTilePosition  GetTilePosition(const CCPosition & pos);
+	CCPosition GetPosition(const CCTilePosition & tile);
     float Dist(const sc2::Point2D & p1, const sc2::Point2D & p2);
     float DistSq(const sc2::Point2D & p1, const sc2::Point2D & p2);
     

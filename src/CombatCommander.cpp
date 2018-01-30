@@ -437,7 +437,7 @@ sc2::Point2D CombatCommander::getMainAttackLocation()
     }
 
     // Fourth choice: We can't see anything so explore the map attacking along the way
-    return m_bot.Map().getLeastRecentlySeenPosition();
+    return Util::GetPosition(m_bot.Map().getLeastRecentlySeenPosition());
 }
 
 const sc2::Unit * CombatCommander::findClosestWorkerTo(std::vector<const sc2::Unit *> & unitsToAssign, const sc2::Point2D & target)

@@ -12,7 +12,7 @@ class BaseLocation
     CCBot &                     m_bot;
     DistanceMap                 m_distanceMap;
 public:
-    sc2::Point2D                m_depotPosition;
+    sc2::Point2DI                m_depotPosition;
     sc2::Point2D                m_centerOfResources;
     std::vector<const sc2::Unit *> m_geysers;
     std::vector<const sc2::Unit *> m_minerals;
@@ -35,11 +35,12 @@ public:
     BaseLocation(CCBot & bot, int baseID, const std::vector<const sc2::Unit *> & resources);
     
     int getGroundDistance(const sc2::Point2D & pos) const;
+	int getGroundDistance(const CCTilePosition & pos) const;
     bool isStartLocation() const;
     bool isPlayerStartLocation(int player) const;
     bool isMineralOnly() const;
     bool containsPosition(const sc2::Point2D & pos) const;
-    const sc2::Point2D & getDepotPosition() const;
+    const sc2::Point2DI & getDepotPosition() const;
     const sc2::Point2D & getPosition() const;
     const std::vector<const sc2::Unit *> & getGeysers() const;
     const std::vector<const sc2::Unit *> & getMinerals() const;
@@ -49,7 +50,7 @@ public:
 
     void setPlayerOccupying(int player, bool occupying);
 
-    const std::vector<sc2::Point2D> & getClosestTiles() const;
+    const std::vector<sc2::Point2DI> & getClosestTiles() const;
 
     void draw();
 };

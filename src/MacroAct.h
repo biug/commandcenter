@@ -62,7 +62,7 @@ public:
 	const sc2::UnitTypeID & getUnitType() const;
 	const sc2::UpgradeID & getUpgradeType() const;
 	const MacroCommand getCommandType() const;
-	const sc2::Point2D getMacroLocation(CCBot & bot) const;
+	const sc2::Point2DI getMacroLocation(CCBot & bot) const;
 
 	int supplyRequired(CCBot & bot) const;
 	int mineralPrice(CCBot & bot)   const;

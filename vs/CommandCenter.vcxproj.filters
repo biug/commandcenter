@@ -109,19 +109,12 @@
     <ClCompile Include="..\src\StalkerManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\MarineManager.h">
-      <Filter>micro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\MarineManager.cpp">
-      <Filter>micro</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\MarauderManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TankManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\BaseManager.cpp" />
     <ClCompile Include="..\src\ReaperManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
@@ -201,6 +194,9 @@
       <Filter>micro</Filter>
     </ClCompile>
     <ClCompile Include="..\src\RavenManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MarineManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
   </ItemGroup>
@@ -324,7 +320,6 @@
     <ClInclude Include="..\src\TankManager.h">
       <Filter>micro</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\BaseManager.h" />
     <ClInclude Include="..\src\HellionManager.h">
       <Filter>micro</Filter>
     </ClInclude>
@@ -404,6 +399,9 @@
       <Filter>micro</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ZealotManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MarineManager.h">
       <Filter>micro</Filter>
     </ClInclude>
   </ItemGroup>

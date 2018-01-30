@@ -99,7 +99,7 @@ bool BuildingPlacer::canBuildHereWithSpace(int bx, int by, const Building & b, i
     return true;
 }
 
-sc2::Point2D BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
+sc2::Point2DI BuildingPlacer::getBuildLocationNear(const Building & b, int buildDist) const
 {
     Timer t;
     t.start();
@@ -126,7 +126,7 @@ sc2::Point2D BuildingPlacer::getBuildLocationNear(const Building & b, int buildD
     double ms = t.getElapsedTimeInMilliSec();
     //printf("Building Placer Took %lf ms\n", ms);
 
-    return sc2::Point2D(0, 0);
+    return sc2::Point2DI(0, 0);
 }
 
 bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, sc2::UnitTypeID type) const
@@ -233,7 +233,7 @@ void BuildingPlacer::freeTiles(int bx, int by, int width, int height)
     }
 }
 
-sc2::Point2D BuildingPlacer::getRefineryPosition()
+sc2::Point2DI BuildingPlacer::getRefineryPosition()
 {
     sc2::Point2D closestGeyser(0, 0);
     double minGeyserDistanceFromHome = std::numeric_limits<double>::max();
@@ -274,7 +274,7 @@ sc2::Point2D BuildingPlacer::getRefineryPosition()
 		}
     }
 
-    return closestGeyser;
+    return Util::GetTilePosition(closestGeyser);
 }
 
 bool BuildingPlacer::isReserved(int x, int y) const

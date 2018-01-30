@@ -191,7 +191,7 @@ void WorkerManager::setWaitWorker(const sc2::Unit * worker)
 // set 'setJobAsBuilder' to false if we just want to see which worker will build a building
 const sc2::Unit * WorkerManager::getBuilder(Building & b, bool setJobAsBuilder) const
 {
-    const sc2::Unit * builderWorker = getClosestBuildableWorkerTo(b.finalPosition);
+    const sc2::Unit * builderWorker = getClosestBuildableWorkerTo(Util::GetPosition(b.finalPosition));
 
     // if the worker exists (one may not have been found in rare cases)
     if (builderWorker && setJobAsBuilder)

@@ -12,7 +12,7 @@ CCBot::CCBot()
     , m_strategy(*this)
     , m_techTree(*this)
 	, m_state(*this)
-	, m_baseMan(*this)
+
 {
     
 }
@@ -63,7 +63,7 @@ void CCBot::OnStep()
 
 void CCBot::OnUnitCreated(const sc2::Unit * unit)
 {
-	m_baseMan.OnUnitCreated(unit);
+
 }
 
 void CCBot::OnUpgradeCompleted(sc2::UpgradeID upgradeID)

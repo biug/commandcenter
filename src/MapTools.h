@@ -60,26 +60,32 @@ public:
     
     bool    isValid(int x, int y) const;
     bool    isValid(const sc2::Point2D & pos) const;
+	bool    isValidTile(int tileX, int tileY) const;
+	bool    isValidTile(const CCTilePosition & tile) const;
     bool    isPowered(const sc2::Point2D & pos) const;
     bool    isExplored(const sc2::Point2D & pos) const;
     bool    isVisible(const sc2::Point2D & pos) const;
     bool    canBuildTypeAtPosition(int x, int y, sc2::UnitTypeID type) const;
 
     const   DistanceMap & getDistanceMap(const sc2::Point2D & tile) const;
+	const   DistanceMap & getDistanceMap(const sc2::Point2DI & tile) const;
     int     getGroundDistance(const sc2::Point2D & src, const sc2::Point2D & dest) const;
     bool    isConnected(int x1, int y1, int x2, int y2) const;
     bool    isConnected(const sc2::Point2D & from, const sc2::Point2D & to) const;
+	bool    isConnected(const CCTilePosition & from, const CCTilePosition & to) const;
     bool    isWalkable(const sc2::Point2D & pos) const;
     bool    isWalkable(int x, int y) const;
+	bool    isWalkable(const CCTilePosition & tile) const;
     void    drawLastSeen() const;
     
-    bool    isBuildable(const sc2::Point2D & pos) const;
+    bool    isBuildable(CCTilePosition & pos) const;
     bool    isBuildable(int x, int y) const;
+	bool    isBuildable(const sc2::Point2D & tile) const;
     bool    isDepotBuildableTile(const sc2::Point2D & pos) const;
     
-    sc2::Point2D getLeastRecentlySeenPosition() const;
+    sc2::Point2DI getLeastRecentlySeenPosition() const;
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
-    const std::vector<sc2::Point2D> & getClosestTilesTo(const sc2::Point2D & pos) const;
+    const std::vector<sc2::Point2DI> & getClosestTilesTo(const sc2::Point2DI & pos) const;
 };
 

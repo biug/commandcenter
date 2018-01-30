@@ -268,7 +268,7 @@ const MacroCommand MacroAct::getCommandType() const
 	return _macroCommandType;
 }
 
-const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
+const sc2::Point2DI MacroAct::getMacroLocation(CCBot & bot) const
 {
 	if (_macroLocation == MacroLocation::Natural) {
 		auto loc = bot.Bases().getPlayerNaturalLocation(Players::Self);
@@ -309,11 +309,11 @@ const sc2::Point2D MacroAct::getMacroLocation(CCBot & bot) const
 			if (g1 && g2)
 			{
 				sc2::Point2D g1Pos(g1->pos.x, g1->pos.y), g2Pos(g2->pos.x, g2->pos.y);
-				return g1Pos * 1.25f - g2Pos * 0.25f;
+				return sc2::Point2DI((g1->pos.x + g2->pos.x) / 2, (g1->pos.y + g2->pos.y) / 2);
 			}
 		}
 	}
-	return sc2::Point2D(0, 0);
+	return sc2::Point2DI(0, 0);
 }
 
 int MacroAct::supplyRequired(CCBot & bot) const

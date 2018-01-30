@@ -305,10 +305,10 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
     auto & producerTypes = m_bot.Data(buildType).whatBuilds;
 	warpGate = m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_WARPGATE, true);
 	auto macroLocation = type.getMacroLocation(m_bot);
-	if (macroLocation != sc2::Point2D(0, 0))
+	if (macroLocation != sc2::Point2DI(0, 0))
 	{
 		std::cout << "macrolocation found for " << buildType.getName() << std::endl;
-		closestTo = macroLocation;
+		closestTo = Util::GetPosition(macroLocation);
 	}
     // make a set of all candidate producers
     std::vector<const sc2::Unit *> candidateProducers;
@@ -392,7 +392,7 @@ void ProductionManager::create(const sc2::Unit * producer, BuildOrderItem & item
 			// send the building task to the building manager
 			auto macroLocation = item.type.getMacroLocation(m_bot);
 			m_buildingManager.addBuildingTask(item.type.getUnitType(),
-				macroLocation != sc2::Point2D(0, 0) ? macroLocation : m_bot.GetStartLocation());
+				macroLocation != sc2::Point2DI(0, 0) ? macroLocation : Util::GetTilePosition(m_bot.GetStartLocation()));
 		}
     }
     // if we're dealing with a non-building unit
