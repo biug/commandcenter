@@ -48,7 +48,7 @@ void VikingManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		{
 			VikingInfos[Viking] = VikingInfo(Viking->health);
 		}
-		int currentHP = Viking->health;
+		float currentHP = Viking->health;
 		bool beingAttack = currentHP < VikingInfos[Viking].m_hpLastSecond;
 		if (refreshInfo) VikingInfos[Viking].m_hpLastSecond = currentHP;
 
@@ -115,7 +115,7 @@ void VikingManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 
 bool VikingManager::ShouldRetreat(const sc2::Unit * Unit)
 {
-	int currentHP = Unit->health;
+	float currentHP = Unit->health;
 	bool beingAttack = currentHP < VikingInfos[Unit].m_hpLastSecond;
 	// TODO: should melee units ever retreat?
 	if (beingAttack && currentHP < Unit->health_max*0.2) {

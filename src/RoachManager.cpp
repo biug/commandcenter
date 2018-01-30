@@ -49,7 +49,7 @@ void RoachManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			RoachInfos[Roach] = RoachInfo(Roach->health);
 		}
-		int currentHP = Roach->health;
+		float currentHP = Roach->health;
 		bool beingAttack = currentHP < RoachInfos[Roach].m_hpLastSecond;
 		if (refreshInfo) RoachInfos[Roach].m_hpLastSecond = currentHP;
 		

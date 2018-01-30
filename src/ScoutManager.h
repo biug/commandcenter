@@ -8,7 +8,7 @@ class ScoutManager
 {
     CCBot &   m_bot;
 
-    const sc2::Unit * m_scoutUnit;
+	const sc2::Unit * m_scoutUnit;
     std::string     m_scoutStatus;
     int             m_numScouts;
     bool            m_scoutUnderAttack;
@@ -24,7 +24,7 @@ class ScoutManager
 public:
 
     ScoutManager(CCBot & bot);
-
+	const sc2::Unit * getScout();
     void onStart();
     void onFrame();
     void setWorkerScout(const sc2::Unit * unit);

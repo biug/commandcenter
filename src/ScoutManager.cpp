@@ -204,6 +204,10 @@ bool ScoutManager::enemyWorkerInRadiusOf(const sc2::Point2D & pos) const
     return false;
 }
 
+const sc2::Unit * ScoutManager::getScout() {
+	return m_scoutUnit;
+}
+
 sc2::Point2D ScoutManager::getFleePosition() const
 {
     // TODO: make this follow the perimeter of the enemy base again, but for now just use home base as flee direction

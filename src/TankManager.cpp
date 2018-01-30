@@ -49,7 +49,7 @@ void TankManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			tankInfos[tank] = TankInfo(tank->health);
 		}
-		int currentHP = tank->health;
+		float currentHP = tank->health;
 		bool beingAttack = currentHP < tankInfos[tank].m_hpLastSecond;
 		if (refreshInfo) tankInfos[tank].m_hpLastSecond = currentHP;
 		

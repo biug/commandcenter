@@ -8,8 +8,8 @@
 
     "Game Info" :
     {
-        "BotRace"                   : "Terran",
-        "EnemyDifficulty"           : 6,
+        "BotRace"                   : "Protoss",
+        "EnemyDifficulty"           : 7,
         "EnemyRace"                 : "Zerg",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season3\\AscensiontoAiurLE.SC2Map",
         "StepSize"                  : 1
@@ -24,9 +24,9 @@
     
     "Macro" :
     {
-        "WorkersPerRefinery"        : 3,
+        "WorkersPerRefinery"        : 2,
         "BuildingSpacing"           : 0,
-        "PylonSpacing"              : 3
+        "PylonSpacing"              : 2
     },
 
     "Debug" :
@@ -55,7 +55,7 @@
     "Strategy" :
     {
         "Protoss"                   : "Protoss_StalkerRush",
-        "Terran"                    : "Terran_MarineRush9",
+        "Terran"                    : "Terran_MarineRush",
         "Zerg"                      : "Zerg_2HatchRoach",
         
         "ScoutHarassEnemy"          : true,
@@ -64,7 +64,7 @@
         {
             "Protoss_ZealotRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 16", "Pylon",  "Gateway", "Pylon",  "Gateway", "Gateway", "Pylon",  "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Pylon", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot", "Zealot"]},
  
-            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 20", "Pylon",  "Gateway","go scout"  ,"Assimilator", "Assimilator",  "Gateway", "CyberneticsCore","go start gas", "Pylon", "WarpGateResearch", "go chrono boost cyberneticscore",  "Stalker", "Stalker", "TwilightCouncil", "Pylon @ enemy third", "Stalker", "Stalker", "go rally at pylon","BlinkTech", "Gateway @ enemy third", "Gateway", "Pylon", "Pylon", "go wait warpgate", "Stalker", "go chrono boost twilightcouncil", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker @ main", "Stalker", "Stalker", "go wait blink", "go start attack", "Stalker", "Stalker", "Stalker", "go chrono boost warpgate", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
+            "Protoss_StalkerRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["go keep train worker 23", "Pylon",  "Gateway","go scout"  ,"Assimilator", "Assimilator",  "Gateway", "CyberneticsCore","go start gas", "Pylon", "WarpGateResearch", "go chrono boost cyberneticscore",  "Stalker", "Stalker", "TwilightCouncil", "Pylon @ enemy third", "Stalker", "Stalker", "go rally at pylon","BlinkTech", "Gateway @ enemy third", "Gateway", "Pylon", "Pylon", "go wait warpgate", "Stalker", "go chrono boost twilightcouncil", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker @ main", "Stalker", "Stalker", "go wait blink", "go start attack", "Stalker", "Stalker", "Stalker", "go chrono boost warpgate", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker","Stalker", "Stalker", "Stalker", "Stalker", "Stalker", "Stalker"]},
 
             "Protoss_ImmortalRush"    : { "Race" : "Protoss", "OpeningBuildOrder" : ["Probe", "Probe", "Pylon", "Probe", "Probe", "Gateway", "Assimilator", "Probe", "Probe", "Probe", "Probe", "Assimilator", "Probe", "Probe", "Gateway", "Probe", "Probe", "CyberneticsCore", "Pylon @ enemy third", "WarpGateResearch",  "Stalker", "Stalker","RoboticsFacility", "Stalker", "Stalker", "go rally at pylon", "Pylon", "Gateway", "Pylon", "Immortal", "MothershipCore", "go wait warpgate", "Pylon", "Immortal", "Stalker", "Stalker", "Stalker", "Adept", "Immortal", "Adept", "Adept", "Adept", "Stalker", "Immortal", "go start attack"]},
 
@@ -73,7 +73,7 @@
             
             "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Marine","Marine","Stimpack","Marauder", "Marine", "Marine","Factory","Marine", "Marine", "Marine", "Marine", "Marine", "FactoryTechlab", "Marine", "Marine","go start attack", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine",  "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
 
-             "Terran_MarineRush9"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 12","commandcenter"]},
+             "Terran_MarineRush9"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 12","commandcenter","go keep train worker 24","SupplyDepot","commandcenter"]},
 
             "Zerg_ZerglingRush"     : { "Race" : "Zerg",    "OpeningBuildOrder" : ["SpawningPool", "Drone", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling"] },
 

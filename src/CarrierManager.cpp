@@ -49,7 +49,7 @@ void CarrierManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			CarrierInfos[Carrier] = CarrierInfo(Carrier->health);
 		}
-		int currentHP = Carrier->health;
+		float currentHP = Carrier->health;
 		bool beingAttack = currentHP < CarrierInfos[Carrier].m_hpLastSecond;
 		if (refreshInfo) CarrierInfos[Carrier].m_hpLastSecond = currentHP;
 

@@ -49,7 +49,7 @@ void MedivacManager::executeMicro(const std::vector<const sc2::Unit *> & targets
 			MedivacInfos[Medivac] = MedivacInfo(Medivac->health);
 		}
 		
-		int currentHP = Medivac->health;
+		float currentHP = Medivac->health;
 
 		if (refreshInfo) MedivacInfos[Medivac].m_hpLastSecond = currentHP;
 
@@ -141,7 +141,7 @@ bool MedivacManager::unloadUnit(const sc2::Unit * Unit, const sc2::Unit * Mediva
 
 bool MedivacManager::ShouldRetreat(const sc2::Unit * Unit)
 {	
-	int currentHP = Unit->health;
+	float currentHP = Unit->health;
 	bool beingAttack = currentHP < MedivacInfos[Unit].m_hpLastSecond;
 	// TODO: should melee units ever retreat?
 	if (beingAttack && currentHP < Unit->health_max*0.2) {

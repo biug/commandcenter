@@ -49,7 +49,7 @@ void SentryManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		{
 			SentryInfos[Sentry] = SentryInfo(Sentry->health);
 		}
-		int currentHP = Sentry->health;
+		float currentHP = Sentry->health;
 		bool beingAttack = currentHP < SentryInfos[Sentry].m_hpLastSecond;
 		if (refreshInfo) SentryInfos[Sentry].m_hpLastSecond = currentHP;
 		

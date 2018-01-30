@@ -420,10 +420,10 @@ void BuildingManager::drawBuildingInformation()
         {
             ss << "Assigned " << sc2::UnitTypeToName(b.type) << "    " << b.builderUnit->tag << " " << getBuildingWorkerCode(b) << " (" << b.finalPosition.x << "," << b.finalPosition.y << ")\n";
 
-            float x1 = b.finalPosition.x;
-            float y1 = b.finalPosition.y;
-            float x2 = b.finalPosition.x + Util::GetUnitTypeWidth(b.type, m_bot);
-            float y2 = b.finalPosition.y + Util::GetUnitTypeHeight(b.type, m_bot);
+            int x1 = b.finalPosition.x;
+            int y1 = b.finalPosition.y;
+            int x2 = b.finalPosition.x + Util::GetUnitTypeWidth(b.type, m_bot);
+            int y2 = b.finalPosition.y + Util::GetUnitTypeHeight(b.type, m_bot);
 
             m_bot.Map().drawSquare(x1, y1, x2, y2, sc2::Colors::Red);
             //m_bot.Map().drawLine(b.finalPosition, m_bot.GetUnit(b.builderUnitTag)->pos, sc2::Colors::Yellow);
@@ -469,7 +469,7 @@ sc2::Point2DI BuildingManager::getBuildingLocation(const Building & b)
     }
 	if (b.type.ToType() == sc2::UNIT_TYPEID::PROTOSS_PYLON) 
 	{
-		return m_buildingPlacer.getBuildLocationNear(b, 3);
+		return m_buildingPlacer.getBuildLocationNear(b, 2);
 	}
 	int buildingSpacing = m_bot.Config().BuildingSpacing;
 	

@@ -49,7 +49,7 @@ void ReaperManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		{
 			ReaperInfos[Reaper] = ReaperInfo(Reaper->health);
 		}
-		int currentHP = Reaper->health;
+		float currentHP = Reaper->health;
 		bool beingAttack = currentHP < ReaperInfos[Reaper].m_hpLastSecond;
 		if (refreshInfo) ReaperInfos[Reaper].m_hpLastSecond = currentHP;
 

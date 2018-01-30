@@ -49,7 +49,7 @@ void RavagerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			RavagerInfos[Ravager] = RavagerInfo(Ravager->health);
 		}
-		int currentHP = Ravager->health;
+		float currentHP = Ravager->health;
 		bool beingAttack = currentHP < RavagerInfos[Ravager].m_hpLastSecond;
 		if (refreshInfo) RavagerInfos[Ravager].m_hpLastSecond = currentHP;
 		

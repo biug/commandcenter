@@ -27,7 +27,7 @@ class CCBot : public sc2::Agent
 	StateManager			m_state;
     BotConfig               m_config;
     TechTree                m_techTree;
-
+	std::vector<CCPosition> m_baseLocations;
     GameCommander           m_gameCommander;
 
     void OnError(const std::vector<sc2::ClientError> & client_errors, 
@@ -53,6 +53,7 @@ public:
 	int GetCurrentSupply() const;
 	int GetMaxSupply() const;
     sc2::Point2D GetStartLocation() const;
+	const std::vector<CCPosition> & GetStartLocations() const;
     const sc2::Unit * GetUnit(const UnitTag & tag) const;
 	StateManager & State();
 };

@@ -28,6 +28,7 @@ class ProductionManager
     int     getFreeGas();
 	void    fixBuildOrderDeadlock();
 	void    trainWarpGate();
+	void    keepTrainWorker();
 public:
 
     ProductionManager(CCBot & bot);

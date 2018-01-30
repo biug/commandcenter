@@ -242,9 +242,9 @@ public:
 			std::stringstream name;
 			name << getName(_type) << " " << _position.x << "," << _position.y;
 		}
-		else {
-			return getName(_type);
-		}
+		
+		return getName(_type);
+		
 	}
 
 };

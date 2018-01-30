@@ -49,7 +49,7 @@ void UltraliskManager::assignTargets(const std::vector<const sc2::Unit *> & targ
 		{
 			UltraliskInfos[Ultralisk] = UltraliskInfo(Ultralisk->health);
 		}
-		int currentHP = Ultralisk->health;
+		float currentHP = Ultralisk->health;
 		bool beingAttack = currentHP < UltraliskInfos[Ultralisk].m_hpLastSecond;
 		if (refreshInfo) UltraliskInfos[Ultralisk].m_hpLastSecond = currentHP;
 		

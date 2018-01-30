@@ -33,7 +33,7 @@ void WorkerData::updateAllWorkerData()
         {
             setWorkerJob(worker, WorkerJobs::Idle);
         }
-
+		
         // TODO: If it's a gas worker whose refinery has been destroyed, set to minerals
     }
 
@@ -191,9 +191,8 @@ const sc2::Unit * WorkerData::getMineralToMine(const sc2::Unit * unit) const
 {
     const sc2::Unit * bestMineral = nullptr;
     double bestDist = 100000;
-	for (auto base : m_bot.Bases().getOccupiedBaseLocations(Players::Self))
-	{
-		for (auto mineral : base->getMinerals())
+	
+		for (auto mineral : m_bot.Observation()->GetUnits())
 		{
 			if (!Util::IsMineral(mineral)) continue;
 
@@ -205,7 +204,7 @@ const sc2::Unit * WorkerData::getMineralToMine(const sc2::Unit * unit) const
 				bestDist = dist;
 			}
 		}
-	}
+	
 
     return bestMineral;
 }

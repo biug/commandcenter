@@ -132,13 +132,19 @@ void WorkerManager::setMineralWorker(const sc2::Unit * unit)
 {
     // check if there is a mineral available to send the worker to
     auto depot = getClosestDepot(unit);
-
+	if (!depot) {
+		return;
+	}
     // if there is a valid mineral
-    if (depot)
+    if (Util::Dist(depot->pos,unit->pos) < 4)
     {
         // update m_workerData with the new job
         m_workerData.setWorkerJob(unit, WorkerJobs::Minerals, depot);
-    }
+	}
+	else {
+		Micro::SmartMove(unit, depot->pos, m_bot);
+	}
+
 }
 
 const sc2::Unit * WorkerManager::getClosestDepot(const sc2::Unit * worker) const
@@ -150,7 +156,7 @@ const sc2::Unit * WorkerManager::getClosestDepot(const sc2::Unit * worker) const
     {
         if (!unit) { continue; }
 
-        if (Util::IsTownHall(unit) && Util::IsCompleted(unit))
+        if (Util::IsTownHall(unit) && Util::IsCompleted(unit) && unit->assigned_harvesters < 16)
         {
             double distance = Util::DistSq(unit->pos, worker->pos);
             if (!closestDepot || distance < closestDistance)

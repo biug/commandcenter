@@ -39,7 +39,7 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 
 		ZerglingTargets.push_back(target);
 	}
-	int morphrate = 0.2;
+	float morphrate = 0.2;
 	int num = Zerglings.size()* morphrate;
 	int banelingnum = 0;
 	for (auto Zergling : Zerglings) {
@@ -78,7 +78,7 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		{
 			ZerglingInfos[Zergling] = ZerglingInfo(Zergling->health);
 		}
-		int currentHP = Zergling->health;
+		float currentHP = Zergling->health;
 		bool beingAttack = currentHP < ZerglingInfos[Zergling].m_hpLastSecond;
 		if (refreshInfo) ZerglingInfos[Zergling].m_hpLastSecond = currentHP;
 

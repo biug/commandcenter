@@ -20,7 +20,10 @@ CCBot::CCBot()
 void CCBot::OnGameStart() 
 {
     m_config.readConfigFile();
-    
+	for (auto & loc : Observation()->GetGameInfo().enemy_start_locations)
+	{
+		m_baseLocations.push_back(loc);
+	}
     // get my race
     auto playerID = Observation()->GetPlayerID();
     for (auto & playerInfo : Observation()->GetGameInfo().player_info)
@@ -41,7 +44,6 @@ void CCBot::OnGameStart()
     m_unitInfo.onStart();
     m_bases.onStart();
     m_workers.onStart();
-	//m_baseMan.onStart(m_bases.getPlayerStartingBaseLocation(Players::Self));
     m_gameCommander.onStart();
 }
 
@@ -130,9 +132,15 @@ const sc2::Unit * CCBot::GetUnit(const UnitTag & tag) const
     return Observation()->GetUnit(tag);
 }
 
+
 StateManager & CCBot::State()
 {
 	return m_state;
+}
+
+const std::vector<CCPosition> & CCBot::GetStartLocations() const
+{
+	return m_baseLocations;
 }
 
 sc2::Point2D CCBot::GetStartLocation() const

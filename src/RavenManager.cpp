@@ -49,7 +49,7 @@ void RavenManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			RavenInfos[Raven] = RavenInfo(Raven->health);
 		}
-		int currentHP = Raven->health;
+		float currentHP = Raven->health;
 		bool beingAttack = currentHP < RavenInfos[Raven].m_hpLastSecond;
 		if (refreshInfo) RavenInfos[Raven].m_hpLastSecond = currentHP;
 		

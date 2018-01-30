@@ -50,7 +50,7 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		{
 			marineInfos[marine] = MarineInfo(marine->health);
 		}
-		int currentHP = marine->health;
+		float currentHP = marine->health;
 		bool beingAttack = currentHP < marineInfos[marine].m_hpLastSecond;
 		if (refreshInfo) marineInfos[marine].m_hpLastSecond = currentHP;
 		
