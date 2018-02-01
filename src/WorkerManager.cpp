@@ -111,7 +111,7 @@ const sc2::Unit * WorkerManager::getClosestBuildableWorkerTo(const sc2::Point2D 
 		if (!worker) { continue; }
 
 		// if it is a mineral worker
-		if (m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals || m_workerData.getWorkerJob(worker) == WorkerJobs::Wait)
+		if (m_workerData.getWorkerJob(worker) == WorkerJobs::Minerals || m_workerData.getWorkerJob(worker) == WorkerJobs::Wait || m_workerData.getWorkerJob(worker) == WorkerJobs::Idle)
 		{
 			float dist = Util::PlanerDist(worker->pos, pos);
 

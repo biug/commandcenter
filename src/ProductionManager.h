@@ -24,6 +24,7 @@ class ProductionManager
     void    setBuildOrder(const BuildOrder & buildOrder);
     void    create(const sc2::Unit * producer, BuildOrderItem & item);
     void    manageBuildOrderQueue();
+	size_t  NumberOfBuildingsQueued(sc2::UnitTypeID unit_type) const;
     int     getFreeMinerals();
     int     getFreeGas();
 	void    fixBuildOrderDeadlock();

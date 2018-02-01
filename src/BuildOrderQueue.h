@@ -36,7 +36,7 @@ public:
     void queueItem(const BuildOrderItem & b);			// queues something with a given priority
     void removeHighestPriorityItem();								// removes the highest priority item
     void removeCurrentHighestPriorityItem();
-
+	int GetItemsInQueueOfType(sc2::UnitTypeID unit_type) const;
     size_t size();													// returns the size of the queue
 
     bool isEmpty();

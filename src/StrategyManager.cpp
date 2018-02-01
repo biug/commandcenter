@@ -15,6 +15,7 @@ Strategy::Strategy(const std::string & name, const sc2::Race & race, const Build
     , m_buildOrder(buildOrder)
     , m_wins(0)
     , m_losses(0)
+	
 {
 
 }
@@ -22,6 +23,7 @@ Strategy::Strategy(const std::string & name, const sc2::Race & race, const Build
 // constructor
 StrategyManager::StrategyManager(CCBot & bot)
     : m_bot(bot)
+	, bases_safe(false)
 {
 
 }
@@ -33,7 +35,30 @@ void StrategyManager::onStart()
 
 void StrategyManager::onFrame()
 {
+	bases_safe = AreBasesSafe();
+	for (const auto & unit : m_bot.UnitInfo().getUnits(Players::Self))
+	{
+		// Emergency repair units and depots.
+		if (Util::IsBuilding(unit->unit_type))
+		{
+			// If a depot may die, go repair it. 
+			if (unit->unit_type == sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT || unit->unit_type == sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOTLOWERED)
+			{
+				if (unit->health != unit->health_max && unit->build_progress == 1.0)
+					Micro::SmartRepair(m_bot.Workers().getClosestBuildableWorkerTo(unit->pos), unit, m_bot);
+			}
+			/*
+			if (!bases_safe)
+			{
 
+				m_bot.Actions()->UnitCommand(unit, sc2::ABILITY_ID::LIFT);
+			}
+			else
+			{
+				 m_bot.Actions()->UnitCommand(unit, sc2::ABILITY_ID::LAND,unit->pos);
+			}*/
+		}
+	}
 }
 
 const BuildOrder & StrategyManager::getOpeningBookBuildOrder() const
@@ -52,10 +77,7 @@ const BuildOrder & StrategyManager::getOpeningBookBuildOrder() const
     }
 }
 
-bool StrategyManager::shouldExpandNow() const
-{
-    return false;
-}
+
 
 void StrategyManager::addStrategy(const std::string & name, const Strategy & strategy)
 {
@@ -86,6 +108,31 @@ const UnitPairVector StrategyManager::getZergBuildOrderGoal() const
 void StrategyManager::onEnd(const bool isWinner)
 {
 
+}
+
+bool StrategyManager::ShouldExpandNow() const
+{
+	if (m_bot.Observation()->GetMinerals() > 500 && bases_safe)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool StrategyManager::AreBasesSafe()
+{
+	for (const auto & enemy_unit : m_bot.UnitInfo().getUnits(Players::Enemy))
+	{
+		for (const auto  potential_base : m_bot.UnitInfo().getUnits(Players::Self))
+		{
+			if (Util::IsTownHall(potential_base)
+				&& Util::DistSq(potential_base->pos, enemy_unit->pos) < (30 * 30))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 void StrategyManager::readStrategyFile(const std::string & filename)

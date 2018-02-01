@@ -110,7 +110,17 @@ void ProductionManager::manageBuildOrderQueue()
         return;
     }
 	
+	if (m_bot.Strategy().ShouldExpandNow()
+		// Don't queue more bases than you have minerals for.
+		)
+	{
+		switch (m_bot.GetPlayerRace(Players::Self)) {
+		case sc2::Race::Protoss: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_NEXUS), true);
+		case sc2::Race::Terran: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER), true);
+		case sc2::Race::Zerg: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::ZERG_HATCHERY), true);
+		}
 	
+	}
 	
 	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 25)
 	{
@@ -583,6 +593,11 @@ bool ProductionManager::meetsReservedResources(const BuildType & type)
     // return whether or not we meet the resources
 	
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
+}
+
+size_t ProductionManager::NumberOfBuildingsQueued(sc2::UnitTypeID unit_type) const
+{
+	return m_buildingManager.NumberOfBuildingTypeInProduction(unit_type);
 }
 
 void ProductionManager::drawProductionInformation()

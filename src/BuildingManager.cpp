@@ -381,6 +381,16 @@ void BuildingManager::orbitalCallDownMule()
 		}
 	}
 }
+int BuildingManager::NumberOfBuildingTypeInProduction(sc2::UnitTypeID unit_type) const
+{
+	int count = 0;
+	for (const auto & b : m_buildings)
+	{
+		if (b.type == unit_type) ++count;
+	}
+	return count;
+}
+
 void BuildingManager::drawBuildingInformation()
 {
     m_buildingPlacer.drawReservedTiles();

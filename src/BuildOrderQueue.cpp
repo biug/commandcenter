@@ -165,6 +165,15 @@ std::string BuildOrderQueue::getQueueInformation() const
     return ss.str();
 }
 
+int BuildOrderQueue::GetItemsInQueueOfType(sc2::UnitTypeID unit_type) const
+{
+	int return_val = 0;
+	for (const auto & ele : m_queue)
+	{
+		if (ele.type.getUnitType() == unit_type) return_val++;
+	}
+	return return_val;
+}
 
 BuildOrderItem::BuildOrderItem(const MacroAct & t, int p, bool b)
     : type(t)

@@ -26,6 +26,7 @@ class BuildingManager
     void            checkForDeadTerranBuilders();			// STEP 5
     void            checkForCompletedBuildings();			// STEP 6
 	void            orbitalCallDownMule();
+
     char            getBuildingWorkerCode(const Building & b) const;
 
 public:
@@ -40,7 +41,7 @@ public:
 	const sc2::Unit *   getMineralToMine(const sc2::Unit * unit) const;
     int                 getReservedMinerals();
     int                 getReservedGas();
-
+	int                 NumberOfBuildingTypeInProduction(sc2::UnitTypeID unit_type) const;
     bool                isBeingBuilt(sc2::UnitTypeID type);
 
     std::vector<sc2::UnitTypeID> buildingsQueued() const;
