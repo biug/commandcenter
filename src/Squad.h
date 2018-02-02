@@ -32,6 +32,11 @@
 
 #include "StalkerManager.h"
 #include "ZealotManager.h"
+#include "SentryManager.h"
+#include "ImmortalManager.h"
+#include "PhoenixManager.h"
+#include "ColossusManager.h"
+#include "VoidRayManager.h"
 
 class CCBot;
 
@@ -67,6 +72,11 @@ class Squad
 	ZerglingManager		m_zerglingManager;
 
 	ZealotManager		m_zealotManager;
+	SentryManager		m_sentryManager;
+	ImmortalManager		m_immortalManager;
+	PhoenixManager		m_phoenixManager;
+	ColossusManager		m_colossusManager;
+	VoidRayManager		m_voidrayManager;
 
 	std::map<const sc2::Unit *, bool> m_nearEnemy;
 

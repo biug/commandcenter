@@ -3,9 +3,9 @@
 #include "CCBot.h"
 
 ColossusInfo::ColossusInfo() :
-m_hpLastSecond(45)
+	m_hpLastSecond(45)
 {
-	
+
 }
 
 ColossusInfo::ColossusInfo(float hp) :
@@ -52,7 +52,7 @@ void ColossusManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		float currentHP = Colossus->health;
 		bool beingAttack = currentHP < ColossusInfos[Colossus].m_hpLastSecond;
 		if (refreshInfo) ColossusInfos[Colossus].m_hpLastSecond = currentHP;
-		
+
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
@@ -61,38 +61,7 @@ void ColossusManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Colossus, ColossusTargets);
 				if (!target) continue;
-				
-				if (m_bot.State().m_stimpack)
-				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Colossus);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
-					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
-					}
-					for (auto buff : Colossus->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Colossus->weapon_cooldown >0))
-					{
-						Micro::SmartAbility(Colossus, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
-					}
-					//continue;
-				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Colossus->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Colossus->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Colossus, tp, m_bot);
-				}
-				else {
+				if (Colossus->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_COLOSSUS) {
 					Micro::SmartAttackMove(Colossus, target->pos, m_bot);
 				}
 			}
@@ -149,11 +118,11 @@ const sc2::Unit * ColossusManager::getTarget(const sc2::Unit * rangedUnit, const
 int ColossusManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
-	if (Util::IsPsionicUnit(unit))
+	if (Util::IsMeleeUnit(unit))
 	{
 		return 11;
 	}
-	if (Util::IsMeleeUnit(unit))
+	if (Util::IsPsionicUnit(unit))
 	{
 		return 10;
 	}

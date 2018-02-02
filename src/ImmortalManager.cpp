@@ -3,9 +3,9 @@
 #include "CCBot.h"
 
 ImmortalInfo::ImmortalInfo() :
-m_hpLastSecond(45)
+	m_hpLastSecond(45)
 {
-	
+
 }
 
 ImmortalInfo::ImmortalInfo(float hp) :
@@ -47,12 +47,12 @@ void ImmortalManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		BOT_ASSERT(Immortal, "ranged unit is null");
 		if (ImmortalInfos.find(Immortal) == ImmortalInfos.end())
 		{
-			ImmortalInfos[Immortal] = ImmortalInfo(Immortal->health);
+			ImmortalInfos[Immortal] = ImmortalInfo(Immortal->health + Immortal->shield);
 		}
-		float currentHP = Immortal->health;
+		float currentHP = Immortal->health + Immortal->shield;
 		bool beingAttack = currentHP < ImmortalInfos[Immortal].m_hpLastSecond;
 		if (refreshInfo) ImmortalInfos[Immortal].m_hpLastSecond = currentHP;
-		
+
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
@@ -61,40 +61,39 @@ void ImmortalManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Immortal, ImmortalTargets);
 				if (!target) continue;
-				
-				if (m_bot.State().m_stimpack)
+				auto abilities = m_bot.Query()->GetAbilitiesForUnit(Immortal);
+				bool immortalbarrier = false;
+				for (auto & ab : abilities.abilities)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Immortal);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_IMMORTALBARRIER)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
+						immortalbarrier = true;
+
 					}
-					for (auto buff : Immortal->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
+				}
+				for (auto buff : Immortal->buffs) {
+					if (buff == sc2::BUFF_ID::IMMORTALOVERLOAD) {
+						immortalbarrier = false;
 					}
-					if (stimpack && (beingAttack || Immortal->weapon_cooldown >0))
-					{
-						Micro::SmartAbility(Immortal, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
+				}
+
+				bool being_attacked_fiercely = false;
+				int nerbytargetnum = 0;
+				for (auto nearbytarget : ImmortalTargets)
+				{
+					if (Util::Dist(Immortal->pos, nearbytarget->pos) <= 10) {
+						nerbytargetnum++;
 					}
-					continue;
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Immortal->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Immortal->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Immortal, tp, m_bot);
+				if (beingAttack && ((ImmortalInfos[Immortal].m_hpLastSecond - currentHP >= 30) || nerbytargetnum >= 4)) {
+					being_attacked_fiercely = true;
 				}
-				else {
-					Micro::SmartAttackMove(Immortal, target->pos, m_bot);
+				if (being_attacked_fiercely  &&  immortalbarrier)
+				{
+					Micro::SmartAbility(Immortal, sc2::ABILITY_ID::EFFECT_IMMORTALBARRIER, m_bot);
 				}
+				else { Micro::SmartAttackMove(Immortal, target->pos, m_bot); }
+
 			}
 			// if there are no targets
 			else
@@ -114,6 +113,7 @@ void ImmortalManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		}
 	}
 }
+
 
 // get a target for the ranged unit to attack
 // TODO: this is the melee targeting code, replace it with something better for ranged units
@@ -149,6 +149,10 @@ const sc2::Unit * ImmortalManager::getTarget(const sc2::Unit * rangedUnit, const
 int ImmortalManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (Util::IsHeavyArmor(unit))
+	{
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;

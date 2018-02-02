@@ -60,7 +60,7 @@ void ZealotManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				const sc2::Unit * target = getTarget(Zealot, ZealotTargets);
 				if (!target) continue;
 
-				if (Zealot->health + Zealot->shield < 50 && beingAttack)
+				if (!target->is_flying)
 				{
 					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Zealot);
 					bool canCharge = false;
@@ -71,20 +71,14 @@ void ZealotManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 							canCharge = true;
 						}
 					}
-					if (canCharge && (Util::Dist(Zealot->pos, target->pos)) <20 && (Util::Dist(Zealot->pos, target->pos))>4)
+					if (canCharge && (Util::Dist(Zealot->pos, target->pos)) <15 && (Util::Dist(Zealot->pos, target->pos))>4)
 					{
 						Micro::SmartAbility(Zealot, sc2::ABILITY_ID::EFFECT_CHARGE, target, m_bot);
 					}
-					continue;
+					else { Micro::SmartAttackMove(Zealot, target->pos, m_bot); }
+
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Zealot->weapon_cooldown > 0) {
-					sc2::Point2D rp = RetreatPosition(Zealot);
-					Micro::SmartMove(Zealot, rp, m_bot);
-				}
-				else {
-					Micro::SmartAttackMove(Zealot, target->pos, m_bot);
-				}
+
 			}
 			// if there are no targets
 			else
@@ -107,26 +101,6 @@ void ZealotManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 }
 
 
-sc2::Point2D ZealotManager::RetreatPosition(const sc2::Unit * unit)
-{
-	auto pos = unit->pos;
-	sc2::Point2D base = m_bot.GetStartLocation();
-
-	double angle = atan(pos.y - base.y / (pos.x - base.x));
-	double step_size = 5;
-	double step_x = step_size * sin(angle);
-	double step_y = step_size * cos(angle);
-
-	//std::stringstream ss;
-	//ss << std::endl;
-	//ss << "old position:      " << pos.x << " " << pos.y << std::endl;
-	//ss << "new position:      " << (pos.x + step_x) << " " << pos.y + step_y << std::endl;
-	//std::cout << ss.str();
-	m_bot.Debug()->DebugTextOut("x", sc2::Point2D(pos.x + step_x, pos.y + step_y), sc2::Colors::White);
-
-	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
-
-}
 // get a target for the ranged unit to attack
 // TODO: this is the melee targeting code, replace it with something better for ranged units
 const sc2::Unit * ZealotManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)

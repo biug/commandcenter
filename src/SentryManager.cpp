@@ -3,9 +3,9 @@
 #include "CCBot.h"
 
 SentryInfo::SentryInfo() :
-m_hpLastSecond(45)
+	m_hpLastSecond(45)
 {
-	
+
 }
 
 SentryInfo::SentryInfo(float hp) :
@@ -47,12 +47,12 @@ void SentryManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		BOT_ASSERT(Sentry, "ranged unit is null");
 		if (SentryInfos.find(Sentry) == SentryInfos.end())
 		{
-			SentryInfos[Sentry] = SentryInfo(Sentry->health);
+			SentryInfos[Sentry] = SentryInfo(Sentry->health + Sentry->shield);
 		}
-		float currentHP = Sentry->health;
+		float currentHP = Sentry->health + Sentry->shield;
 		bool beingAttack = currentHP < SentryInfos[Sentry].m_hpLastSecond;
 		if (refreshInfo) SentryInfos[Sentry].m_hpLastSecond = currentHP;
-		
+
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
@@ -61,40 +61,45 @@ void SentryManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Sentry, SentryTargets);
 				if (!target) continue;
-				
-				if (m_bot.State().m_stimpack)
+				auto abilities = m_bot.Query()->GetAbilitiesForUnit(Sentry);
+				bool guardianshield = false;
+				bool forcefield = false;
+				for (auto & ab : abilities.abilities)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Sentry);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_GUARDIANSHIELD)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
+						guardianshield = true;
 					}
-					for (auto buff : Sentry->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Sentry->weapon_cooldown >0))
+					else if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_FORCEFIELD)
 					{
-						Micro::SmartAbility(Sentry, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
+						forcefield = true;
 					}
-					continue;
+
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Sentry->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Sentry->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Sentry, tp, m_bot);
+				for (auto buff : Sentry->buffs) {
+					if (buff == sc2::BUFF_ID::GUARDIANSHIELD) {
+						guardianshield = false;
+					}
 				}
-				else {
-					Micro::SmartAttackMove(Sentry, target->pos, m_bot);
+				int nearbyselfnum = 1;
+				for (auto selfunit : Sentrys)
+				{
+					if (Util::Dist(Sentry->pos, selfunit->pos) <= 10 && selfunit->alliance == 1)
+					{
+						nearbyselfnum++;
+					}
 				}
+				if (guardianshield && beingAttack && (nearbyselfnum >= 3 || currentHP <= 40))
+				{
+					Micro::SmartAbility(Sentry, sc2::ABILITY_ID::EFFECT_GUARDIANSHIELD, m_bot);
+				}
+				if (forcefield && beingAttack && (Sentrys.size() <= SentryTargets.size()))
+				{
+					sc2::Point2D fp = SetForcefieldPosition(Sentry, SentryTargets);
+					Micro::SmartAbility(Sentry, sc2::ABILITY_ID::EFFECT_FORCEFIELD, fp, m_bot);
+				}
+				Micro::SmartAttackMove(Sentry, target->pos, m_bot);
+
 			}
 			// if there are no targets
 			else
@@ -113,6 +118,33 @@ void SentryManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 			// TODO: draw the line to the unit's target
 		}
 	}
+}
+
+sc2::Point2D SentryManager::SetForcefieldPosition(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
+{
+	const sc2::Unit *ClosestTarget = nullptr;
+	const sc2::Unit *FarthestTarget = nullptr;
+	float ClosestDistance = std::numeric_limits<float>::max();
+	float FarthestDistance = 0;
+	for (auto targetUnit : targets)
+	{
+		if (!targetUnit->is_flying)
+		{
+			float distance = Util::Dist(rangedUnit->pos, targetUnit->pos);
+			if (distance < ClosestDistance)
+			{
+				ClosestDistance = distance;
+				ClosestTarget = targetUnit;
+			}
+			else if (distance > FarthestDistance)
+			{
+				FarthestDistance = distance;
+				FarthestTarget = targetUnit;
+			}
+		}
+
+	}
+	return sc2::Point2D((ClosestTarget->pos.x + FarthestTarget->pos.x) / 2, (ClosestTarget->pos.y + FarthestTarget->pos.y) / 2);
 }
 
 // get a target for the ranged unit to attack

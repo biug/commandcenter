@@ -25,6 +25,11 @@ Squad::Squad(CCBot & bot)
 	, m_battlecruiserManager(bot)
 	, m_zerglingManager(bot)
 	, m_zealotManager(bot)
+	, m_sentryManager(bot)
+	, m_immortalManager(bot)
+	, m_phoenixManager(bot)
+	, m_colossusManager(bot)
+	, m_voidrayManager(bot)
 {
 }
 
@@ -52,6 +57,11 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 	, m_battlecruiserManager(bot)
 	, m_zerglingManager(bot)
 	, m_zealotManager(bot)
+	, m_sentryManager(bot)
+	, m_immortalManager(bot)
+	, m_phoenixManager(bot)
+	, m_colossusManager(bot)
+	, m_voidrayManager(bot)
 {
 }
 
@@ -87,6 +97,11 @@ void Squad::onFrame()
 		m_battlecruiserManager.regroup(regroupPosition);
 		m_zerglingManager.regroup(regroupPosition);
 		m_zealotManager.regroup(regroupPosition);
+		m_sentryManager.regroup(regroupPosition);
+		m_immortalManager.regroup(regroupPosition);
+		m_phoenixManager.regroup(regroupPosition);
+		m_colossusManager.regroup(regroupPosition);
+		m_voidrayManager.regroup(regroupPosition);
 	}
 	else // otherwise, execute micro
 	{
@@ -107,6 +122,11 @@ void Squad::onFrame()
 		m_battlecruiserManager.execute(m_order);
 		m_zerglingManager.execute(m_order);
 		m_zealotManager.execute(m_order);
+		m_sentryManager.execute(m_order);
+		m_immortalManager.execute(m_order);
+		m_phoenixManager.execute(m_order);
+		m_colossusManager.execute(m_order);
+		m_voidrayManager.execute(m_order);
 		//_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
 		//_detectorManager.execute(_order);
 	}
@@ -183,6 +203,11 @@ void Squad::addUnitsToMicroManagers()
 	std::vector<const sc2::Unit *> battlecruiserUnits;
 	std::vector<const sc2::Unit *> zerglingUnits;
 	std::vector<const sc2::Unit *> zealotUnits;
+	std::vector<const sc2::Unit *> sentryUnits;
+	std::vector<const sc2::Unit *> immortalUnits;
+	std::vector<const sc2::Unit *> phoenixUnits;
+	std::vector<const sc2::Unit *> colossusUnits;
+	std::vector<const sc2::Unit *> voidrayUnits;
 	// add _units to micro managers
 	for (auto unit : m_units)
 	{
@@ -237,8 +262,28 @@ void Squad::addUnitsToMicroManagers()
 		{
 			zealotUnits.push_back(unit);
 		}
-		//continue to add 
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_SENTRY)
+		{
+			sentryUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_IMMORTAL)
+		{
+			immortalUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_PHOENIX)
+		{
+			phoenixUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_COLOSSUS)
+		{
+			colossusUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_VOIDRAY)
+		{
+			voidrayUnits.push_back(unit);
+		}
 
+		//continue to add 
 		// select ranged _units
 		else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
 		{
@@ -265,6 +310,11 @@ void Squad::addUnitsToMicroManagers()
 	m_vikingManager.setUnits(vikingUnits);
 	m_zerglingManager.setUnits(zerglingUnits);
 	m_zealotManager.setUnits(zealotUnits);
+	m_sentryManager.setUnits(sentryUnits);
+	m_immortalManager.setUnits(immortalUnits);
+	m_phoenixManager.setUnits(phoenixUnits);
+	m_colossusManager.setUnits(colossusUnits);
+	m_voidrayManager.setUnits(voidrayUnits);
 }
 
 // TODO: calculates whether or not to regroup
