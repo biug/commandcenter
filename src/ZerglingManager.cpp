@@ -39,17 +39,13 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 
 		ZerglingTargets.push_back(target);
 	}
-<<<<<<< HEAD
+
 	double morphrate = 0.2;
 	double banelingnum = 0;
 	double num = Zerglings.size()* morphrate;
 	std::cout << "Zerglings.size() " << Zerglings.size() << std::endl;
 	std::cout << "num " << num << std::endl;
-=======
-	float morphrate = 0.2;
-	int num = Zerglings.size()* morphrate;
-	int banelingnum = 0;
->>>>>>> 8f3ce4775faeefd65d62e3ea87de656be93ebef1
+
 	for (auto Zergling : Zerglings) {
 		if (Zergling->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) {
 			banelingnum += 1;
