@@ -49,7 +49,7 @@ void HydraliskManager::assignTargets(const std::vector<const sc2::Unit *> & targ
 		{
 			HydraliskInfos[Hydralisk] = HydraliskInfo(Hydralisk->health);
 		}
-		int currentHP = Hydralisk->health;
+		float currentHP = Hydralisk->health;
 		bool beingAttack = currentHP < HydraliskInfos[Hydralisk].m_hpLastSecond;
 		if (refreshInfo) HydraliskInfos[Hydralisk].m_hpLastSecond = currentHP;
 		

@@ -49,7 +49,7 @@ void GhostManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			GhostInfos[Ghost] = GhostInfo(Ghost->health);
 		}
-		int currentHP = Ghost->health;
+		float currentHP = Ghost->health;
 		bool beingAttack = currentHP < GhostInfos[Ghost].m_hpLastSecond;
 		if (refreshInfo) GhostInfos[Ghost].m_hpLastSecond = currentHP;
 

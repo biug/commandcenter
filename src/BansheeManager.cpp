@@ -49,7 +49,7 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			BansheeInfos[Banshee] = BansheeInfo(Banshee->health);
 		}
-		int currentHP = Banshee->health;
+		float currentHP = Banshee->health;
 		bool beingAttack = currentHP < BansheeInfos[Banshee].m_hpLastSecond;
 		if (refreshInfo) BansheeInfos[Banshee].m_hpLastSecond = currentHP;
 		

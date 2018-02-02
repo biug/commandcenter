@@ -49,7 +49,7 @@ void BattlecruiserManager::assignTargets(const std::vector<const sc2::Unit *> & 
 		{
 			BattlecruiserInfos[Battlecruiser] = BattlecruiserInfo(Battlecruiser->health);
 		}
-		int currentHP = Battlecruiser->health;
+		float currentHP = Battlecruiser->health;
 		bool beingAttack = currentHP < BattlecruiserInfos[Battlecruiser].m_hpLastSecond;
 		if (refreshInfo) BattlecruiserInfos[Battlecruiser].m_hpLastSecond = currentHP;
 		

@@ -1,6 +1,8 @@
 #include "StalkerManager.h"
 #include "Util.h"
 #include "CCBot.h"
+#include <cmath>
+#define PI 3.1415926
 
 StalkerInfo::StalkerInfo() :
 	m_hpLastSecond(160)
@@ -44,6 +46,9 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 	bool refreshInfo = m_bot.Map().frame() % 16;
 	for (auto stalker : stalkers)
 	{
+		std::stringstream ss;
+		ss << stalker->facing;
+		m_bot.Map().drawText(stalker->pos,ss.str());
 		BOT_ASSERT(stalker, "ranged unit is null");
 		if (stalkerInfos.find(stalker) == stalkerInfos.end())
 		{
@@ -75,9 +80,13 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 					}
 					if (canBlink)
 					{
-						auto p1 = target->pos, p2 = stalker->pos;
-						auto tp = p2 * 2 - p1;
-						Micro::SmartAbility(stalker, sc2::ABILITY_ID::EFFECT_BLINK, tp, m_bot);
+						
+						auto angle = atan((target->pos.y - stalker->pos.y) / (target->pos.x - stalker->pos.x));
+						int step_size = 8;
+						double step_x = step_size * sin(angle);
+						double step_y = step_size * cos(angle);
+						Micro::SmartAbility(stalker, sc2::ABILITY_ID::EFFECT_BLINK, stalker->pos + sc2::Point2D(step_x, step_y), m_bot);
+						Micro::SmartAttackMove(stalker, target->pos, m_bot);
 					}
 					continue;
 				}
@@ -111,6 +120,7 @@ const sc2::Unit * StalkerManager::getTarget(const sc2::Unit * rangedUnit, const 
 
 	int highPriority = 0;
 	double closestDist = std::numeric_limits<double>::max();
+	float lowestHealth = std::numeric_limits<float>::max();
 	const sc2::Unit * closestTarget = nullptr;
 
 	// for each target possiblity
@@ -120,15 +130,23 @@ const sc2::Unit * StalkerManager::getTarget(const sc2::Unit * rangedUnit, const 
 
 		int priority = getAttackPriority(rangedUnit, targetUnit);
 		float distance = Util::Dist(rangedUnit->pos, targetUnit->pos);
+	
+		
 
+		// If there are ranged units on high ground we can't see, we can't attack them back.
+		if (!(m_bot.Observation()->GetVisibility(targetUnit->pos) == sc2::Visibility::Visible) && Util::IsCombatUnit(targetUnit, m_bot))
+			continue;
 		// if it's a higher priority, or it's closer, set it
-		if (!closestTarget || (priority > highPriority) || (priority == highPriority && distance < closestDist))
+		if (!closestTarget || (priority > highPriority) || (priority == highPriority && distance < closestDist) || (priority == highPriority && targetUnit->health<lowestHealth))
 		{
+			lowestHealth = targetUnit->health;
 			closestDist = distance;
 			highPriority = priority;
 			closestTarget = targetUnit;
 		}
+		
 	}
+	
 
 	return closestTarget;
 }
@@ -137,17 +155,20 @@ const sc2::Unit * StalkerManager::getTarget(const sc2::Unit * rangedUnit, const 
 int StalkerManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
-	if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_SENTRY) {
+	if (Util::IsPsionicUnit(unit)) {
 		return 11;
+	}
+	if (Util::IsHeavyArmor(unit)) {
+		return 10;
 	}
 	if (Util::IsCombatUnit(unit, m_bot))
 	{
-		return 10;
+		return 9;
 	}
 	
 	if (Util::IsWorker(unit))
 	{
-		return 9;
+		return 8;
 	}
 
 	return 1;

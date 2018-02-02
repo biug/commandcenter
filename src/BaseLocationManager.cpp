@@ -306,7 +306,9 @@ void BaseLocationManager::onFrame()
 
 	// if we have found enemy base location
 	if (m_playerStartingBaseLocations[Players::Enemy] && !m_playerNaturalLocations[Players::Enemy])
+	
 	{
+		
 		// calculate natural loc
 		const BaseLocation * enemyNaturalLoc = nullptr;
 		sc2::Point2D enemyStartPos = m_playerStartingBaseLocations[Players::Enemy]->getPosition();
@@ -320,7 +322,7 @@ void BaseLocationManager::onFrame()
 			}
 		}
 		m_playerNaturalLocations[Players::Enemy] = enemyNaturalLoc;
-
+		
 		// calculate third loc
 		const BaseLocation * enemyThirdLoc = nullptr;
 		sc2::Point2D enemyNaturalPos = enemyNaturalLoc->getPosition();
@@ -334,6 +336,7 @@ void BaseLocationManager::onFrame()
 			}
 		}
 		m_playerThirdLocations[Players::Enemy] = enemyThirdLoc;
+		
 	}
 
 	if (m_playerStartingBaseLocations[Players::Self])
@@ -427,7 +430,10 @@ sc2::Point2DI BaseLocationManager::getNextExpansion(int player) const
         auto tile = base->getDepotPosition();
         
         bool buildingInTheWay = false; // TODO: check if there are any units on the tile
-
+		for (auto & unit : m_bot.UnitInfo().getUnits(Players::Self)) {
+			if (Util::Dist(unit->pos, Util::GetPosition(tile)) < 1 && (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER || unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_ORBITALCOMMAND))
+				buildingInTheWay = true;
+		}
         if (buildingInTheWay)
         {
             continue;
@@ -449,5 +455,5 @@ sc2::Point2DI BaseLocationManager::getNextExpansion(int player) const
         }
     }
 
-    return closestBase ? closestBase->getDepotPosition() : sc2::Point2DI(0.0f, 0.0f);
+    return closestBase ? closestBase->getDepotPosition() : sc2::Point2DI(0, 0);
 }

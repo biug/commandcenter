@@ -14,8 +14,9 @@ namespace Util
         IsUnit(sc2::UNIT_TYPEID type);
         bool operator()(const sc2::Unit * unit, const sc2::ObservationInterface*);
     };
-
+	bool CanAttackAir(std::vector<sc2::Weapon> weapons);
     int GetPlayer(const sc2::Unit * unit);
+	bool    IsBuilding(const sc2::UnitTypeID & type);
 	bool IsPsionicUnit(const sc2::Unit * unit);
 	bool IsMeleeUnit(const sc2::Unit * unit);
 	bool IsHeavyArmor(const sc2::Unit * unit);

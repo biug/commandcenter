@@ -49,7 +49,7 @@ void PhoenixManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			PhoenixInfos[Phoenix] = PhoenixInfo(Phoenix->health);
 		}
-		int currentHP = Phoenix->health;
+		float currentHP = Phoenix->health;
 		bool beingAttack = currentHP < PhoenixInfos[Phoenix].m_hpLastSecond;
 		if (refreshInfo) PhoenixInfos[Phoenix].m_hpLastSecond = currentHP;
 		

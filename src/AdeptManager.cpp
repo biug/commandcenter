@@ -49,7 +49,7 @@ void AdeptManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			AdeptInfos[Adept] = AdeptInfo(Adept->health);
 		}
-		int currentHP = Adept->health;
+		float currentHP = Adept->health;
 		bool beingAttack = currentHP < AdeptInfos[Adept].m_hpLastSecond;
 		if (refreshInfo) AdeptInfos[Adept].m_hpLastSecond = currentHP;
 

@@ -99,9 +99,9 @@ void CombatCommander::updateAttackSquads()
     {
 		return;
     }
-
+	
     Squad & mainAttackSquad = m_squadData.getSquad("MainAttack");
-
+	
     for (auto unit : m_combatUnits)
     {   
         BOT_ASSERT(unit, "null unit in combat units");
@@ -115,7 +115,7 @@ void CombatCommander::updateAttackSquads()
             m_squadData.assignUnitToSquad(unit, mainAttackSquad);
         }
     }
-
+	
     SquadOrder mainAttackOrder(SquadOrderTypes::Attack, getMainAttackLocation(), 25, "Attack Enemy Base");
     mainAttackSquad.setSquadOrder(mainAttackOrder);
 }
@@ -435,7 +435,7 @@ sc2::Point2D CombatCommander::getMainAttackLocation()
             return enemyUnit->pos;
         }
     }
-
+	
     // Fourth choice: We can't see anything so explore the map attacking along the way
     return Util::GetPosition(m_bot.Map().getLeastRecentlySeenPosition());
 }

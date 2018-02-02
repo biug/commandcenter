@@ -49,7 +49,7 @@ void ThorManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			ThorInfos[Thor] = ThorInfo(Thor->health);
 		}
-		int currentHP = Thor->health;
+		float currentHP = Thor->health;
 		bool beingAttack = currentHP < ThorInfos[Thor].m_hpLastSecond;
 		if (refreshInfo) ThorInfos[Thor].m_hpLastSecond = currentHP;
 		

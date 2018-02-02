@@ -49,7 +49,7 @@ void MutaliskManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		{
 			MutaliskInfos[Mutalisk] = MutaliskInfo(Mutalisk->health);
 		}
-		int currentHP = Mutalisk->health;
+		float currentHP = Mutalisk->health;
 		bool beingAttack = currentHP < MutaliskInfos[Mutalisk].m_hpLastSecond;
 		if (refreshInfo) MutaliskInfos[Mutalisk].m_hpLastSecond = currentHP;
 		

@@ -49,7 +49,7 @@ void LurkerManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 		{
 			LurkerInfos[Lurker] = LurkerInfo(Lurker->health);
 		}
-		int currentHP = Lurker->health;
+		float currentHP = Lurker->health;
 		bool beingAttack = currentHP < LurkerInfos[Lurker].m_hpLastSecond;
 		if (refreshInfo) LurkerInfos[Lurker].m_hpLastSecond = currentHP;
 		

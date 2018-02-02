@@ -49,7 +49,7 @@ void QueenManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			QueenInfos[Queen] = QueenInfo(Queen->health);
 		}
-		int currentHP = Queen->health;
+		float currentHP = Queen->health;
 		bool beingAttack = currentHP < QueenInfos[Queen].m_hpLastSecond;
 		if (refreshInfo) QueenInfos[Queen].m_hpLastSecond = currentHP;
 		

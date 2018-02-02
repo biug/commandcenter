@@ -7,7 +7,7 @@ typedef std::pair<sc2::UnitTypeID, size_t>  UnitPair;
 typedef std::vector<UnitPair>               UnitPairVector;
 
 class CCBot;
-
+enum class Tactic { BlinkStalkerAttack, Colosuss };
 struct Strategy
 {
     std::string m_name;
@@ -29,8 +29,7 @@ class StrategyManager
     std::map<std::string, Strategy> m_strategies;
     int                             m_totalGamesPlayed;
     const BuildOrder                m_emptyBuildOrder;
-
-    bool  shouldExpandNow() const;
+	bool                            bases_safe;
     const UnitPairVector getProtossBuildOrderGoal() const;
     const UnitPairVector getTerranBuildOrderGoal() const;
     const UnitPairVector getZergBuildOrderGoal() const;
@@ -46,4 +45,6 @@ public:
     const UnitPairVector getBuildOrderGoal() const;
     const BuildOrder & getOpeningBookBuildOrder() const;
     void readStrategyFile(const std::string & str);
+	bool ShouldExpandNow() const;
+	bool AreBasesSafe();
 };

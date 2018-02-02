@@ -41,45 +41,7 @@ void ProductionManager::onFrame()
     // TODO: triggers for game things like cloaked units etc
 	
     m_buildingManager.onFrame();
-	if (m_bot.State().m_keepTrainWorker) {
-		
-		for (auto b : m_bot.UnitInfo().getUnits(Players::Self)) {
-			switch (m_bot.GetPlayerRace(Players::Self))
-			{
-			case sc2::Race::Protoss:
-				if (m_bot.Data(b->unit_type).isTownHall) {
-					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
-						Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
-					}
-				}
-			case sc2::Race::Terran:
-				if (m_bot.Data(b->unit_type).isTownHall) {
-					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
-						Micro::SmartTrain(b, sc2::UNIT_TYPEID::TERRAN_SCV, m_bot);
-					}
-				}
-				break;
-			case sc2::Race::Zerg:
-					if (m_bot.Data(b->unit_type).isTownHall){
-						if (!detectSupplyDeadlock()) {
-							Micro::SmartTrain(b, sc2::UNIT_TYPEID::ZERG_DRONE, m_bot);
-						}
-					}
-			default:
-				break;
-			}
-		}
-		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) >= m_bot.State().m_numKeepTrainWorker - 2) {
-			m_bot.State().m_keepTrainWorker = false;
-		}
-		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONE) + m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONEBURROWED) >= m_bot.State().m_numKeepTrainWorker - 2) {
-			m_bot.State().m_keepTrainWorker = false;
-		}
-		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::TERRAN_SCV) >= m_bot.State().m_numKeepTrainWorker - 2) {
-			m_bot.State().m_keepTrainWorker = false;
-		}
-	}
-	
+	keepTrainWorker();
 
 	// chrono boost target
 	if (m_bot.State().m_chronoTarget != sc2::UNIT_TYPEID::INVALID)
@@ -148,7 +110,17 @@ void ProductionManager::manageBuildOrderQueue()
         return;
     }
 	
+	if (m_bot.Strategy().ShouldExpandNow()
+		// Don't queue more bases than you have minerals for.
+		)
+	{
+		switch (m_bot.GetPlayerRace(Players::Self)) {
+		case sc2::Race::Protoss: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_NEXUS), true);
+		case sc2::Race::Terran: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER), true);
+		case sc2::Race::Zerg: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::ZERG_HATCHERY), true);
+		}
 	
+	}
 	
 	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 25)
 	{
@@ -473,7 +445,47 @@ bool ProductionManager::detectBuildOrderDeadlock()
     // TODO: detect build order deadlocks here
     return false;
 }
+void ProductionManager::keepTrainWorker() {
+	if (m_bot.State().m_keepTrainWorker) {
 
+		for (auto b : m_bot.UnitInfo().getUnits(Players::Self)) {
+			switch (m_bot.GetPlayerRace(Players::Self))
+			{
+			case sc2::Race::Protoss:
+				if (m_bot.Data(b->unit_type).isTownHall) {
+					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
+						Micro::SmartTrain(b, sc2::UNIT_TYPEID::PROTOSS_PROBE, m_bot);
+					}
+				}
+			case sc2::Race::Terran:
+				if (m_bot.Data(b->unit_type).isTownHall) {
+					if (b->orders.size() < 1 || (b->orders[0].progress > 0.7f && b->orders.size() <2)) {
+						Micro::SmartTrain(b, sc2::UNIT_TYPEID::TERRAN_SCV, m_bot);
+					}
+				}
+				break;
+			case sc2::Race::Zerg:
+				if (m_bot.Data(b->unit_type).isTownHall) {
+					if (!detectSupplyDeadlock()) {
+						Micro::SmartTrain(b, sc2::UNIT_TYPEID::ZERG_DRONE, m_bot);
+					}
+				}
+			default:
+				break;
+			}
+		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::PROTOSS_PROBE) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONE) + m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_DRONEBURROWED) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+		if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::TERRAN_SCV) >= m_bot.State().m_numKeepTrainWorker - 2) {
+			m_bot.State().m_keepTrainWorker = false;
+		}
+	}
+
+}
 bool ProductionManager::isMorphedBuilding(const sc2::UNIT_TYPEID t) {
 	switch (t)
 	{
@@ -590,6 +602,11 @@ bool ProductionManager::meetsReservedResources(const BuildType & type)
     // return whether or not we meet the resources
 	
     return (m_bot.Data(type).mineralCost <= getFreeMinerals()) && (m_bot.Data(type).gasCost <= getFreeGas());
+}
+
+size_t ProductionManager::NumberOfBuildingsQueued(sc2::UnitTypeID unit_type) const
+{
+	return m_buildingManager.NumberOfBuildingTypeInProduction(unit_type);
 }
 
 void ProductionManager::drawProductionInformation()

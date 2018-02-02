@@ -49,7 +49,7 @@ void HellionManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		{
 			HellionInfos[hellion] = HellionInfo(hellion->health);
 		}
-		int currentHP = hellion->health;
+		float currentHP = hellion->health;
 		bool beingAttack = currentHP < HellionInfos[hellion].m_hpLastSecond;
 		if (refreshInfo) HellionInfos[hellion].m_hpLastSecond = currentHP;
 

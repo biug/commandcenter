@@ -49,7 +49,7 @@ void ColossusManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		{
 			ColossusInfos[Colossus] = ColossusInfo(Colossus->health);
 		}
-		int currentHP = Colossus->health;
+		float currentHP = Colossus->health;
 		bool beingAttack = currentHP < ColossusInfos[Colossus].m_hpLastSecond;
 		if (refreshInfo) ColossusInfos[Colossus].m_hpLastSecond = currentHP;
 		

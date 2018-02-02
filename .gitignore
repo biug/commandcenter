@@ -14,3 +14,6 @@ bin/CommandCenter
 bin/*.exe
 bin/*.ilk
 bin/TechTree.json
+src/ZerglingManager.cpp
+src/ZerglingManager.cpp
+src/ZerglingManager.cpp

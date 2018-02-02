@@ -49,7 +49,7 @@ void ImmortalManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		{
 			ImmortalInfos[Immortal] = ImmortalInfo(Immortal->health);
 		}
-		int currentHP = Immortal->health;
+		float currentHP = Immortal->health;
 		bool beingAttack = currentHP < ImmortalInfos[Immortal].m_hpLastSecond;
 		if (refreshInfo) ImmortalInfos[Immortal].m_hpLastSecond = currentHP;
 		
