@@ -278,8 +278,17 @@ void ProductionManager::fixBuildOrderDeadlock()
 
 		if (!hasProducer)
 		{
-			m_queue.queueAsHighestPriority(MacroAct(m_bot.Data(currentItem.type.getUnitType()).whatBuilds[0].ToType()), true);
-			fixBuildOrderDeadlock();
+			// for zerg : no need to add larva to queue 
+			if (m_bot.Data(currentItem.type.getUnitType()).whatBuilds[0].ToType() == sc2::UNIT_TYPEID::ZERG_LARVA) {
+				if (m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::ZERG_LARVA, false) == 0) {
+					return;
+				}
+			}
+			else {
+				m_queue.queueAsHighestPriority(MacroAct(m_bot.Data(currentItem.type.getUnitType()).whatBuilds[0].ToType()), true);
+				fixBuildOrderDeadlock();
+			}
+
 		}
 
 		// build a refinery if we don't have one and the thing costs gas

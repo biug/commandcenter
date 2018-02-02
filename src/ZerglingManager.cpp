@@ -39,16 +39,21 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 
 		ZerglingTargets.push_back(target);
 	}
-	int morphrate = 0.2;
-	int num = Zerglings.size()* morphrate;
-	int banelingnum = 0;
+	double morphrate = 0.2;
+	double banelingnum = 0;
+	double num = Zerglings.size()* morphrate;
+	std::cout << "Zerglings.size() " << Zerglings.size() << std::endl;
+	std::cout << "num " << num << std::endl;
 	for (auto Zergling : Zerglings) {
 		if (Zergling->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) {
 			banelingnum += 1;
 		}
 	}
+
+	std::cout << "banelingnum " << banelingnum << std::endl;
 	num -= banelingnum;
-	if (Zerglings.size() > 20 && num >0) {
+	std::cout << "num " << num << std::endl;
+	if (Zerglings.size() > 10 && num >0) {
 		for (auto Zergling : Zerglings) {
 			auto abilities = m_bot.Query()->GetAbilitiesForUnit(Zergling);
 			bool canmorph = false;
@@ -82,26 +87,67 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		bool beingAttack = currentHP < ZerglingInfos[Zergling].m_hpLastSecond;
 		if (refreshInfo) ZerglingInfos[Zergling].m_hpLastSecond = currentHP;
 
+		std::vector<const sc2::Unit *> Banelings;
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
-			if (!ZerglingTargets.empty())
-			{
-				// find the best target for this meleeUnit
-				const sc2::Unit * target = getTarget(Zergling, ZerglingTargets);
-				if (!target) continue;
-				Micro::SmartAttackMove(Zergling, target->pos, m_bot);
-			}
-			// if there are no targets
-			else
-			{
-				// if we're not near the order position
-				if (Util::Dist(Zergling->pos, order.getPosition()) > 4)
+			if (Zergling->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) {
+				Banelings.push_back(Zergling);
+				if (!ZerglingTargets.empty())
 				{
-					// move to it
-					Micro::SmartMove(Zergling, order.getPosition(), m_bot);
+					// find the best target for this meleeUnit
+					const sc2::Unit * target = getTarget(Zergling, ZerglingTargets);
+					if (!target) continue;
+					Micro::SmartAttackMove(Zergling, target->pos, m_bot);
+				}
+				// if there are no targets
+				else
+				{
+					// if we're not near the order position
+					if (Util::Dist(Zergling->pos, order.getPosition()) > 4)
+					{
+						// move to it
+						Micro::SmartMove(Zergling, order.getPosition(), m_bot);
+					}
 				}
 			}
+			// zergling micro act
+			else {
+				if (!ZerglingTargets.empty())
+				{
+					// find the best target for this meleeUnit
+					const sc2::Unit * target = getTarget(Zergling, ZerglingTargets);
+					if (!target) continue;
+					else {
+						Micro::SmartAttackMove(Zergling, target->pos, m_bot);
+					}
+				}
+				// if there are no targets
+				else
+				{
+					//  speed down to follow baneling
+					if (Banelings.size()>0) {
+						double closestDist = Util::Dist(Banelings[0]->pos, Zergling->pos);
+						const sc2::Unit *  closestBaneling = Banelings[0];
+						for (auto baneling : Banelings) {
+							float distance = Util::Dist(Zergling->pos, baneling->pos);
+							if (distance > closestDist) {
+								closestDist = distance;
+								closestBaneling = baneling;
+							}
+						}
+						Micro::SmartMove(Zergling, closestBaneling->pos, m_bot);
+
+					}
+					// if we're not near the order position
+					else if (Util::Dist(Zergling->pos, order.getPosition()) > 4)
+					{
+						// move to it
+						Micro::SmartMove(Zergling, order.getPosition(), m_bot);
+					}
+				}
+			}
+
 		}
 
 		if (m_bot.Config().DrawUnitTargetInfo)
