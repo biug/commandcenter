@@ -110,7 +110,10 @@ void ProductionManager::manageBuildOrderQueue()
         return;
     }
 	
-	if (m_bot.Strategy().ShouldExpandNow()
+	if (m_bot.Strategy().ShouldExpandNow() && 
+		!(m_queue.getHighestPriorityItem().type.getUnitType() == sc2::UNIT_TYPEID::PROTOSS_NEXUS ||
+			m_queue.getHighestPriorityItem().type.getUnitType() == sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER ||
+			m_queue.getHighestPriorityItem().type.getUnitType() == sc2::UNIT_TYPEID::ZERG_HATCHERY)
 		// Don't queue more bases than you have minerals for.
 		)
 	{
@@ -265,7 +268,8 @@ void ProductionManager::fixBuildOrderDeadlock()
 
 		// build a refinery if we don't have one and the thing costs gas
 		auto refinery = Util::GetRefinery(m_bot.GetPlayerRace(Players::Self));
-		if (m_bot.Data(currentItem.type.getUnitType()).gasCost > 0 && m_bot.UnitInfo().getUnitTypeCount(Players::Self, refinery, false) == 0)
+		if (m_bot.Data(currentItem.type.getUnitType()).gasCost > 0 && m_bot.UnitInfo().getUnitTypeCount(Players::Self, refinery, false) == 0 \
+			&& !m_buildingManager.isBeingBuilt(refinery))
 		{
 			m_queue.queueAsHighestPriority(MacroAct(refinery.ToType()), true);
 		}
