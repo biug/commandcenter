@@ -61,40 +61,30 @@ void ThorManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Thor, ThorTargets);
 				if (!target) continue;
-				
-				if (m_bot.State().m_stimpack)
+				int enemyflynum = 0;
+				bool flag = false;
+				for (auto & u : m_bot.Observation()->GetUnits())
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Thor);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
+					if ((Util::GetPlayer(u) == Players::Enemy) && !(Util::IsHeavyArmor(u))&&u->is_flying)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
+						enemyflynum++;
 					}
-					for (auto buff : Thor->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Thor->weapon_cooldown >0))
+					if ((Util::GetPlayer(u) == Players::Enemy) && Util::IsHeavyArmor(u) && u->is_flying)
 					{
-						Micro::SmartAbility(Thor, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
+						flag=true;
 					}
-					continue;
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Thor->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Thor->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Thor, tp, m_bot);
+				if (Thor->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THORAP && enemyflynum > 2) {
+					Micro::SmartAbility(Thor, sc2::ABILITY_ID::MORPH_THOREXPLOSIVEMODE, m_bot);
+				}
+				else if (Thor->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THOR && enemyflynum==1 && flag)
+				{
+						Micro::SmartAbility(Thor, sc2::ABILITY_ID::MORPH_THORHIGHIMPACTMODE, m_bot);
 				}
 				else {
-					Micro::SmartAttackMove(Thor, target->pos, m_bot);
+					Micro::SmartAttackUnit(Thor, target, m_bot);
 				}
+				
 			}
 			// if there are no targets
 			else
@@ -149,22 +139,20 @@ const sc2::Unit * ThorManager::getTarget(const sc2::Unit * rangedUnit, const std
 int ThorManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (unit->is_flying) {
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;
 	}
-	if (Util::IsMeleeUnit(unit))
+	if (Util::IsCombatUnit(unit, m_bot))
 	{
 		return 10;
 	}
-	if (Util::IsCombatUnit(unit, m_bot))
-	{
-		return 9;
-	}
-
 	if (Util::IsWorker(unit))
 	{
-		return 8;
+		return 9;
 	}
 
 	return 1;

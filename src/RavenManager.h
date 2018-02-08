@@ -24,4 +24,6 @@ public:
 	void    assignTargets(const std::vector<const sc2::Unit *> & targets);
 	int     getAttackPriority(const sc2::Unit * rangedUnit, const sc2::Unit * target);
 	const sc2::Unit * getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets);
+	sc2::Point2D RavenManager::RetreatPosition(const sc2::Unit * rangedUnit);
+	sc2::Point2D RavenManager::GetTurretPosition(const sc2::Unit * rangedUnit);
 };

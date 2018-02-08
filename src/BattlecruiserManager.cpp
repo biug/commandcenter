@@ -61,42 +61,39 @@ void BattlecruiserManager::assignTargets(const std::vector<const sc2::Unit *> & 
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Battlecruiser, BattlecruiserTargets);
 				if (!target) continue;
-				
-				if (m_bot.State().m_stimpack)
+				auto abilities = m_bot.Query()->GetAbilitiesForUnit(Battlecruiser);
+				bool isYamatogunVaild = false;
+				bool isTacticaljumpVaild = false;
+
+				for (auto & ab : abilities.abilities)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Battlecruiser);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_YAMATOGUN)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
+						isYamatogunVaild = true;
+
 					}
-					for (auto buff : Battlecruiser->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Battlecruiser->weapon_cooldown >0))
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_TACTICALJUMP)
 					{
-						Micro::SmartAbility(Battlecruiser, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
+						isTacticaljumpVaild = true;
+
 					}
-					continue;
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Battlecruiser->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Battlecruiser->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Battlecruiser, tp, m_bot);
+
+				if (isYamatogunVaild && Battlecruiser->energy >= 125)
+				{
+					Micro::SmartAbility(Battlecruiser, sc2::ABILITY_ID::EFFECT_YAMATOGUN, target, m_bot);
+					
+				}
+				else if (beingAttack && currentHP<50 && isTacticaljumpVaild && (Battlecruiser->weapon_cooldown > 0) && Battlecruiser->energy >= 100) {
+					sc2::Point2D base = m_bot.GetStartLocation();
+					Micro::SmartAbility(Battlecruiser, sc2::ABILITY_ID::EFFECT_TACTICALJUMP, base, m_bot);
 				}
 				else {
 					Micro::SmartAttackMove(Battlecruiser, target->pos, m_bot);
+					
 				}
 			}
-			// if there are no targets
+			// if there are no targets 
 			else
 			{
 				// if we're not near the order position
@@ -149,6 +146,9 @@ const sc2::Unit * BattlecruiserManager::getTarget(const sc2::Unit * rangedUnit, 
 int BattlecruiserManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (Util::canAttackSky(unit->unit_type)) {
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;
