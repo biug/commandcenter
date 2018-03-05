@@ -17,3 +17,4 @@ bin/TechTree.json
 src/ZerglingManager.cpp
 src/ZerglingManager.cpp
 src/ZerglingManager.cpp
+bin/BotConfig.txt

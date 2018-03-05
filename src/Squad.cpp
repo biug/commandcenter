@@ -291,7 +291,22 @@ void Squad::addUnitsToMicroManagers()
 		{
 			voidrayUnits.push_back(unit);
 		}
-
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THOR)
+		{
+			thorUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BANSHEE)
+		{
+			bansheeUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_BATTLECRUISER)
+		{
+			battlecruiserUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_RAVEN)
+		{
+			ravenUnits.push_back(unit);
+		}
 		//continue to add 
 		// select ranged _units
 		else if (Util::GetAttackRange(unit->unit_type, m_bot) >= 1.5f)
@@ -324,7 +339,14 @@ void Squad::addUnitsToMicroManagers()
 	m_phoenixManager.setUnits(phoenixUnits);
 	m_colossusManager.setUnits(colossusUnits);
 	m_voidrayManager.setUnits(voidrayUnits);
+<<<<<<< HEAD
 	m_queenManager.setUnits(queenUnits);
+=======
+	m_thorManager.setUnits(thorUnits);
+	m_bansheeManager.setUnits(bansheeUnits);
+	m_battlecruiserManager.setUnits(battlecruiserUnits);
+	m_ravenManager.setUnits(ravenUnits);
+>>>>>>> f8e5b0faef98fe6eb7ad3e20206c7bfa9b2ea71b
 }
 
 // TODO: calculates whether or not to regroup
