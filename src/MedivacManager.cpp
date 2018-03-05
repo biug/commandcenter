@@ -59,7 +59,10 @@ void MedivacManager::executeMicro(const std::vector<const sc2::Unit *> & targets
 
 				//auto p1 = target->pos, p2 = Medivac->pos;
 				//auto tp = p2 * 2 - p1;
-			Micro::SmartMove(Medivac, target->pos, m_bot);
+			if (Util::Dist(target->pos, Medivac->pos) > 2) {
+				Micro::SmartMove(Medivac, target->pos, m_bot);
+			}
+			
 			/**
 			if (target->health < target->health_max*0.2) {
 				loadUnit(target, Medivac);

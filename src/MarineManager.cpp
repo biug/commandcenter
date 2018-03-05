@@ -29,7 +29,6 @@ void MarineManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
 void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 {
 	const std::vector<const sc2::Unit *> & marines = getUnits();
-
 	// figure out targets
 	std::vector<const sc2::Unit *> marineTargets;
 	for (auto target : targets)

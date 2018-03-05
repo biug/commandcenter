@@ -30,6 +30,7 @@ Squad::Squad(CCBot & bot)
 	, m_phoenixManager(bot)
 	, m_colossusManager(bot)
 	, m_voidrayManager(bot)
+	, m_queenManager(bot)
 {
 }
 
@@ -62,6 +63,7 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 	, m_phoenixManager(bot)
 	, m_colossusManager(bot)
 	, m_voidrayManager(bot)
+	, m_queenManager(bot)
 {
 }
 
@@ -102,6 +104,7 @@ void Squad::onFrame()
 		m_phoenixManager.regroup(regroupPosition);
 		m_colossusManager.regroup(regroupPosition);
 		m_voidrayManager.regroup(regroupPosition);
+		m_queenManager.regroup(regroupPosition);
 	}
 	else // otherwise, execute micro
 	{
@@ -127,6 +130,7 @@ void Squad::onFrame()
 		m_phoenixManager.execute(m_order);
 		m_colossusManager.execute(m_order);
 		m_voidrayManager.execute(m_order);
+		m_queenManager.execute(m_order);
 		//_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
 		//_detectorManager.execute(_order);
 	}
@@ -208,6 +212,7 @@ void Squad::addUnitsToMicroManagers()
 	std::vector<const sc2::Unit *> phoenixUnits;
 	std::vector<const sc2::Unit *> colossusUnits;
 	std::vector<const sc2::Unit *> voidrayUnits;
+	std::vector<const sc2::Unit *> queenUnits;
 	// add _units to micro managers
 	for (auto unit : m_units)
 	{
@@ -257,6 +262,10 @@ void Squad::addUnitsToMicroManagers()
 		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_ZERGLING || unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) // sc2::UNIT_TYPEID::TERRAN_GHOSTACADEMY
 		{
 			zerglingUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_QUEEN)
+		{
+			queenUnits.push_back(unit);
 		}
 		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_ZEALOT)
 		{
@@ -315,6 +324,7 @@ void Squad::addUnitsToMicroManagers()
 	m_phoenixManager.setUnits(phoenixUnits);
 	m_colossusManager.setUnits(colossusUnits);
 	m_voidrayManager.setUnits(voidrayUnits);
+	m_queenManager.setUnits(queenUnits);
 }
 
 // TODO: calculates whether or not to regroup

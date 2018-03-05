@@ -43,8 +43,8 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 	double morphrate = 0.2;
 	double banelingnum = 0;
 	double num = Zerglings.size()* morphrate;
-	std::cout << "Zerglings.size() " << Zerglings.size() << std::endl;
-	std::cout << "num " << num << std::endl;
+	//std::cout << "Zerglings.size() " << Zerglings.size() << std::endl;
+	//std::cout << "num " << num << std::endl;
 
 	for (auto Zergling : Zerglings) {
 		if (Zergling->unit_type.ToType() == sc2::UNIT_TYPEID::ZERG_BANELING) {
@@ -52,9 +52,9 @@ void ZerglingManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 		}
 	}
 
-	std::cout << "banelingnum " << banelingnum << std::endl;
+	//std::cout << "banelingnum " << banelingnum << std::endl;
 	num -= banelingnum;
-	std::cout << "num " << num << std::endl;
+	//std::cout << "num " << num << std::endl;
 	if (Zerglings.size() > 10 && num >0) {
 		for (auto Zergling : Zerglings) {
 			auto abilities = m_bot.Query()->GetAbilitiesForUnit(Zergling);

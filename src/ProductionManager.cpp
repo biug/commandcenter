@@ -109,7 +109,7 @@ void ProductionManager::manageBuildOrderQueue()
     {
         return;
     }
-	
+	/*
 	if (m_bot.Strategy().ShouldExpandNow() && 
 		!(m_queue.getHighestPriorityItem().type.getUnitType() == sc2::UNIT_TYPEID::PROTOSS_NEXUS ||
 			m_queue.getHighestPriorityItem().type.getUnitType() == sc2::UNIT_TYPEID::TERRAN_COMMANDCENTER ||
@@ -124,7 +124,7 @@ void ProductionManager::manageBuildOrderQueue()
 		}
 	
 	}
-	
+	*/
 	if (detectSupplyDeadlock() && m_bot.Observation()->GetFoodUsed() > 25)
 	{
 		// we need build supply depot
@@ -292,7 +292,7 @@ const sc2::Unit * ProductionManager::getProducer(const MacroAct & type, sc2::Poi
 	auto macroLocation = type.getMacroLocation(m_bot);
 	if (macroLocation != sc2::Point2DI(0, 0))
 	{
-		std::cout << "macrolocation found for " << buildType.getName() << std::endl;
+		//std::cout << "macrolocation found for " << buildType.getName() << std::endl;
 		closestTo = Util::GetPosition(macroLocation);
 	}
     // make a set of all candidate producers

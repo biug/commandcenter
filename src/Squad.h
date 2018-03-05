@@ -28,6 +28,8 @@
 //Zerg micromanager
 
 #include "ZerglingManager.h"
+#include "QueenManager.h"
+
 //Protoss micromanager
 
 #include "StalkerManager.h"
@@ -70,6 +72,7 @@ class Squad
 	BattlecruiserManager m_battlecruiserManager;
 
 	ZerglingManager		m_zerglingManager;
+	QueenManager		m_queenManager;
 
 	ZealotManager		m_zealotManager;
 	SentryManager		m_sentryManager;

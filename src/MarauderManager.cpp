@@ -82,7 +82,7 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 					}
 					if (stimpack && (beingAttack || marauder->weapon_cooldown >0))
 					{
-						std::cout << "abality EFFECT_STIM " << std::endl;
+						//std::cout << "abality EFFECT_STIM " << std::endl;
 						Micro::SmartAbility(marauder, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
 					}
 					//continue;
@@ -94,7 +94,6 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 					//auto tp = p2 * 2 - p1;
 					sc2::Point2D rp = RetreatPosition(marauder);
 					Micro::SmartMove(marauder, rp, m_bot);
-					std::cout << "kite attack" << std::endl;
 				}
 				else {
 					Micro::SmartAttackMove(marauder, target->pos, m_bot);
@@ -128,13 +127,6 @@ sc2::Point2D MarauderManager::RetreatPosition(const sc2::Unit * unit)
 	double step_size = 5;
 	double step_x = step_size * sin(angle);
 	double step_y = step_size * cos(angle);
-
-	std::stringstream ss;
-	ss << std::endl;
-	ss << "old position:      " << pos.x << " " << pos.y << std::endl;
-	ss << "new position:      " << (pos.x + step_x) << " " << pos.y + step_y << std::endl;
-	std::cout << ss.str();
-	m_bot.Debug()->DebugTextOut("x", sc2::Point2D(pos.x + step_x, pos.y + step_y), sc2::Colors::White);
 
 	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
 

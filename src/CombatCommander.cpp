@@ -95,6 +95,14 @@ void CombatCommander::updateAttackSquads()
 		}
 	}
 
+	bool shouldattack = shouldWeStartAttacking();
+
+	const BaseLocation * enemyBaseLocation = m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy);
+	// if we have enough army and know enemy baselocation
+	if (shouldattack && enemyBaseLocation) {
+		m_attackStarted = true;
+	}
+
     if (!m_attackStarted)
     {
 		return;
@@ -436,7 +444,25 @@ sc2::Point2D CombatCommander::getMainAttackLocation()
         }
     }
 	
-    // Fourth choice: We can't see anything so explore the map attacking along the way
+
+	// for each start location in the level
+
+	if (!enemyBaseLocation)
+	{
+		for (const BaseLocation * startLocation : m_bot.Bases().getStartingBaseLocations())
+		{
+			
+			// if we haven't explored it yet then scout it out
+			// TODO: this is where we could change the order of the base scouting, since right now it's iterator order
+			if (!m_bot.Map().isExplored(startLocation->getPosition()))
+			{
+				return startLocation->getPosition();
+			}
+		}
+	}
+
+	//return enemyBaseLocation->getPosition();
+    //Fourth choice: We can't see anything so explore the map attacking along the way
     return Util::GetPosition(m_bot.Map().getLeastRecentlySeenPosition());
 }
 

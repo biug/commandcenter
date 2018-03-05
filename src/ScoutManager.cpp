@@ -67,6 +67,7 @@ void ScoutManager::moveScouts()
     // if we know where the enemy region is and where our scout is
 	if (enemyBaseLocation)
 	{
+		//std::cout << "enemyBaseLocation is not null" << std::endl;
 		int scoutDistanceToEnemy = m_bot.Map().getGroundDistance(m_scoutUnit->pos, enemyBaseLocation->getPosition());
 		bool scoutInRangeOfenemy = enemyBaseLocation->containsPosition(m_scoutUnit->pos);
 		if (m_arriveEnemyStart) {
@@ -151,7 +152,7 @@ void ScoutManager::moveScouts()
 	if (!enemyBaseLocation)
 	{
 		m_scoutStatus = "Enemy base unknown, exploring";
-
+		//std::cout << m_scoutStatus << std::endl;
 		for (const BaseLocation * startLocation : m_bot.Bases().getStartingBaseLocations())
 		{
 			// if we haven't explored it yet then scout it out

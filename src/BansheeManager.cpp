@@ -56,41 +56,42 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
 		{
+			bool iscloakon = false;
+			bool iscloakoff = false;
+			bool isdetector = false;
 			if (!BansheeTargets.empty())
 			{
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Banshee, BansheeTargets);
 				if (!target) continue;
 				
-				if (m_bot.State().m_stimpack)
+				auto abilities = m_bot.Query()->GetAbilitiesForUnit(Banshee);
+				for (auto & ab : abilities.abilities)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Banshee);
-					bool stimpack = false;
-					
-					for (auto & ab : abilities.abilities)
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::BEHAVIOR_CLOAKON)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
-							
-						}
+						iscloakon = true;
 					}
-					for (auto buff : Banshee->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Banshee->weapon_cooldown >0))
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::BEHAVIOR_CLOAKOFF)
 					{
-						Micro::SmartAbility(Banshee, sc2::ABILITY_ID::EFFECT_STIM,m_bot);
+						iscloakoff = true;
 					}
-					continue;
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Banshee->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Banshee->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Banshee, tp, m_bot);
+				for (auto & u : m_bot.Observation()->GetUnits())
+				{
+					if ((Util::GetPlayer(u) == Players::Enemy) && Util::IsDetectorType(u->unit_type))
+					{
+						isdetector = true;
+					}
+				}
+				std::cout << iscloakon << std::endl;
+				if (iscloakon && !(isdetector) && Banshee->energy > 25)
+				{
+					Micro::SmartAbility(Banshee, sc2::ABILITY_ID::BEHAVIOR_CLOAKON,  m_bot);
+				}
+				else if (beingAttack && (Banshee->weapon_cooldown > 0 )) {
+					sc2::Point2D rp = RetreatPosition(Banshee);
+					Micro::SmartMove(Banshee, rp, m_bot);
 				}
 				else {
 					Micro::SmartAttackMove(Banshee, target->pos, m_bot);
@@ -99,6 +100,9 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 			// if there are no targets
 			else
 			{
+				if (iscloakoff) {
+					Micro::SmartAbility(Banshee, sc2::ABILITY_ID::BEHAVIOR_CLOAKOFF, m_bot);
+				}
 				// if we're not near the order position
 				if (Util::Dist(Banshee->pos, order.getPosition()) > 4)
 				{
@@ -113,6 +117,19 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 			// TODO: draw the line to the unit's target
 		}
 	}
+}
+
+sc2::Point2D BansheeManager::RetreatPosition(const sc2::Unit * unit)
+{
+	auto pos = unit->pos;
+	sc2::Point2D base = m_bot.GetStartLocation();
+
+	double angle = atan(pos.y - base.y / (pos.x - base.x));
+	double step_size = 5;
+	double step_x = step_size * sin(angle);
+	double step_y = step_size * cos(angle);
+	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
+
 }
 
 // get a target for the ranged unit to attack
@@ -149,6 +166,15 @@ const sc2::Unit * BansheeManager::getTarget(const sc2::Unit * rangedUnit, const 
 int BansheeManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (unit->is_flying) {
+		return 7;
+	}
+	if (Util::canAttackSky(unit->unit_type)) {
+		return 13;
+	}
+	if (Util::IsDetectorType(unit->unit_type)) {
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;
@@ -161,7 +187,6 @@ int BansheeManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Uni
 	{
 		return 9;
 	}
-
 	if (Util::IsWorker(unit))
 	{
 		return 8;
