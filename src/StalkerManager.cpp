@@ -83,8 +83,8 @@ void StalkerManager::assignTargets(const std::vector<const sc2::Unit *> & target
 						
 						auto angle = atan((target->pos.y - stalker->pos.y) / (target->pos.x - stalker->pos.x));
 						int step_size = 8;
-						double step_x = step_size * sin(angle);
-						double step_y = step_size * cos(angle);
+						float step_x = step_size * sin(angle);
+						float step_y = step_size * cos(angle);
 						Micro::SmartAbility(stalker, sc2::ABILITY_ID::EFFECT_BLINK, stalker->pos + sc2::Point2D(step_x, step_y), m_bot);
 						Micro::SmartAttackMove(stalker, target->pos, m_bot);
 					}

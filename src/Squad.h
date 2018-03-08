@@ -39,6 +39,9 @@
 #include "PhoenixManager.h"
 #include "ColossusManager.h"
 #include "VoidRayManager.h"
+#include "CarrierManager.h"
+#include "HightemplarManager.h"
+#include "DarktemplarManager.h"
 
 class CCBot;
 
@@ -80,6 +83,11 @@ class Squad
 	PhoenixManager		m_phoenixManager;
 	ColossusManager		m_colossusManager;
 	VoidRayManager		m_voidrayManager;
+	CarrierManager		m_carrierManager;
+	HightemplarManager	m_hightemplarManager;
+	DarktemplarManager  m_darktemplarManager;
+
+
 
 	std::map<const sc2::Unit *, bool> m_nearEnemy;
 

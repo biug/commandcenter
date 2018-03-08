@@ -31,6 +31,9 @@ Squad::Squad(CCBot & bot)
 	, m_colossusManager(bot)
 	, m_voidrayManager(bot)
 	, m_queenManager(bot)
+	, m_carrierManager(bot)
+	, m_hightemplarManager(bot)
+	, m_darktemplarManager(bot)
 {
 }
 
@@ -64,6 +67,9 @@ Squad::Squad(const std::string & name, const SquadOrder & order, size_t priority
 	, m_colossusManager(bot)
 	, m_voidrayManager(bot)
 	, m_queenManager(bot)
+	, m_carrierManager(bot)
+	, m_hightemplarManager(bot)
+	, m_darktemplarManager(bot)
 {
 }
 
@@ -105,6 +111,9 @@ void Squad::onFrame()
 		m_colossusManager.regroup(regroupPosition);
 		m_voidrayManager.regroup(regroupPosition);
 		m_queenManager.regroup(regroupPosition);
+		m_carrierManager.regroup(regroupPosition);
+		m_hightemplarManager.regroup(regroupPosition);
+		m_darktemplarManager.regroup(regroupPosition);
 	}
 	else // otherwise, execute micro
 	{
@@ -131,6 +140,9 @@ void Squad::onFrame()
 		m_colossusManager.execute(m_order);
 		m_voidrayManager.execute(m_order);
 		m_queenManager.execute(m_order);
+		m_carrierManager.execute(m_order);
+		m_hightemplarManager.execute(m_order);
+		m_darktemplarManager.execute(m_order);
 		//_detectorManager.setUnitClosestToEnemy(unitClosestToEnemy());
 		//_detectorManager.execute(_order);
 	}
@@ -213,6 +225,9 @@ void Squad::addUnitsToMicroManagers()
 	std::vector<const sc2::Unit *> colossusUnits;
 	std::vector<const sc2::Unit *> voidrayUnits;
 	std::vector<const sc2::Unit *> queenUnits;
+	std::vector<const sc2::Unit *> carrierUnits;
+	std::vector<const sc2::Unit *> hightemplarUnits;
+	std::vector<const sc2::Unit *> darktemplarUnits;
 	// add _units to micro managers
 	for (auto unit : m_units)
 	{
@@ -291,6 +306,18 @@ void Squad::addUnitsToMicroManagers()
 		{
 			voidrayUnits.push_back(unit);
 		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_CARRIER)
+		{
+			carrierUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_HIGHTEMPLAR)
+		{
+			hightemplarUnits.push_back(unit);
+		}
+		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_DARKTEMPLAR)
+		{
+			darktemplarUnits.push_back(unit);
+		}
 		else if (unit->unit_type.ToType() == sc2::UNIT_TYPEID::TERRAN_THOR)
 		{
 			thorUnits.push_back(unit);
@@ -339,14 +366,14 @@ void Squad::addUnitsToMicroManagers()
 	m_phoenixManager.setUnits(phoenixUnits);
 	m_colossusManager.setUnits(colossusUnits);
 	m_voidrayManager.setUnits(voidrayUnits);
-<<<<<<< HEAD
+	m_carrierManager.setUnits(carrierUnits);
+	m_hightemplarManager.setUnits(hightemplarUnits);
+	m_darktemplarManager.setUnits(darktemplarUnits);
 	m_queenManager.setUnits(queenUnits);
-=======
 	m_thorManager.setUnits(thorUnits);
 	m_bansheeManager.setUnits(bansheeUnits);
 	m_battlecruiserManager.setUnits(battlecruiserUnits);
 	m_ravenManager.setUnits(ravenUnits);
->>>>>>> f8e5b0faef98fe6eb7ad3e20206c7bfa9b2ea71b
 }
 
 // TODO: calculates whether or not to regroup

@@ -47,9 +47,9 @@ void CarrierManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		BOT_ASSERT(Carrier, "ranged unit is null");
 		if (CarrierInfos.find(Carrier) == CarrierInfos.end())
 		{
-			CarrierInfos[Carrier] = CarrierInfo(Carrier->health);
+			CarrierInfos[Carrier] = CarrierInfo(Carrier->health + Carrier->shield);
 		}
-		float currentHP = Carrier->health;
+		float currentHP = Carrier->health + Carrier->shield;
 		bool beingAttack = currentHP < CarrierInfos[Carrier].m_hpLastSecond;
 		if (refreshInfo) CarrierInfos[Carrier].m_hpLastSecond = currentHP;
 
@@ -62,39 +62,27 @@ void CarrierManager::assignTargets(const std::vector<const sc2::Unit *> & target
 				const sc2::Unit * target = getTarget(Carrier, CarrierTargets);
 				if (!target) continue;
 
-				if (m_bot.State().m_stimpack)
+				auto abilities = m_bot.Query()->GetAbilitiesForUnit(Carrier);
+				bool buildInterceptors= false;
+				for (auto & ab : abilities.abilities)
 				{
-					auto abilities = m_bot.Query()->GetAbilitiesForUnit(Carrier);
-					bool stimpack = false;
-
-					for (auto & ab : abilities.abilities)
+					if (ab.ability_id.ToType() == sc2::ABILITY_ID::BUILD_INTERCEPTORS)
 					{
-						if (ab.ability_id.ToType() == sc2::ABILITY_ID::EFFECT_STIM)
-						{
-							stimpack = true;
+						buildInterceptors = true;
 
-						}
 					}
-					for (auto buff : Carrier->buffs) {
-						if (buff == sc2::BUFF_ID::STIMPACK) {
-							stimpack = false;
-						}
-					}
-					if (stimpack && (beingAttack || Carrier->weapon_cooldown >0))
-					{
-						Micro::SmartAbility(Carrier, sc2::ABILITY_ID::EFFECT_STIM, m_bot);
-					}
-					//continue;
 				}
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Carrier->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Carrier->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Carrier, tp, m_bot);
+				if (beingAttack && !buildInterceptors) {
+					sc2::Point2D rp = RetreatPosition(Carrier);
+					Micro::SmartMove(Carrier, rp, m_bot);
+				}
+				else if(buildInterceptors){
+					Micro::SmartAbility(Carrier, sc2::ABILITY_ID::BUILD_INTERCEPTORS, m_bot);
 				}
 				else {
 					Micro::SmartAttackMove(Carrier, target->pos, m_bot);
 				}
+				
 			}
 			// if there are no targets
 			else
@@ -113,6 +101,22 @@ void CarrierManager::assignTargets(const std::vector<const sc2::Unit *> & target
 			// TODO: draw the line to the unit's target
 		}
 	}
+}
+
+
+sc2::Point2D CarrierManager::RetreatPosition(const sc2::Unit * unit)
+{
+	auto pos = unit->pos;
+	sc2::Point2D base = m_bot.GetStartLocation();
+
+	auto angle = atan(pos.y - base.y / (pos.x - base.x));
+	float step_size = 5;
+	float step_x = step_size * sin(angle);
+	float step_y = step_size * cos(angle);
+	m_bot.Debug()->DebugTextOut("x", sc2::Point2D(pos.x + step_x, pos.y + step_y), sc2::Colors::White);
+
+	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
+
 }
 
 // get a target for the ranged unit to attack
@@ -149,6 +153,9 @@ const sc2::Unit * CarrierManager::getTarget(const sc2::Unit * rangedUnit, const 
 int CarrierManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (Util::IsHeavyArmor(unit)) {
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;

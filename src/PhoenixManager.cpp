@@ -130,10 +130,10 @@ sc2::Point2D PhoenixManager::RetreatPosition(const sc2::Unit * unit)
 	auto pos = unit->pos;
 	sc2::Point2D base = m_bot.GetStartLocation();
 
-	double angle = atan(pos.y - base.y / (pos.x - base.x));
-	double step_size = 5;
-	double step_x = step_size * sin(angle);
-	double step_y = step_size * cos(angle);
+	float angle = atan(pos.y - base.y / (pos.x - base.x));
+	float step_size = 5;
+	float step_x = step_size * sin(angle);
+	float step_y = step_size * cos(angle);
 	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
 
 }
