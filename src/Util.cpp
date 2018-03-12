@@ -693,3 +693,73 @@ const sc2::Unit* Util::getClosestPylon(CCBot & bot)
 	}
 	return closest;
 }
+
+
+int Util::GetAttackDamage(const sc2::UnitTypeID & type, CCBot & bot)
+{
+	auto & weapons = bot.Observation()->GetUnitTypeData()[type].weapons;
+
+	float max_damage = 0.0f;
+	for (auto & weapon : weapons)
+	{
+		max_damage = weapon.damage_ * weapon.attacks;
+	}
+
+	return static_cast<int>(max_damage);
+}
+
+float Util::GetAttackRate(const sc2::UnitTypeID & type, CCBot & bot)
+{
+	auto & weapons = bot.Observation()->GetUnitTypeData()[type].weapons;
+
+	float speed = 0.0f;
+	for (auto & weapon : weapons)
+	{
+		speed = weapon.speed;
+	}
+
+	return speed;
+}
+
+
+int Util::DPSAtPoint(const sc2::Point2D unit_pos, CCBot & bot)
+{
+	int total_dps = 0;
+	for (auto & enemyunit : bot.Observation()->GetUnits(sc2::Unit::Alliance::Enemy))
+	{
+		const float dist = Util::Dist(enemyunit->pos, unit_pos);
+		const float range = GetAttackRange(enemyunit->unit_type, bot);
+		// if we are in range, the dps that is coming at us increases.
+		if (dist < range + 0.5f) // Add one half to account for our unit radius. Also gives us a margin of error.
+		{
+			total_dps += GetAttackDamage(enemyunit->unit_type, bot);
+		}
+	}
+
+	return total_dps;
+}
+
+// future_time is how many seconds into the future do we want to calculate the potential dps at the given point. 
+int Util::PredictFutureDPSAtPoint(const sc2::Point2D unit_pos, const float future_time, CCBot & bot)
+{
+	// Save work and avoid dividing by 0.
+	if (future_time == 0) return DPSAtPoint(unit_pos, bot);
+
+	float total_dps = 0;
+	for (auto & enemy_unit : bot.Observation()->GetUnits(sc2::Unit::Alliance::Enemy))
+	{
+		const float dist = Util::Dist(enemy_unit->pos, unit_pos);
+		const float range = GetAttackRange(enemy_unit->unit_type, bot);
+		const auto enemy_type = bot.Observation()->GetUnitTypeData()[enemy_unit->unit_type];
+		const float enemy_travel_dist = enemy_type.movement_speed * future_time;
+		// if we are in range, the dps that is coming at us increases.
+		if (dist < range + enemy_travel_dist) // Add one half to account for our unit radius. Also gives us a margin of error.
+		{
+			const int dam = GetAttackDamage(enemy_unit->unit_type, bot);
+			const float rate = GetAttackRate(enemy_unit->unit_type, bot);
+			total_dps += dam  * ceil(rate / future_time);
+		}
+	}
+
+	return total_dps;
+}

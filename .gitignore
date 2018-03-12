@@ -18,3 +18,8 @@ src/ZerglingManager.cpp
 src/ZerglingManager.cpp
 src/ZerglingManager.cpp
 bin/BotConfig.txt
+vs/Debug.cpp
+vs/Debug.h
+bin/BotConfig.txt
+vs/CommandCenter.vcxproj
+*.filters

@@ -199,6 +199,12 @@
     <ClCompile Include="..\src\MarineManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\DarktemplarManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\HightemplarManager.cpp">
+      <Filter>micro</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -402,6 +408,12 @@
       <Filter>micro</Filter>
     </ClInclude>
     <ClInclude Include="..\src\MarineManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DarktemplarManager.h">
+      <Filter>micro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HightemplarManager.h">
       <Filter>micro</Filter>
     </ClInclude>
   </ItemGroup>

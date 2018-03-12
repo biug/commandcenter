@@ -71,6 +71,14 @@ namespace Util
 
 	const sc2::Unit*	getClosestPylon(CCBot & bot);
 
+	float GetAttackRate(const sc2::UnitTypeID & type, CCBot & bot);
+
+	int DPSAtPoint(const sc2::Point2D unit_pos, CCBot & bot);
+
+	int GetAttackDamage(const sc2::UnitTypeID & type, CCBot & bot);
+
+	int PredictFutureDPSAtPoint(const sc2::Point2D unit_pos, const float future_time, CCBot & bot);
+
 	template<typename P1, typename P2>
 	float PlanerDist(const P1 & p1, const P2 & p2)
 	{

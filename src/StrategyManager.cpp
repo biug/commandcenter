@@ -64,7 +64,7 @@ void StrategyManager::onFrame()
 const BuildOrder & StrategyManager::getOpeningBookBuildOrder() const
 {
     auto buildOrderIt = m_strategies.find(m_bot.Config().StrategyName);
-
+	std::cout << "StrategyName " << m_bot.Config().StrategyName << std::endl;
     // look for the build order in the build order map
     if (buildOrderIt != std::end(m_strategies))
     {

@@ -22,12 +22,12 @@ int main(int argc, char* argv[])
     }
     
     rapidjson::Document doc;
-    std::string config = JSONTools::ReadFile("BotConfig.txt");
+    std::string config = JSONTools::ReadFile("C:\\Users\\Admin\\Documents\\GitHub\\commandcenter\\bin\\BotConfig.txt");
     if (config.length() == 0)
     {
         std::cerr << "Config file could not be found, and is required for starting the bot\n";
         std::cerr << "Please read the instructions and try again\n";
-        exit(-1);
+
     }
 
 	
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Config file could not be parsed, and is required for starting the bot\n";
         std::cerr << "Please read the instructions and try again\n";
-        exit(-1);
+
     }
 
     std::string botRaceString;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Config file has no 'Game Info' object, required for starting the bot\n";
         std::cerr << "Please read the instructions and try again\n";
-        exit(-1);
+
     }
 
     // Add the custom bot, it will control the players.
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     {
         coordinator.Update();
 		// Slow down game speed for better look & feel while making experiments.
-		sc2::SleepFor(5);
+		sc2::SleepFor(1);
     }
 
     return 0;

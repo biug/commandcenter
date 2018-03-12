@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{D4AC5062-8BEA-46D8-9231-57241C214F1C}</ProjectGUID>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
     <ProjectName>CommandCenter</ProjectName>
@@ -86,12 +86,12 @@
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>D:\scbots\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\scbots\s2client-api\build_debug\bin;$(LibraryPath)</LibraryPath>
     <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>D:\scbots\s2client-api\build\bin;E:\SC2API_Binary_vs2017\SC2API_Binary_vs2017\lib;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.16299.0\ucrt\x64;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.16299.0\um\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;E:\SC2API_Binary_vs2017\SC2API_Binary_vs2017\include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.16299.0\ucrt;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.16299.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.16299.0\um;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.16299.0\winrt;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\scbots\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -293,10 +293,12 @@
     <ClCompile Include="..\src\BuildOrderQueue.cpp" />
     <ClCompile Include="..\src\CombatCommander.cpp" />
     <ClCompile Include="..\src\Common.cpp" />
+    <ClCompile Include="..\src\DarktemplarManager.cpp" />
     <ClCompile Include="..\src\DistanceMap.cpp" />
     <ClCompile Include="..\src\GameCommander.cpp" />
     <ClCompile Include="..\src\GhostManager.cpp" />
     <ClCompile Include="..\src\HellionManager.cpp" />
+    <ClCompile Include="..\src\HightemplarManager.cpp" />
     <ClCompile Include="..\src\JSONTools.cpp" />
     <ClCompile Include="..\src\MacroAct.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -364,10 +366,12 @@
     <ClInclude Include="..\src\CombatCommander.h" />
     <ClInclude Include="..\src\Common.h" />
     <ClInclude Include="..\src\BotConfig.h" />
+    <ClInclude Include="..\src\DarktemplarManager.h" />
     <ClInclude Include="..\src\DistanceMap.h" />
     <ClInclude Include="..\src\GameCommander.h" />
     <ClInclude Include="..\src\GhostManager.h" />
     <ClInclude Include="..\src\HellionManager.h" />
+    <ClInclude Include="..\src\HightemplarManager.h" />
     <ClInclude Include="..\src\JSONTools.h" />
     <ClInclude Include="..\src\MacroAct.h" />
     <ClInclude Include="..\src\MacroCommand.h" />

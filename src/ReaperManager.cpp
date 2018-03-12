@@ -65,13 +65,8 @@ void ReaperManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 					Micro::SmartAttackMove(Reaper, target->pos, m_bot);
 				}
 				// kite attack it
-				else if (Util::IsMeleeUnit(target) && Reaper->weapon_cooldown > 0 || beingAttack) {
-					auto p1 = target->pos, p2 = Reaper->pos;
-					auto tp = p2 * 3 - p1;
-					Micro::SmartMove(Reaper, tp, m_bot);
-				}
 				else {
-					Micro::SmartAttackMove(Reaper, target->pos, m_bot);
+					SmartKiteTarget(Reaper, target);
 				}
 			}
 			// if there are no targets
@@ -91,6 +86,122 @@ void ReaperManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 			// TODO: draw the line to the unit's target
 		}
 	}
+}
+
+
+#pragma region Advanced micro functionality
+float ReaperManager::TimeToFaceEnemy(const sc2::Unit* unit, const sc2::Unit* target) const
+{
+	const float x_segment = abs(unit->pos.x - target->pos.x);
+	const float y_segment = abs(unit->pos.y - target->pos.y);
+	const float angle = atan(y_segment / x_segment) * 57.29f; // 57.29 = 180/pi
+
+	return angle / 999; // 999 is the turning spead of reapers. 
+}
+
+// Warning: This funcition has no discrestion in what it kites. Be careful to not attack overlords with reapers!
+void ReaperManager::SmartKiteTarget(const sc2::Unit* unit, const sc2::Unit* target) const
+{
+	assert(unit);
+	assert(target);
+
+	const float range = Util::GetAttackRange(unit->unit_type, m_bot);
+
+	bool should_flee(true);
+
+	// When passing a unit into PathingDistance, how the unit moves is taken into account.
+	// EXAMPLE:: Reapers can cliffjump, Void Rays can fly over everything.
+	const float dist(m_bot.Query()->PathingDistance(unit, target->pos));
+	const float speed(m_bot.Observation()->GetUnitTypeData()[unit->unit_type].movement_speed);
+
+	const float time_to_enter = (dist - range) / speed;
+
+	// If we start moving back to attack, will our weapon be off cooldown?
+	if ((time_to_enter >= unit->weapon_cooldown))
+	{
+		should_flee = false;
+	}
+
+	// Don't kite workers and buildings. 
+	if (Util::IsBuilding(target->unit_type) || Util::IsWorker(target))
+	{
+		should_flee = false;
+	}
+
+	sc2::Point2D flee_position;
+
+	// find the new coordinates.
+	const float delta_x = unit->pos.x - target->pos.x;
+	const float delta_y = unit->pos.y - target->pos.y;
+
+	const float dist2 = Util::Dist(unit->pos, target->pos);
+
+	const float new_x = delta_x * range / dist2 + target->pos.x;
+	const float new_y = delta_y * range / dist2 + target->pos.y;
+
+	const float fire_time = TimeToFaceEnemy(unit, target) + Util::GetAttackRate(unit->unit_type, m_bot) + 0.05f;
+
+	// If we are in danger of dieing, run back to home base!
+	// If we are danger of dieing while attacking
+	if (unit->health <= Util::PredictFutureDPSAtPoint(unit->pos, fire_time, m_bot)
+		// If we are danger of dieing while moving to attack a point.
+		|| unit->health <= Util::DPSAtPoint(sc2::Point2D{ new_x, new_y }, m_bot))
+	{
+		// No matter what the other logic above says to do, RUN!
+		should_flee = true;
+
+		sc2::Point2D base = m_bot.GetStartLocation();
+		Micro::SmartMove(unit, base, m_bot);
+
+		//need to imporve by pathfinding
+		//flee_position = sc2::Point2D{ static_cast<float>(m_bot.Config().ProxyLocationX),
+		//	static_cast<float>(m_bot.Config().ProxyLocationY) };
+		//m_bot.DebugHelper().DrawLine(unit->pos, sc2::Point2D{ new_x, new_y }, sc2::Colors::Red);
+		//Pathfinding p;
+		//p.SmartRunAway(unit, 20, bot_);
+		return;
+	}
+	// Otherwise, kite if we are not close to death.
+	else
+	{
+		flee_position = unit->pos - target->pos + unit->pos;
+		//m_bot.DebugHelper().DrawLine(unit->pos, sc2::Point2D{ new_x, new_y }, sc2::Colors::Green);
+	}
+
+	// If we are on cooldown, run away.
+	if (should_flee)
+	{
+		//bot_.DebugHelper().DrawLine(unit->pos, flee_position);
+		flee_position = unit->pos - target->pos + unit->pos;
+		Micro::SmartMove(unit, flee_position, m_bot);
+	}
+	// Otherwise go attack!
+	else
+	{
+		// bot.DebugHelper().DrawLine(ranged_unit->pos, target->pos, sc2::Colors::Red);
+		Micro::SmartAttackUnit(unit, target, m_bot);
+	}
+}
+
+sc2::Point2D ReaperManager::RetreatPosition(const sc2::Unit * unit)
+{
+	auto pos = unit->pos;
+	sc2::Point2D base = m_bot.GetStartLocation();
+
+	double angle = atan(pos.y - base.y / (pos.x - base.x));
+	double step_size = 10;
+	double step_x = step_size * sin(angle);
+	double step_y = step_size * cos(angle);
+
+	//std::stringstream ss;
+	//ss << std::endl;
+	//ss << "old position:      " << pos.x << " " << pos.y << std::endl;
+	//ss << "new position:      " << (pos.x + step_x) << " " << pos.y + step_y << std::endl;
+	//std::cout << ss.str();
+	m_bot.Debug()->DebugTextOut("x", sc2::Point2D(pos.x + step_x, pos.y + step_y), sc2::Colors::White);
+
+	return sc2::Point2D(pos.x + step_x, pos.y + step_y);
+
 }
 
 // get a target for the ranged unit to attack

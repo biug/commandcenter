@@ -355,9 +355,9 @@ void Squad::addUnitsToMicroManagers()
 	//m_detectorManager.setUnits(detectorUnits);
 	m_tankManager.setUnits(tankUnits);
 	m_hellionManager.setUnits(hellionUnits);
-	m_reaperManager.setUnits(ghostUnits);
+	m_reaperManager.setUnits(reaperUnits);
 	m_medivacManager.setUnits(medivacUnits);
-	m_ghostManager.setUnits(medivacUnits);
+	m_ghostManager.setUnits(ghostUnits);
 	m_vikingManager.setUnits(vikingUnits);
 	m_zerglingManager.setUnits(zerglingUnits);
 	m_zealotManager.setUnits(zealotUnits);
