@@ -444,7 +444,8 @@ void BuildingManager::drawBuildingInformation()
         }
     }
 
-    m_bot.Map().drawTextScreen(sc2::Point2D(0.05f, 0.05f), ss.str());
+    //m_bot.Map().drawTextScreen(sc2::Point2D(0.05f, 0.05f), ss.str());
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.05f, 0.05f), ss.str(), sc2::Colors::White, 20);
 }
 
 std::vector<sc2::UnitTypeID> BuildingManager::buildingsQueued() const

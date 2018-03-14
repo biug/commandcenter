@@ -7,6 +7,8 @@
 UnitInfoManager::UnitInfoManager(CCBot & bot)
     : m_bot(bot)
 {
+	m_unitData[Players::Self] = *new  UnitData();
+	m_unitData[Players::Enemy] = *new  UnitData();
 
 }
 
@@ -15,11 +17,44 @@ void UnitInfoManager::onStart()
 
 }
 
+void UnitInfoManager::OnUnitDestroyed(const sc2::Unit * unit)
+{
+	if (unit->alliance== sc2::Unit::Self) {
+		m_unitData[Players::Self].killUnit(unit);
+	}
+	if (unit->alliance == sc2::Unit::Enemy) {
+		m_unitData[Players::Enemy].killUnit(unit);
+	}
+
+	//test
+	/*
+	if (unit->unit_type == sc2::UNIT_TYPEID::TERRAN_SCV) {
+		//std::cout << "unit->unit_type " << unit->unit_type << std::endl;
+		//std::cout << "unit->is_alive " << unit->is_alive << std::endl;
+		//std::cout << "unit->health " << unit->health << std::endl;
+
+		if (!unit->is_alive) {
+			std::cout << "is dead";
+		}
+		if (unit->is_alive == false) {
+			std::cout << "is dead";
+		}
+		if (unit == NULL) {
+			std::cout << "is null";
+		}
+		if (unit->health < 20.0) {
+			std::cout << "is dying";
+		}
+	}
+	*/
+	
+}
+
 void UnitInfoManager::onFrame()
 {
     updateUnitInfo();
     drawUnitInformation(100, 100);
-    //drawSelectedUnitDebugInfo();
+	drawCombatUnitComparision(100, 100);
 }
 
 void UnitInfoManager::updateUnitInfo()
@@ -37,8 +72,8 @@ void UnitInfoManager::updateUnitInfo()
     }
 
     // remove bad enemy units
-    m_unitData[Players::Self].removeBadUnits();
-    m_unitData[Players::Enemy].removeBadUnits();
+    //m_unitData[Players::Self].removeBadUnits();
+    //m_unitData[Players::Enemy].removeBadUnits();
 }
 
 const std::map<const sc2::Unit *, UnitInfo> & UnitInfoManager::getUnitInfoMap(int player) const
@@ -202,12 +237,18 @@ void UnitInfoManager::drawUnitInformation(float x,float y) const
     }
 
     std::stringstream ss;
-
+	int numUnits;
+	int numDeadUnits;
     // for each unit in the queue
     for (int t(0); t < 255; t++)
     {
-        int numUnits =      m_unitData.at(Players::Self).getNumUnits(t);
-        int numDeadUnits =  m_unitData.at(Players::Enemy).getNumDeadUnits(t);
+		if (m_unitData.find(Players::Self) != m_unitData.end()) {
+			numUnits = m_unitData.at(Players::Self).getNumUnits(t);
+		}
+
+		if (m_unitData.find(Players::Enemy) != m_unitData.end()) {
+			numDeadUnits = m_unitData.at(Players::Enemy).getNumDeadUnits(t);
+		}
 
         // if there exist units in the vector
         if (numUnits > 0)
@@ -223,6 +264,59 @@ void UnitInfoManager::drawUnitInformation(float x,float y) const
     }
 
 
+}
+
+void UnitInfoManager::drawCombatUnitComparision(float x, float y) const
+{
+	if (!m_bot.Config().DrawCombatUnitCompare)
+	{
+		return;
+	}
+
+	std::stringstream ss;
+	std::stringstream ss2;
+
+	int self_numUnits;
+	int enemy_numUnits;
+
+	int self_numDeadUnits;
+	int enemy_numDeadUnits;
+
+	ss <<  " Self Unit   vs   Enemy Unit " << "\n";
+	ss2 << " Lost Unit : Self vs Enemy  " << "\n";
+	// for each unit in the queue
+	for (int t(0); t < 255; t++)
+	{
+		if (m_unitData.find(Players::Self) != m_unitData.end()) {
+			self_numUnits = m_unitData.at(Players::Self).getNumUnits(t);
+			self_numDeadUnits = m_unitData.at(Players::Self).getNumDeadUnits(t);
+		}
+
+		if (m_unitData.find(Players::Enemy) != m_unitData.end()) {
+			enemy_numUnits = m_unitData.at(Players::Enemy).getNumDeadUnits(t);
+			enemy_numDeadUnits = m_unitData.at(Players::Enemy).getNumDeadUnits(t);
+		}
+
+		// if there exist units in the vector
+		if (self_numUnits > 0 || enemy_numUnits >0 )
+		{
+			
+			ss << sc2::UnitTypeToName(t) <<" : "<< self_numUnits << " vs " << enemy_numUnits << "\n";
+		}
+
+		// if there exist units in the vector
+		if (self_numDeadUnits > 0 || enemy_numDeadUnits >0)
+		{
+			ss2 << sc2::UnitTypeToName(t) << " : " << self_numDeadUnits << " vs " << enemy_numDeadUnits << "\n";
+		}
+
+	}
+	//std::cout << ss.str() << std::endl;
+	//m_bot.Debug()->DebugTextOut(ss.str(),sc2::Point2D(1.0f, 1.0f), sc2::Colors::White);
+	//m_bot.Map().drawTextScreen(sc2::Point2D(0.55f, 0.2f), ss.str());
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.7f, 0.3f), ss.str(), sc2::Colors::White, 20);
+
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.7f, 0.5f), ss2.str(), sc2::Colors::White, 20);
 }
 
 void UnitInfoManager::updateUnit(const sc2::Unit * unit)
@@ -282,5 +376,6 @@ void UnitInfoManager::getNearbyForce(std::vector<UnitInfo> & unitInfo, sc2::Poin
 
 const UnitData & UnitInfoManager::getUnitData(int player) const
 {
-    return m_unitData.find(player)->second;
+	const auto & it = m_unitData.find(player);
+    return it->second;
 }

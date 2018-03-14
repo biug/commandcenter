@@ -52,7 +52,7 @@ class UnitData
     std::vector<int>        m_numUnits;
     int                     m_mineralsLost;
     int	                    m_gasLost;
-
+	//std::vector<const sc2::Unit *>    m_isAlive;
     bool badUnitInfo(const UnitInfo & ui) const;
 
 public:

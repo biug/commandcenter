@@ -306,6 +306,11 @@ void MapTools::drawTextScreen(const sc2::Point2D & pos, const std::string & str,
     m_bot.Debug()->DebugTextOut(str, pos, color);
 }
 
+void MapTools::drawTextScreenAdjustSize(const sc2::Point2D & pos, const std::string & str, const sc2::Color & color, uint32_t size = 8) const
+{
+	m_bot.Debug()->DebugTextOut(str, pos, color, size);
+}
+
 bool MapTools::isConnected(int x1, int y1, int x2, int y2) const
 {
     if (!isValid(x1, y1) || !isValid(x2, y2))

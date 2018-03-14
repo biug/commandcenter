@@ -50,7 +50,8 @@ void ScoutManager::drawScoutInformation()
     std::stringstream ss;
     ss << "Scout Info: " << m_scoutStatus;
 
-    m_bot.Map().drawTextScreen(sc2::Point2D(0.1f, 0.6f), ss.str());
+    //m_bot.Map().drawTextScreen(sc2::Point2D(0.1f, 0.6f), ss.str());
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.1f, 0.6f), ss.str(), sc2::Colors::White, 30);
 }
 
 void ScoutManager::moveScouts()

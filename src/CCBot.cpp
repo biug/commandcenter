@@ -68,6 +68,14 @@ void CCBot::OnUnitCreated(const sc2::Unit * unit)
 
 }
 
+void CCBot::OnUnitDestroyed(const sc2::Unit * unit)
+{
+	if (!unit) {
+		return;
+	}
+	m_unitInfo.OnUnitDestroyed(unit);
+}
+
 void CCBot::OnUpgradeCompleted(sc2::UpgradeID upgradeID)
 {
 	m_state.OnUpgradeCompleted(upgradeID);

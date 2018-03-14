@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
     std::string botRaceString;
     std::string enemyRaceString;
     std::string mapString;
-    int stepSize = 1;
-	sc2::Difficulty enemyDifficulty = sc2::Difficulty::VeryHard;
+    int stepSize = 5;
+	sc2::Difficulty enemyDifficulty = sc2::Difficulty::MediumHard;
 
     if (doc.HasMember("Game Info") && doc["Game Info"].IsObject())
     {
@@ -75,6 +75,10 @@ int main(int argc, char* argv[])
     coordinator.SetParticipants({
         CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),
         CreateComputer(Util::GetRaceFromString(enemyRaceString), enemyDifficulty)
+		//CreateObserverr(Util::GetRaceFromString(enemyRaceString), &agent)
+		//static inline PlayerSetup CreateObserverr(Race race, Agent* agent) {
+		//    return PlayerSetup(PlayerType::Observer, race,agent);
+		//}
     });
 
     // Start the game.
@@ -86,7 +90,7 @@ int main(int argc, char* argv[])
     {
         coordinator.Update();
 		// Slow down game speed for better look & feel while making experiments.
-		sc2::SleepFor(1);
+		//sc2::SleepFor(1);
     }
 
     return 0;

@@ -12,7 +12,7 @@
         "EnemyDifficulty"           : 5,
         "EnemyRace"                 : "Zerg",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season3\\AscensiontoAiurLE.SC2Map",
-        "StepSize"                  : 1
+        "StepSize"                  : 3
     },
         
     "Micro" :
@@ -33,18 +33,20 @@
     {
         "DrawGameInfo"              : true, 
         "DrawProductionInfo"        : true, 
-        "DrawBaseLocationInfo"      : false,
-        "DrawTileInfo"              : false,
+        "DrawBaseLocationInfo"      : true,
+        "DrawTileInfo"              : true,
         "DrawWalkableSectors"       : false,
-        "DrawScoutInfo"             : false,
+        "DrawScoutInfo"             : true,
         "DrawEnemyUnitInfo"         : false,
-        "DrawResourceInfo"          : false,
-        "DrawUnitTargetInfo"        : false,
+        "DrawResourceInfo"          : true,
+        "DrawUnitTargetInfo"        : true,
         "DrawLastSeenTileInfo"      : false,
-        "DrawSquadInfo"             : false,
+        "DrawSquadInfo"             : true,
         "DrawWorkerInfo"            : false,
-        "DrawBuildingInfo"          : false,
-        "DrawReservedBuildingTiles" : false
+        "DrawBuildingInfo"          : true,
+        "DrawReservedBuildingTiles" : true,
+        
+        "DrawCombatUnitCompare"     : true
     },
     
     "Modules" :
@@ -55,7 +57,7 @@
     "Strategy" :
     {
         "Protoss"                   : "Protoss_ImmortalRush",
-        "Terran"                    : "Terran_Test1",
+        "Terran"                    : "Terran_Test2",
         "Zerg"                      : "Zerg_ZerglingRush",
         
         "ScoutHarassEnemy"          : true,
@@ -72,7 +74,7 @@
 
             "Terran_Test1"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Reaper", "Reaper", "Reaper", "Reaper","Reaper", "Reaper","Reaper", "Reaper", "Reaper", "Reaper", "Reaper", "go start attack","Reaper","Reaper", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper"] },
 
-            "Terran_Test2"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Reaper", "Reaper", "Reaper", "Reaper","Reaper", "Reaper","Reaper", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Factory","Stimpack","Marauder", "Factory", "Starport", "FactoryTechlab", "Medivac", "Medivac", "Medivac", "Medivac", "Marine", "Marine", "Marine", "Marauder", "Marauder", "Marauder", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper"] },
+            "Terran_Test2"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab", "Marine", "Marine", "Marine", "Marauder", "Marauder", "Marauder", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marauder", "Marauder", "Marauder","Factory","Stimpack","Marauder", "Factory", "Starport", "FactoryTechlab", "Medivac", "Medivac", "Medivac", "Medivac", "Marine", "Marine", "Marine", "Marauder", "Marauder", "Marauder", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder"] },
             
             "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Marine","Marine","Stimpack","Marauder", "Marine", "Marine","Factory","Marine", "Marine", "Marine", "Marine", "Marine", "FactoryTechlab", "Marine", "Marine","go start attack", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine",  "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
 

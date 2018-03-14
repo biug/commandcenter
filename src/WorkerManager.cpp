@@ -254,8 +254,8 @@ void WorkerManager::drawWorkerInformation()
     {
         ss << m_workerData.getJobCode(workerTag) << " " << workerTag << "\n";
     }
-
-    m_bot.Map().drawTextScreen(sc2::Point2D(0.75f, 0.2f), ss.str());
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.8f, 0.1f), ss.str(), sc2::Colors::White, 20);
+   // m_bot.Map().drawTextScreen(sc2::Point2D(0.8f, 0.1f), ss.str());
 }
 
 bool WorkerManager::isFree(const sc2::Unit * worker) const

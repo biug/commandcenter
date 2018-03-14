@@ -41,7 +41,10 @@ public:
     bool DrawLastSeenTileInfo;
     bool DrawUnitTargetInfo;
     bool DrawSquadInfo;		
-    
+
+	bool DrawCombatUnitCompare;
+
+
     sc2::Color ColorLineTarget;
     sc2::Color ColorLineMineral;
     sc2::Color ColorUnitNearEnemy;

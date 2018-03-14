@@ -107,6 +107,11 @@ void ProductionManager::manageBuildOrderQueue()
     // if there is nothing in the queue, oh well
     if (m_queue.isEmpty())
     {
+		switch (m_bot.GetPlayerRace(Players::Self)) {
+		case sc2::Race::Protoss: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::PROTOSS_STALKER), true);
+		case sc2::Race::Terran: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::TERRAN_MARINE), true);
+		case sc2::Race::Zerg: m_queue.queueAsHighestPriority(MacroAct(sc2::UNIT_TYPEID::ZERG_ZERGLING), true);
+		}
         return;
     }
 	/*
@@ -633,5 +638,6 @@ void ProductionManager::drawProductionInformation()
 
     ss << m_queue.getQueueInformation();
 
-    m_bot.Map().drawTextScreen(sc2::Point2D(0.01f, 0.01f), ss.str(), sc2::Colors::Yellow);
+	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.01f, 0.01f), ss.str(), sc2::Colors::Yellow, 30);
+    //m_bot.Map().drawTextScreen(sc2::Point2D(0.01f, 0.01f), ss.str(), sc2::Colors::Yellow,);
 }

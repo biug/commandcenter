@@ -29,6 +29,8 @@ public:
     void                    onFrame();
     void                    onStart();
 
+	void OnUnitDestroyed(const sc2::Unit * unit);
+
     const std::vector<const sc2::Unit *> & getUnits(int player) const;
 
     size_t                  getUnitTypeCount(int player, sc2::UnitTypeID type, bool completed = true) const;
@@ -39,5 +41,8 @@ public:
 
     //bool                  enemyHasCloakedUnits() const;
     void                    drawUnitInformation(float x, float y) const;
+
+	void drawCombatUnitComparision(float x, float y) const;
+
 
 };

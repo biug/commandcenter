@@ -134,7 +134,7 @@ void GameCommander::onUnitCreate(const sc2::Unit * unit)
 
 void GameCommander::onUnitDestroy(const sc2::Unit * unit)
 {
-    //_productionManager.onUnitDestroy(unit);
+    //productionManager.onUnitDestroy(unit);
 }
 
 

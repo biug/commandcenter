@@ -55,6 +55,7 @@ public:
     void    drawSphere(const sc2::Point2D & pos, float radius, const sc2::Color & color = sc2::Colors::White) const;
     void    drawText(const sc2::Point2D & pos, const std::string & str, const sc2::Color & color = sc2::Colors::White) const;
     void    drawTextScreen(const sc2::Point2D & pos, const std::string & str, const sc2::Color & color = sc2::Colors::White) const;
+	void drawTextScreenAdjustSize(const sc2::Point2D & pos, const std::string & str, const sc2::Color & color, uint32_t size) const;
     void    drawBoxAroundUnit(const UnitTag & uinit, sc2::Color color) const;
     void    drawSphereAroundUnit(const UnitTag & uinit, sc2::Color color) const;
     

@@ -8,6 +8,7 @@ UnitData::UnitData()
     const int maxTypeID = 1024;
     m_numDeadUnits	    = std::vector<int>(maxTypeID + 1, 0);
     m_numUnits		    = std::vector<int>(maxTypeID + 1, 0);
+	//m_isAlive = std::vector<const sc2::Unit *>();
 }
 
 void UnitData::updateUnit(const sc2::Unit * unit)
@@ -24,11 +25,13 @@ void UnitData::updateUnit(const sc2::Unit * unit)
     ui.unit         = unit;
     ui.player       = Util::GetPlayer(unit);
     ui.lastPosition = unit->pos;
-    ui.lastHealth   = unit->health;
+    
     ui.lastShields  = unit->shield;
     ui.tag          = unit->tag;
     ui.type         = unit->unit_type;
     ui.progress     = unit->build_progress;
+
+	ui.lastHealth = unit->health;
 
     if (firstSeen)
     {

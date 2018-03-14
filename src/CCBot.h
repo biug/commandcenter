@@ -40,6 +40,9 @@ public:
     void OnStep() override;
 	void OnUpgradeCompleted(sc2::UpgradeID upgradeID) override;
 	void OnUnitCreated(const sc2::Unit* unit) override;
+
+	void OnUnitDestroyed(const sc2::Unit* unit) override;
+
           BotConfig & Config();
           WorkerManager & Workers();
     const BaseLocationManager & Bases() const;
