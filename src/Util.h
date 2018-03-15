@@ -41,6 +41,7 @@ namespace Util
     bool IsIdle(const sc2::Unit * unit);
     bool IsCompleted(const sc2::Unit * unit);
     float GetAttackRange(const sc2::UnitTypeID & type, CCBot & bot);
+	float GetSightRange(const sc2::UnitTypeID & type, CCBot & bot);
 
 
     bool UnitCanBuildTypeNow(const sc2::Unit * unit, const sc2::UnitTypeID & type, CCBot & m_bot);
@@ -84,4 +85,9 @@ namespace Util
 	{
 		return fabs(p1.x - p2.x) + fabs(p1.y - p2.y);
 	}
+	const bool isBadEffect(sc2::EffectID id);
+	sc2::Point2D normalizeVector(const sc2::Point2D pos, const float length = 1.0f);
+
+	float Dist(const sc2::Point2D & p1);
+	float DistSq(const sc2::Point2D & p1);
 };

@@ -121,9 +121,12 @@ const sc2::Unit * ImmortalManager::getTarget(const sc2::Unit * rangedUnit, const
 {
 	BOT_ASSERT(rangedUnit, "null melee unit in getTarget");
 
-	int highPriority = 0;
+	int highPriorityFar = 0;
+	int highPriorityNear = 0;
 	double closestDist = std::numeric_limits<double>::max();
-	const sc2::Unit * closestTarget = nullptr;
+	const sc2::Unit * closestTargetOutsideRange = nullptr;
+	const sc2::Unit * weakestTargetInsideRange = nullptr;
+	double lowestHealth = std::numeric_limits<double>::max();
 
 	// for each target possiblity
 	for (auto targetUnit : targets)
@@ -132,17 +135,35 @@ const sc2::Unit * ImmortalManager::getTarget(const sc2::Unit * rangedUnit, const
 
 		int priority = getAttackPriority(rangedUnit, targetUnit);
 		float distance = Util::Dist(rangedUnit->pos, targetUnit->pos);
-
-		// if it's a higher priority, or it's closer, set it
-		if (!closestTarget || (priority > highPriority) || (priority == highPriority && distance < closestDist))
+		float range = Util::GetAttackRange(rangedUnit->unit_type, m_bot);
+		if (distance > range)
 		{
-			closestDist = distance;
-			highPriority = priority;
-			closestTarget = targetUnit;
+			if (distance <= Util::GetSightRange(rangedUnit->unit_type, m_bot))
+			{
+				priority += 20;
+			}
+			if (!closestTargetOutsideRange || (priority > highPriorityFar) || (priority == highPriorityFar && distance < closestDist))
+			{
+				closestDist = distance;
+				highPriorityFar = priority;
+				closestTargetOutsideRange = targetUnit;
+			}
 		}
+		else
+		{
+			if (!weakestTargetInsideRange || (priority > highPriorityNear) || (priority == highPriorityNear && (targetUnit->health + targetUnit->shield <lowestHealth)))
+			{
+				closestDist = distance;
+				highPriorityNear = priority;
+				weakestTargetInsideRange = targetUnit;
+			}
+
+		}
+
 	}
 
-	return closestTarget;
+	return weakestTargetInsideRange && highPriorityNear>1 ? weakestTargetInsideRange : closestTargetOutsideRange;
+
 }
 
 // get the attack priority of a type in relation to a zergling

@@ -293,6 +293,11 @@ float Util::GetAttackRange(const sc2::UnitTypeID & type, CCBot & bot)
 
     return maxRange;
 }
+float Util::GetSightRange(const sc2::UnitTypeID & type, CCBot & bot)
+{
+	const float m_sight = bot.Observation()->GetUnitTypeData()[type].sight_range;
+	return m_sight;
+}
 
 bool Util::IsDetectorType(const sc2::UnitTypeID & type)
 {
@@ -762,4 +767,42 @@ int Util::PredictFutureDPSAtPoint(const sc2::Point2D unit_pos, const float futur
 	}
 
 	return total_dps;
+}
+
+const bool Util::isBadEffect(const sc2::EffectID id)
+{
+	if (id.ToType() == sc2::EFFECT_ID::LURKERATTACK)
+	{
+		int a = 1;
+	}
+	switch (id.ToType())
+	{
+	case sc2::EFFECT_ID::BLINDINGCLOUD:
+	case sc2::EFFECT_ID::CORROSIVEBILE:
+	case sc2::EFFECT_ID::LIBERATORMORPHED:
+	case sc2::EFFECT_ID::LIBERATORMORPHING:
+	case sc2::EFFECT_ID::LURKERATTACK:
+	case sc2::EFFECT_ID::NUKEDOT:
+	case sc2::EFFECT_ID::PSISTORM:
+	case sc2::EFFECT_ID::THERMALLANCES:
+		return true;
+	}
+	return false;
+}
+
+sc2::Point2D Util::normalizeVector(const sc2::Point2D pos, const float length)
+{
+	return (length / Util::Dist(pos)) * pos;
+}
+
+float Util::Dist(const sc2::Point2D & p1)
+{
+	return sqrtf(Util::DistSq(p1));
+}
+float Util::DistSq(const sc2::Point2D & p1)
+{
+	float dx = p1.x;
+	float dy = p1.y;
+
+	return dx * dx + dy * dy;
 }

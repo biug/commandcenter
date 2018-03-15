@@ -113,7 +113,49 @@ void MedivacManager::executeMicro(const std::vector<const sc2::Unit *> & targets
 	**/
 }
 
-
+void MedivacManager::escapeFromEffect(const sc2::Unit * rangedUnit)
+{
+	const std::vector<sc2::Effect> effects = m_bot.Observation()->GetEffects();
+	bool escapefromeffect = false;
+	for (const auto & effect : effects)
+	{
+		if (Util::isBadEffect(effect.effect_id))
+		{
+			const float radius = m_bot.Observation()->GetEffectData()[effect.effect_id].radius;
+			for (const auto & pos : effect.positions)
+			{
+				if (Util::Dist(rangedUnit->pos, pos) < radius + 2.0f)
+				{
+					sc2::Point2D escapePos;
+					if (effect.positions.size() == 1)
+					{
+						escapePos = pos + Util::normalizeVector(rangedUnit->pos - pos, radius + 2.0f);
+					}
+					else
+					{
+						const sc2::Point2D attackDirection = effect.positions.back() - effect.positions.front();
+						//"Randomly" go right and left
+						if (rangedUnit->tag % 2)
+						{
+							escapePos = rangedUnit->pos + Util::normalizeVector(sc2::Point2D(-attackDirection.x, attackDirection.y), radius + 2.0f);
+						}
+						else
+						{
+							escapePos = rangedUnit->pos - Util::normalizeVector(sc2::Point2D(-attackDirection.x, attackDirection.y), radius + 2.0f);
+						}
+					}
+					Micro::SmartMove(rangedUnit, escapePos, m_bot);
+					escapefromeffect = true;
+					break;
+				}
+				if (escapefromeffect)
+				{
+					break;
+				}
+			}
+		}
+	}
+}
 bool MedivacManager::loadUnit(const sc2::Unit * Unit, const sc2::Unit * Medivac)
 {
 	auto abilities = m_bot.Query()->GetAbilitiesForUnit(Medivac);

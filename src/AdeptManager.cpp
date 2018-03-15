@@ -47,9 +47,9 @@ void AdeptManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		BOT_ASSERT(Adept, "ranged unit is null");
 		if (AdeptInfos.find(Adept) == AdeptInfos.end())
 		{
-			AdeptInfos[Adept] = AdeptInfo(Adept->health);
+			AdeptInfos[Adept] = AdeptInfo(Adept->health + Adept->shield);
 		}
-		float currentHP = Adept->health;
+		float currentHP = Adept->health + Adept->shield;
 		bool beingAttack = currentHP < AdeptInfos[Adept].m_hpLastSecond;
 		if (refreshInfo) AdeptInfos[Adept].m_hpLastSecond = currentHP;
 
@@ -58,17 +58,11 @@ void AdeptManager::assignTargets(const std::vector<const sc2::Unit *> & targets)
 		{
 			if (!AdeptTargets.empty())
 			{
-				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(Adept, AdeptTargets);
 				if (!target) continue;
-				// kite attack it
-				if (Util::IsMeleeUnit(target) && Adept->weapon_cooldown > 0) {
-					auto p1 = target->pos, p2 = Adept->pos;
-					auto tp = p2 * 2 - p1;
-					Micro::SmartMove(Adept, tp, m_bot);
-				}
-				else {
-					Micro::SmartAttackMove(Adept, target->pos, m_bot);
+				if (Adept->unit_type.ToType() == sc2::UNIT_TYPEID::PROTOSS_ADEPT) {
+
+
 				}
 			}
 			// if there are no targets
@@ -96,9 +90,12 @@ const sc2::Unit * AdeptManager::getTarget(const sc2::Unit * rangedUnit, const st
 {
 	BOT_ASSERT(rangedUnit, "null melee unit in getTarget");
 
-	int highPriority = 0;
+	int highPriorityFar = 0;
+	int highPriorityNear = 0;
 	double closestDist = std::numeric_limits<double>::max();
-	const sc2::Unit * closestTarget = nullptr;
+	const sc2::Unit * closestTargetOutsideRange = nullptr;
+	const sc2::Unit * weakestTargetInsideRange = nullptr;
+	double lowestHealth = std::numeric_limits<double>::max();
 
 	// for each target possiblity
 	for (auto targetUnit : targets)
@@ -107,23 +104,45 @@ const sc2::Unit * AdeptManager::getTarget(const sc2::Unit * rangedUnit, const st
 
 		int priority = getAttackPriority(rangedUnit, targetUnit);
 		float distance = Util::Dist(rangedUnit->pos, targetUnit->pos);
-
-		// if it's a higher priority, or it's closer, set it
-		if (!closestTarget || (priority > highPriority) || (priority == highPriority && distance < closestDist))
+		float range = Util::GetAttackRange(rangedUnit->unit_type, m_bot);
+		if (distance > range)
 		{
-			closestDist = distance;
-			highPriority = priority;
-			closestTarget = targetUnit;
+			if (distance <= Util::GetSightRange(rangedUnit->unit_type, m_bot))
+			{
+				priority += 20;
+			}
+			if (!closestTargetOutsideRange || (priority > highPriorityFar) || (priority == highPriorityFar && distance < closestDist))
+			{
+				closestDist = distance;
+				highPriorityFar = priority;
+				closestTargetOutsideRange = targetUnit;
+			}
 		}
+		else
+		{
+			if (!weakestTargetInsideRange || (priority > highPriorityNear) || (priority == highPriorityNear && (targetUnit->health + targetUnit->shield <lowestHealth)))
+			{
+				closestDist = distance;
+				highPriorityNear = priority;
+				weakestTargetInsideRange = targetUnit;
+			}
+
+		}
+
 	}
 
-	return closestTarget;
+	return weakestTargetInsideRange && highPriorityNear>1 ? weakestTargetInsideRange : closestTargetOutsideRange;
+
 }
 
 // get the attack priority of a type in relation to a zergling
 int AdeptManager::getAttackPriority(const sc2::Unit * attacker, const sc2::Unit * unit)
 {
 	BOT_ASSERT(unit, "null unit in getAttackPriority");
+	if (Util::IsLightArmor(unit))
+	{
+		return 12;
+	}
 	if (Util::IsPsionicUnit(unit))
 	{
 		return 11;

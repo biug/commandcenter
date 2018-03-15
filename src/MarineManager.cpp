@@ -137,15 +137,62 @@ sc2::Point2D MarineManager::RetreatPosition(const sc2::Unit * unit)
 	
 }
 
+void MarineManager::escapeFromEffect(const sc2::Unit * rangedUnit)
+{
+	const std::vector<sc2::Effect> effects = m_bot.Observation()->GetEffects();
+	bool escapefromeffect = false;
+	for (const auto & effect : effects)
+	{
+		if (Util::isBadEffect(effect.effect_id))
+		{
+			const float radius = m_bot.Observation()->GetEffectData()[effect.effect_id].radius;
+			for (const auto & pos : effect.positions)
+			{
+				if (Util::Dist(rangedUnit->pos, pos) < radius + 2.0f)
+				{
+					sc2::Point2D escapePos;
+					if (effect.positions.size() == 1)
+					{
+						escapePos = pos + Util::normalizeVector(rangedUnit->pos - pos, radius + 2.0f);
+					}
+					else
+					{
+						const sc2::Point2D attackDirection = effect.positions.back() - effect.positions.front();
+						//"Randomly" go right and left
+						if (rangedUnit->tag % 2)
+						{
+							escapePos = rangedUnit->pos + Util::normalizeVector(sc2::Point2D(-attackDirection.x, attackDirection.y), radius + 2.0f);
+						}
+						else
+						{
+							escapePos = rangedUnit->pos - Util::normalizeVector(sc2::Point2D(-attackDirection.x, attackDirection.y), radius + 2.0f);
+						}
+					}
+					Micro::SmartMove(rangedUnit, escapePos, m_bot);
+					escapefromeffect = true;
+					break;
+				}
+				if (escapefromeffect)
+				{
+					break;
+				}
+			}
+		}
+	}
+}
+
 // get a target for the ranged unit to attack
 // TODO: this is the melee targeting code, replace it with something better for ranged units
 const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const std::vector<const sc2::Unit *> & targets)
 {
 	BOT_ASSERT(rangedUnit, "null melee unit in getTarget");
 
-	int highPriority = 0;
+	int highPriorityFar = 0;
+	int highPriorityNear = 0;
 	double closestDist = std::numeric_limits<double>::max();
-	const sc2::Unit * closestTarget = nullptr;
+	const sc2::Unit * closestTargetOutsideRange = nullptr;
+	const sc2::Unit * weakestTargetInsideRange = nullptr;
+	double lowestHealth = std::numeric_limits<double>::max();
 
 	// for each target possiblity
 	for (auto targetUnit : targets)
@@ -154,17 +201,35 @@ const sc2::Unit * MarineManager::getTarget(const sc2::Unit * rangedUnit, const s
 
 		int priority = getAttackPriority(rangedUnit, targetUnit);
 		float distance = Util::Dist(rangedUnit->pos, targetUnit->pos);
-
-		// if it's a higher priority, or it's closer, set it
-		if (!closestTarget || (priority > highPriority) || (priority == highPriority && distance < closestDist))
+		float range = Util::GetAttackRange(rangedUnit->unit_type, m_bot);
+		if (distance > range)
 		{
-			closestDist = distance;
-			highPriority = priority;
-			closestTarget = targetUnit;
+			if (distance <= Util::GetSightRange(rangedUnit->unit_type, m_bot))
+			{
+				priority += 20;
+			}
+			if (!closestTargetOutsideRange || (priority > highPriorityFar) || (priority == highPriorityFar && distance < closestDist))
+			{
+				closestDist = distance;
+				highPriorityFar = priority;
+				closestTargetOutsideRange = targetUnit;
+			}
 		}
+		else
+		{
+			if (!weakestTargetInsideRange || (priority > highPriorityNear) || (priority == highPriorityNear && (targetUnit->health + targetUnit->shield <lowestHealth)))
+			{
+				closestDist = distance;
+				highPriorityNear = priority;
+				weakestTargetInsideRange = targetUnit;
+			}
+
+		}
+
 	}
 
-	return closestTarget;
+	return weakestTargetInsideRange && highPriorityNear>1 ? weakestTargetInsideRange : closestTargetOutsideRange;
+
 }
 
 

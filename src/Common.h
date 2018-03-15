@@ -43,3 +43,26 @@ typedef float               CCPositionType;
 
 typedef size_t CCPlayer;
 int GetIntFromString(const std::string & s);
+
+namespace sc2
+{
+
+	enum class EFFECT_ID;
+	typedef SC2Type<EFFECT_ID>  EffectID;
+	enum class EFFECT_ID
+	{
+		INVALID = 0,
+		PSISTORM = 1,
+		GUARDIANSHIELD = 2,
+		TEMPORALFIELDGROWING = 3,
+		TEMPORALFIELD = 4,
+		THERMALLANCES = 5,
+		SCANNERSWEEP = 6,
+		NUKEDOT = 7,
+		LIBERATORMORPHING = 8,
+		LIBERATORMORPHED = 9,
+		BLINDINGCLOUD = 10,
+		CORROSIVEBILE = 11,
+		LURKERATTACK = 12
+	};
+}
