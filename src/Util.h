@@ -80,6 +80,10 @@ namespace Util
 
 	int PredictFutureDPSAtPoint(const sc2::Point2D unit_pos, const float future_time, CCBot & bot);
 
+	const std::vector<const sc2::Unit *> GetEnemyUnitInSight(const sc2::Unit *unit, CCBot & bot);
+
+	const std::vector<const sc2::Unit *> GetEnemyBuildingInSight(const sc2::Unit *unit, CCBot & bot);
+
 	template<typename P1, typename P2>
 	float PlanerDist(const P1 & p1, const P2 & p2)
 	{

@@ -8,6 +8,7 @@ GameCommander::GameCommander(CCBot & bot)
     , m_scoutManager        (bot)
     , m_combatCommander     (bot)
     , m_initialScoutSet     (false)
+	, m_ProxyScoutSet		(false)
 {
 
 }
@@ -100,6 +101,27 @@ void GameCommander::setScoutUnits()
             }
         }
     }
+	else if (!m_ProxyScoutSet && m_initialScoutSet && m_bot.State().m_scout)
+	{
+		const sc2::Unit * workerScout = m_bot.Workers().getClosestBuildableWorkerTo(m_bot.GetStartLocation());
+
+		// if we find a worker (which we should) add it to the scout units
+		if (workerScout)
+		{
+			m_scoutManager.setProxyScout(workerScout);
+			assignUnit(workerScout, m_scoutUnits);
+			m_ProxyScoutSet = true;
+		}
+		else
+		{
+
+		}
+	}
+	else
+	{
+
+	}
+	
 }
 
 bool GameCommander::shouldSendInitialScout()

@@ -22,6 +22,7 @@ class GameCommander
     std::vector<const sc2::Unit *>    m_scoutUnits;
 
     bool                    m_initialScoutSet;
+	bool					m_ProxyScoutSet;
 
     void assignUnit(const sc2::Unit * unit, std::vector<const sc2::Unit *> & units);
     bool isAssigned(const sc2::Unit * unit) const;

@@ -806,3 +806,32 @@ float Util::DistSq(const sc2::Point2D & p1)
 
 	return dx * dx + dy * dy;
 }
+const std::vector<const sc2::Unit *> Util::GetEnemyUnitInSight(const sc2::Unit *unit, CCBot &bot)
+{
+	std::vector<const sc2::Unit *> enemyunitinsight;
+	for (auto &enemy :bot.UnitInfo().getUnits(Players::Enemy))
+	{
+		const float dist = Util::Dist(unit->pos, enemy->pos);
+		if (dist < Util::GetSightRange(unit->unit_type, bot) && (Util::IsCombatUnit(enemy, bot) || Util::IsWorker(enemy)))
+		{
+			enemyunitinsight.push_back(enemy);
+		}
+
+	}
+	return enemyunitinsight;
+}
+
+const std::vector<const sc2::Unit *> Util::GetEnemyBuildingInSight(const sc2::Unit *unit, CCBot & bot)
+{
+	std::vector<const sc2::Unit *> enemybuildinginsight;
+	for (auto &enemy : bot.UnitInfo().getUnits(Players::Enemy))
+	{
+		const float dist = Util::Dist(unit->pos, enemy->pos);
+		if (dist < Util::GetSightRange(unit->unit_type, bot) && Util::IsBuilding(unit->unit_type))
+		{
+			enemybuildinginsight.push_back(enemy);
+		}
+
+	}
+	return enemybuildinginsight;
+}

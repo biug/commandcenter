@@ -61,6 +61,9 @@ void MarauderManager::assignTargets(const std::vector<const sc2::Unit *> & targe
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(marauder, marauderTargets);
 				if (!target) continue;
+				if (beingAttack) {
+					escapeFromEffect(marauder);
+				}
 
 				if (m_bot.State().m_stimpack)
 				{

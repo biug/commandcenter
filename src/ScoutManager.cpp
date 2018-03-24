@@ -6,10 +6,14 @@
 ScoutManager::ScoutManager(CCBot & bot)
     : m_bot             (bot)
     , m_scoutUnit       (nullptr)
+	, m_searchProxyUnit	(nullptr)
     , m_numScouts       (0)
     , m_scoutUnderAttack(false)
+	, searchproxyUnitUnderAttack(false)
+	, m_foundProxy		(false)
     , m_scoutStatus     ("None")
     , m_previousScoutHP (0.0f)
+	, searchproxyUnitpreviousHP	(0.0f)
 	, m_arriveEnemyStart(false)
 
 {
@@ -24,7 +28,7 @@ void ScoutManager::onFrame()
 {
 	
 		moveScouts();
-	
+		searchProxy();
     drawScoutInformation();
 }
 
@@ -40,6 +44,16 @@ void ScoutManager::setWorkerScout(const sc2::Unit * tag)
     m_bot.Workers().setScoutWorker(m_scoutUnit);
 }
 
+void ScoutManager::setProxyScout(const sc2::Unit * tag)
+{
+	if (m_searchProxyUnit)
+	{
+		m_bot.Workers().finishedWithWorker(m_searchProxyUnit);
+	}
+	m_searchProxyUnit = tag;
+	m_bot.Workers().setScoutWorker(m_searchProxyUnit);
+}
+
 void ScoutManager::drawScoutInformation()
 {
     if (!m_bot.Config().DrawScoutInfo)
@@ -52,6 +66,80 @@ void ScoutManager::drawScoutInformation()
 
     //m_bot.Map().drawTextScreen(sc2::Point2D(0.1f, 0.6f), ss.str());
 	m_bot.Map().drawTextScreenAdjustSize(sc2::Point2D(0.1f, 0.6f), ss.str(), sc2::Colors::White, 30);
+}
+
+void ScoutManager::searchProxy()
+{
+	if (!m_searchProxyUnit || m_searchProxyUnit->health <= 0) { return; }
+	float searchproxyHP = m_searchProxyUnit->health + m_searchProxyUnit->shield;
+	if (searchproxyHP < searchproxyUnitpreviousHP)
+	{
+		searchproxyUnitUnderAttack = true;
+	}
+	else
+	{
+		searchproxyUnitUnderAttack = false;
+	}
+	bool reachClosestBase = false;
+	if (canbeingattacked(m_searchProxyUnit) || searchproxyUnitUnderAttack)
+	{
+		Micro::SmartMove(m_searchProxyUnit, getFleePosition(), m_bot);
+		reachClosestBase = true;   //if being attacked, give up searching this base
+	}
+	else
+	{
+		if (UnknownBase.empty())
+		{
+			for (const BaseLocation * base : m_bot.Bases().getBaseLocations())
+			{
+				const BaseLocation * enemyBase = m_bot.Bases().getPlayerStartingBaseLocation(Players::Enemy);
+				if (enemyBase && base != enemyBase)
+				{
+					UnknownBase.push_back(base);
+				}
+			}
+		}
+
+		else if (!UnknownBase.empty())
+		{
+			const BaseLocation * closestbase = getClosestBase(UnknownBase);
+			Micro::SmartMove(m_searchProxyUnit, closestbase->getPosition(), m_bot);
+			if (Util::Dist(m_searchProxyUnit->pos, closestbase->getPosition()) < 5) {
+				reachClosestBase = true;
+			}
+			if (reachClosestBase && std::find(UnknownBase.begin(), UnknownBase.end(), closestbase) != UnknownBase.end()) {
+				UnknownBase.erase(std::remove(UnknownBase.begin(), UnknownBase.end(), closestbase), UnknownBase.end());
+			}
+		}
+	}
+	
+	if (isHiddenProxy(getEnemyUnitInfo(m_searchProxyUnit)))
+	{
+		m_foundProxy = true;
+	}
+	else
+	{
+	}
+
+	searchproxyUnitpreviousHP = searchproxyHP;
+
+}
+const BaseLocation * ScoutManager::getClosestBase(std::vector<const BaseLocation * > UnknowBase)
+{
+	float closestdist = std::numeric_limits<float>::max();
+	const BaseLocation * closestBase = m_bot.Bases().getPlayerStartingBaseLocation(Players::Self);
+
+	for (auto baselocation : UnknowBase)
+	{
+		float dist = Util::Dist(m_searchProxyUnit->pos, baselocation->getPosition());
+		if (dist < closestdist)
+		{
+			closestdist = dist;
+			closestBase = baselocation;
+		}
+	}
+	return closestBase;
+
 }
 
 void ScoutManager::moveScouts()
@@ -73,7 +161,7 @@ void ScoutManager::moveScouts()
 		bool scoutInRangeOfenemy = enemyBaseLocation->containsPosition(m_scoutUnit->pos);
 		if (m_arriveEnemyStart) {
 			auto enemyThird = m_bot.Bases().getPlayerThirdLocation(Players::Enemy);
-			if (enemyThird)
+			if (enemyThird && canbeingattacked(m_scoutUnit))
 			{
 				auto enemyThirdPos = enemyThird->getDepotPosition();
 				Micro::SmartMove(m_scoutUnit, enemyThirdPos, m_bot);
@@ -119,7 +207,7 @@ void ScoutManager::moveScouts()
 				if (!m_arriveEnemyStart) {
 					Micro::SmartMove(m_scoutUnit, enemyBaseLocation->getPosition(), m_bot);
 				}
-				if (Util::Dist(m_scoutUnit->pos, enemyBaseLocation->getPosition()) < 10) {
+				if (Util::Dist(m_scoutUnit->pos, enemyBaseLocation->getPosition()) < 8) {
 					m_arriveEnemyStart = true;
 				}
 			}
@@ -169,6 +257,7 @@ void ScoutManager::moveScouts()
     m_previousScoutHP = scoutHP;
 }
 
+
 const sc2::Unit * ScoutManager::closestEnemyWorkerTo(const sc2::Point2D & pos) const
 {
     if (!m_scoutUnit) { return nullptr; }
@@ -214,4 +303,46 @@ sc2::Point2D ScoutManager::getFleePosition() const
 {
     // TODO: make this follow the perimeter of the enemy base again, but for now just use home base as flee direction
     return m_bot.GetStartLocation();
+}
+
+bool ScoutManager::canbeingattacked(const sc2::Unit * unit)
+{
+	for (auto &enemyunit : Util::GetEnemyUnitInSight(unit, m_bot))
+	{
+		const float dist = Util::Dist(enemyunit->pos, unit->pos);
+		if (dist < Util::GetAttackRange(enemyunit->unit_type, m_bot) + 1.0f)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+std::vector<const sc2::Unit *> ScoutManager::getEnemyUnitInfo(const sc2::Unit * unit)
+{
+	const std::vector<const sc2::Unit *> enemyunitinsight = Util::GetEnemyUnitInSight(unit, m_bot);
+	return enemyunitinsight;
+}
+
+bool ScoutManager::isHiddenProxy(std::vector<const sc2::Unit *> enemyunnitinsight)
+{
+	auto selfThird = m_bot.Bases().getPlayerThirdLocation(Players::Self);
+	if (selfThird)
+	{
+		float distBetweenStartAndThirdBase = Util::Dist(selfThird->getPosition(), m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition());
+		for (auto enemyunit : enemyunnitinsight)
+		{
+			if (Util::IsBuilding(enemyunit->unit_type))
+			{
+
+				float distFromEnemyStartBase = Util::Dist(enemyunit->pos, m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition());
+				if (distFromEnemyStartBase < distBetweenStartAndThirdBase * 2)
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
