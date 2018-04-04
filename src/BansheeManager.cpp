@@ -2,7 +2,7 @@
 #include "Util.h"
 #include "CCBot.h"
 #include <iostream>
-#include "pathfinding.h"
+
 
 BansheeInfo::BansheeInfo() :
 m_hpLastSecond(45)

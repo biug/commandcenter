@@ -116,135 +116,6 @@ void MapTools::onFrame()
 
     draw();
 
-
-	// Reset dps_map_
-
-	for (int y = 0; y < dps_map_.size(); ++y)
-	{
-		for (int x = 0; x < dps_map_[y].size(); ++x)
-		{
-			dps_map_[y][x] = 1;
-		}
-	}
-
-
-	// Reset gs_map_
-	
-	for (int y = 0; y < gs_map_.size(); ++y)
-	{
-		for (int x = 0; x < gs_map_[y].size(); ++x)
-		{
-			gs_map_[y][x] = 1;
-		}
-	}
-	
-
-	// Update dps_map_
-	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Enemy))
-	{
-		const auto unit_info = unit_info_pair.second;
-		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
-		if (damage == 0) continue;
-		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
-		//  Melee units are dangerous too.
-		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
-
-		for (float y = 0; y < dps_map_.size(); ++y)
-		{
-			for (float x = 0; x < dps_map_[y].size(); ++x)
-			{
-				for (float falloff = 0; falloff < 25; ++falloff)
-				{
-					// Danger zone falloff only applies to army units. 
-					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
-						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
-						{
-							dps_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
-							break;
-						}
-				}
-			}
-		}
-	}
-
-	for (int y = 0; y < height(); ++y)
-	{
-		for (int x = 0; x < width(); ++x)
-		{
-			if (!isWalkable(x, y))
-				dps_map_[y][x] = 999;
-		}
-	}
-
-
-	// Update gs_map_
-	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
-	{
-		const auto unit_info = unit_info_pair.second;
-		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
-		//const bool Util::canAttackSky(unit->unit_type)
-		if (damage == 0) continue;
-		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
-		//  
-		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
-
-		for (float y = 0; y < gs_map_.size(); ++y)
-		{
-			for (float x = 0; x < gs_map_[y].size(); ++x)
-			{
-				for (float falloff = 0; falloff < 25; ++falloff)
-				{
-					// 
-					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
-						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
-						{
-							gs_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
-							break;
-						}
-				}
-			}
-		}
-	}
-
-	for (int y = 0; y < height(); ++y)
-	{
-		for (int x = 0; x < width(); ++x)
-		{
-			if (!isWalkable(x, y))
-				gs_map_[y][x] = 0.01;
-		}
-	}
-
-	// Update ss_map_
-	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
-	{
-		const auto unit_info = unit_info_pair.second;
-		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
-		const bool skyAttack = Util::canAttackSky(unit_info.type);
-		if (damage == 0||skyAttack==false) continue;
-		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
-		//  
-		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
-
-		for (float y = 0; y < ss_map_.size(); ++y)
-		{
-			for (float x = 0; x < ss_map_[y].size(); ++x)
-			{
-				for (float falloff = 0; falloff < 25; ++falloff)
-				{
-					// 
-					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
-						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
-						{
-							ss_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
-							break;
-						}
-				}
-			}
-		}
-	}
-
-
 }
 
 void MapTools::computeConnectivity()
@@ -704,17 +575,228 @@ bool MapTools::isBuildable(CCTilePosition & tile) const
 	return isBuildable(tile.x, tile.y);
 }
 
-std::vector<std::vector<float>> MapTools::GetDPSMap() const
+
+void MapTools::updateDPSMap(const sc2::Point3D & self_position, const int count_distance)
 {
+	// Reset dps_map_
+	int posx = self_position.x;
+	int posy = self_position.y;
+
+	for (int y = posy-count_distance; y<=posy+count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx-count_distance; x < posx+count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			dps_map_[y][x] = 1;
+		}
+	}
+
+	// Update dps_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Enemy))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		if (damage == 0) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  Melee units are dangerous too.
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+
+		for (float y = posy - count_distance; y <= posy + count_distance; ++y)
+		{
+			if (y<0 || y>height())
+				continue;
+			for (float x = posx - count_distance; x < posx + count_distance; ++x)
+			{
+				if (x<0 || x>width())
+					continue;
+				for (float falloff = 0; falloff < 25; ++falloff)
+				{
+					// Danger zone falloff only applies to army units. 
+					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+						{
+							dps_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+							break;
+						}
+				}
+			}
+		}
+	}
+
+	for (int y = posy - count_distance; y <= posy + count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx - count_distance; x < posx + count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			if (!isWalkable(x, y))
+				dps_map_[y][x] = 999;
+		}
+	}
+
+}
+
+void MapTools::updateGSMap(const sc2::Point3D & self_position, const int count_distance)
+{
+	// Reset dps_map_
+	int posx = self_position.x;
+	int posy = self_position.y;
+
+	for (int y = posy - count_distance; y <= posy + count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx - count_distance; x < posx + count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			gs_map_[y][x] = 1;
+		}
+	}
+
+	// Update dps_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		//const bool Util::canAttackSky(unit->unit_type)
+		if (damage == 0) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+		for (float y = 0; y < gs_map_.size(); ++y)
+		{
+			if (y<0 || y>height())
+				continue;
+			for (float x = 0; x < gs_map_[y].size(); ++x)
+			{
+				if (x<0 || x>width())
+					continue;
+				for (float falloff = 0; falloff < 25; ++falloff)
+				{
+					// 
+					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+						{
+							gs_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+							break;
+						}
+				}
+			}
+		}
+	}
+
+	for (int y = posy - count_distance; y <= posy + count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx - count_distance; x < posx + count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			if (!isWalkable(x, y))
+				gs_map_[y][x] = 0.01;
+		}
+	}
+
+}
+
+
+void MapTools::updateSSMap(const sc2::Point3D & self_position, const int count_distance)
+{
+	// Reset ss_map_
+	int posx = self_position.x;
+	int posy = self_position.y;
+
+	for (int y = posy - count_distance; y <= posy + count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx - count_distance; x < posx + count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			ss_map_[y][x] = 1;
+		}
+	}
+
+	// Update ss_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		//const bool Util::canAttackSky(unit->unit_type)
+		if (damage == 0) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+		for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
+		{
+			const auto unit_info = unit_info_pair.second;
+			const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+			const bool skyAttack = Util::canAttackSky(unit_info.type);
+			if (damage == 0 || skyAttack == false) continue;
+			int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+			//  
+			if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+
+			for (float y = 0; y < ss_map_.size(); ++y)
+			{
+				if (y<0 || y>height())
+					continue;
+				for (float x = 0; x < ss_map_[y].size(); ++x)
+				{
+					if (x<0 || x>width())
+						continue;
+					for (float falloff = 0; falloff < 25; ++falloff)
+					{
+						// 
+						if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+							if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+							{
+								ss_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+								break;
+							}
+					}
+				}
+			}
+		}
+	}
+
+	for (int y = posy - count_distance; y <= posy + count_distance; ++y)
+	{
+		if (y<0 || y>height())
+			continue;
+		for (int x = posx - count_distance; x < posx + count_distance; ++x)
+		{
+			if (x<0 || x>width())
+				continue;
+			if (!isWalkable(x, y))
+				ss_map_[y][x] = 0.01;
+		}
+	}
+
+}
+
+std::vector<std::vector<float>> MapTools::GetDPSMap(const sc2::Point3D & self_position, const int count_distance)
+{
+	updateDPSMap(self_position,count_distance);
 	return dps_map_;
 }
 
-std::vector<std::vector<float>> MapTools::GetGSMap() const
+std::vector<std::vector<float>> MapTools::GetGSMap(const sc2::Point3D & self_position, const int count_distance)
 {
+	updateGSMap(self_position, count_distance);
 	return gs_map_;
 }
 
-std::vector<std::vector<float>> MapTools::GetSSMap() const
+std::vector<std::vector<float>> MapTools::GetSSMap(const sc2::Point3D & self_position, const int count_distance)
 {
+	updateSSMap(self_position, count_distance);
 	return ss_map_;
 }

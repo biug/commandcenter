@@ -307,7 +307,6 @@
     <ClCompile Include="..\src\LurkerManager.cpp" />
     <ClCompile Include="..\src\BattlecruiserManager.cpp" />
     <ClCompile Include="..\src\MarineManager.cpp" />
-    <ClCompile Include="..\src\Pathfinding.cpp" />
     <ClCompile Include="..\src\ThorManager.cpp" />
     <ClCompile Include="..\src\BansheeManager.cpp" />
     <ClCompile Include="..\src\RavenManager.cpp" />
@@ -380,7 +379,6 @@
     <ClInclude Include="..\src\MarauderManager.h" />
     <ClInclude Include="..\src\LurkerManager.h" />
     <ClInclude Include="..\src\MarineManager.h" />
-    <ClInclude Include="..\src\Pathfinding.h" />
     <ClInclude Include="..\src\RavagerManager.h" />
     <ClInclude Include="..\src\MothershipManager.h" />
     <ClInclude Include="..\src\ZealotManager.h" />

@@ -37,6 +37,6 @@ public:
     void			reserveTiles(int x, int y, int width, int height);
     void			freeTiles(int x, int y, int width, int height);
     sc2::Point2DI	getRefineryPosition();
-	sc2::Point2DI GetNextCoordinateToWallWithBuilding(const Building & b) const;
+	sc2::Point2DI GetNextCoordinateToWallWithBuilding(const Building & b, const sc2::Point2D start_point) const;
 	bool CanBuildHere(const int bx, const int by, const Building & b) const;
 };

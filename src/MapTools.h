@@ -102,11 +102,15 @@ public:
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<sc2::Point2DI> & getClosestTilesTo(const sc2::Point2DI & pos) const;
 	//return the current dps of the map 
-	std::vector<std::vector<float>> GetDPSMap() const;
+	std::vector<std::vector<float>> GetDPSMap(const sc2::Point3D & self_position, const int count_distance);
 	//return the current ground_support of the map 
-	std::vector<std::vector<float>> GetGSMap() const;
+	std::vector<std::vector<float>> GetGSMap(const sc2::Point3D & self_position, const int count_distance);
 	//return the current sky_support of the map 
-	std::vector<std::vector<float>> GetSSMap() const;
+	std::vector<std::vector<float>> GetSSMap(const sc2::Point3D & self_position, const int count_distance);
+
+	void updateDPSMap(const sc2::Point3D & target_position, const int count_distance);
+	void updateGSMap(const sc2::Point3D & target_position, const int count_distance);
+	void updateSSMap(const sc2::Point3D & target_position, const int count_distance);
 
 	bool IsAnyTileAdjacentToTileType(const sc2::Point2DI p, const MapTileType tile_type, const sc2::UnitTypeID building_type) const;
 

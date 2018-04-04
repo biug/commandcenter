@@ -205,9 +205,6 @@
     <ClCompile Include="..\src\HightemplarManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Pathfinding.cpp">
-      <Filter>global</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -418,9 +415,6 @@
     </ClInclude>
     <ClInclude Include="..\src\HightemplarManager.h">
       <Filter>micro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Pathfinding.h">
-      <Filter>global</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -131,21 +131,27 @@ sc2::Point2DI BuildingPlacer::getBuildLocationNear(const Building & b, int build
 
 
 
-sc2::Point2DI BuildingPlacer::GetNextCoordinateToWallWithBuilding(const Building & b) const
+sc2::Point2DI BuildingPlacer::GetNextCoordinateToWallWithBuilding(const Building & b, const sc2::Point2D start_point) const
 {
 	sc2::Point2D closest_point(0, 0);
 	double closest_distance = std::numeric_limits<double>::max();
 
 	// Get the closest ramp to our starting base. 
 	const sc2::Point2D base_location = m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition();
+	const int startx = start_point.x;
+	const int starty = start_point.y;
 
 
 	// No need to iterate through the edges of the map, as the edge can never be part of our wall. 
 	// The smallest building is width 2, so shrink the iteration dimensions by that amount. 
-	for (int y = 2; y < (m_bot.Map().height() - 2); ++y)
+	for (int y = starty-20; y < starty+20; ++y)
 	{
-		for (int x = 2; x < (m_bot.Map().width() - 2); ++x)
+		if (y <= 0 || y > m_bot.Map().height())
+			continue;
+		for (int x = startx - 20; x < startx + 20; ++x)
 		{
+			if (x <= 0 || x > m_bot.Map().width())
+				continue;
 			// If we can walk on it, but not build on it, it is most likely a ramp.
 			// TODO: That is not actually correct, come up with a beter way to detect ramps. 
 			if (m_bot.Map().IsAnyTileAdjacentToTileType(sc2::Point2DI(x, y), MapTileType::Ramp, sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT)
