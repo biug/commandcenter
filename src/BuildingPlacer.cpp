@@ -144,11 +144,11 @@ sc2::Point2DI BuildingPlacer::GetNextCoordinateToWallWithBuilding(const Building
 
 	// No need to iterate through the edges of the map, as the edge can never be part of our wall. 
 	// The smallest building is width 2, so shrink the iteration dimensions by that amount. 
-	for (int y = starty-20; y < starty+20; ++y)
+	for (int y = starty-80; y < starty+80; ++y)
 	{
 		if (y <= 0 || y > m_bot.Map().height())
 			continue;
-		for (int x = startx - 20; x < startx + 20; ++x)
+		for (int x = startx - 80; x < startx + 80; ++x)
 		{
 			if (x <= 0 || x > m_bot.Map().width())
 				continue;
@@ -184,6 +184,13 @@ sc2::Point2DI BuildingPlacer::GetNextCoordinateToWallWithBuilding(const Building
 				}
 			}
 		}
+	}
+	if (closest_distance == std::numeric_limits<double>::max()) {
+		int buildingSpacing = m_bot.Config().BuildingSpacing;
+
+		// get a position within our region
+		// TODO: put back in special pylon / cannon spacing
+		return getBuildLocationNear(b, buildingSpacing);
 	}
 	return sc2::Point2DI(closest_point.x, closest_point.y);
 }
