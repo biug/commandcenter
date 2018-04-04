@@ -129,6 +129,60 @@ sc2::Point2DI BuildingPlacer::getBuildLocationNear(const Building & b, int build
     return sc2::Point2DI(0, 0);
 }
 
+
+
+sc2::Point2DI BuildingPlacer::GetNextCoordinateToWallWithBuilding(const Building & b) const
+{
+	sc2::Point2D closest_point(0, 0);
+	double closest_distance = std::numeric_limits<double>::max();
+
+	// Get the closest ramp to our starting base. 
+	const sc2::Point2D base_location = m_bot.Bases().getPlayerStartingBaseLocation(Players::Self)->getPosition();
+
+
+	// No need to iterate through the edges of the map, as the edge can never be part of our wall. 
+	// The smallest building is width 2, so shrink the iteration dimensions by that amount. 
+	for (int y = 2; y < (m_bot.Map().height() - 2); ++y)
+	{
+		for (int x = 2; x < (m_bot.Map().width() - 2); ++x)
+		{
+			// If we can walk on it, but not build on it, it is most likely a ramp.
+			// TODO: That is not actually correct, come up with a beter way to detect ramps. 
+			if (m_bot.Map().IsAnyTileAdjacentToTileType(sc2::Point2DI(x, y), MapTileType::Ramp, sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT)
+				&& CanBuildHere(x, y, b))
+			{
+				// The first depot in a wall has to be next to, well, a wall. 
+				// This allows the depot wall to be built correctly on AbyssalReefLE.
+				//if (bot_.Config().MapName == "AbyssalReefLE" &&
+				//    information_manager_.UnitInfo().GetNumDepots(sc2::Unit::Alliance::Self) < 2
+				//    && !(IsTileCornerOfTileType(sc2::Point2DI(x, y), MapTileType::CantWalk))
+				//    continue;
+
+				if (/*IsTileCornerReserved(sc2::Point2DI(x, y))
+					|| */m_bot.Map().terrainHeight(x, y) < 10.5)
+					continue;
+
+				//// Don't wall of at Proxima Station's pocket expansion.
+				//if (bot_.Config().MapName == "ProximaStationLE" 
+				//    && information_manager_.UnitInfo().GetNumDepots(sc2::Unit::Alliance::Self) < 3
+				// && ((y < 49 || y > 119) || TerrainHeight(x, y) < 10.5))
+				//    continue;
+
+				const sc2::Point2D point(x, y);
+				const double distance = Util::DistSq(point, base_location);
+				if (distance < closest_distance)
+				{
+					closest_point = point;
+					closest_point.x;
+					closest_distance = distance;
+				}
+			}
+		}
+	}
+	return sc2::Point2DI(closest_point.x, closest_point.y);
+}
+
+
 bool BuildingPlacer::tileOverlapsBaseLocation(int x, int y, sc2::UnitTypeID type) const
 {
     // if it's a resource depot we don't care if it overlaps
@@ -289,3 +343,18 @@ bool BuildingPlacer::isReserved(int x, int y) const
     return m_reserveMap[x][y];
 }
 
+// makes final checks to see if a building can be built at a certain location
+bool BuildingPlacer::CanBuildHere(const int bx, const int by, const Building & b) const
+{
+
+	// Will the starcraft engine allow the building to be built at the location?
+	if (!m_bot.Map().isValid(bx, by) || !m_bot.Map().canBuildTypeAtPosition(bx, by,b.type))
+		return false;
+
+	// We are not allowed to build on any tile that we have reserved.
+	if (canBuildHereWithSpace(bx,by,b,0))
+		return false;
+
+	// If none of the above conditions failed, we must be allowed to build at the location.
+	return true;
+}

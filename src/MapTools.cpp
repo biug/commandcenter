@@ -21,6 +21,7 @@ MapTools::MapTools(CCBot & bot)
     , m_height  (0)
     , m_maxZ    (0.0f)
     , m_frame   (0)
+	, unit_info_(bot)
 {
 
 }
@@ -37,6 +38,7 @@ void MapTools::onStart()
     m_sectorNumber   = vvi(m_width, std::vector<int>(m_height, 0));
     m_terrainHeight  = vvf(m_width, std::vector<float>(m_height, 0.0f));
 
+	unit_info_.onStart();
     // Set the boolean grid data from the Map
     for (size_t x(0); x < m_width; ++x)
     {
@@ -54,12 +56,49 @@ void MapTools::onStart()
     }
 
     computeConnectivity();
+
+	dps_map_ = std::vector<std::vector<float>>{};
+	dps_map_.clear();
+	for (int y = 0; y < height(); ++y)
+	{
+		dps_map_.push_back(std::vector<float>());
+		for (int x = 0; x < width(); ++x)
+		{
+			// There is an inherit "danger" for traveling through any square. 
+			// Don't use 0, otherwise we won't find the "shortest and safest path"
+			dps_map_[y].push_back(1);
+		}
+	}
+
+	gs_map_ = std::vector<std::vector<float>>{};
+	gs_map_.clear();
+	for (int y = 0; y < height(); ++y)
+	{
+		gs_map_.push_back(std::vector<float>());
+		for (int x = 0; x < width(); ++x)
+		{
+			// Don't use 0, otherwise we won't find the "shortest and safest path"
+			gs_map_[y].push_back(1);
+		}
+	}
+
+	ss_map_ = std::vector<std::vector<float>>{};
+	ss_map_.clear();
+	for (int y = 0; y < height(); ++y)
+	{
+		ss_map_.push_back(std::vector<float>());
+		for (int x = 0; x < width(); ++x)
+		{
+			// Don't use 0, otherwise we won't find the "shortest and safest path"
+			ss_map_[y].push_back(1);
+		}
+	}
 }
 
 void MapTools::onFrame()
 {
     m_frame++;
-
+	unit_info_.onFrame();
     for (int x=0; x<m_width; ++x)
     {
         for (int y=0; y<m_height; ++y)
@@ -76,6 +115,136 @@ void MapTools::onFrame()
 	drawTextScreen(sc2::Point2D(100, 120), std::to_string(m_frame), sc2::Colors::Green);
 
     draw();
+
+
+	// Reset dps_map_
+
+	for (int y = 0; y < dps_map_.size(); ++y)
+	{
+		for (int x = 0; x < dps_map_[y].size(); ++x)
+		{
+			dps_map_[y][x] = 1;
+		}
+	}
+
+
+	// Reset gs_map_
+	
+	for (int y = 0; y < gs_map_.size(); ++y)
+	{
+		for (int x = 0; x < gs_map_[y].size(); ++x)
+		{
+			gs_map_[y][x] = 1;
+		}
+	}
+	
+
+	// Update dps_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Enemy))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		if (damage == 0) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  Melee units are dangerous too.
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+
+		for (float y = 0; y < dps_map_.size(); ++y)
+		{
+			for (float x = 0; x < dps_map_[y].size(); ++x)
+			{
+				for (float falloff = 0; falloff < 25; ++falloff)
+				{
+					// Danger zone falloff only applies to army units. 
+					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+						{
+							dps_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+							break;
+						}
+				}
+			}
+		}
+	}
+
+	for (int y = 0; y < height(); ++y)
+	{
+		for (int x = 0; x < width(); ++x)
+		{
+			if (!isWalkable(x, y))
+				dps_map_[y][x] = 999;
+		}
+	}
+
+
+	// Update gs_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		//const bool Util::canAttackSky(unit->unit_type)
+		if (damage == 0) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+
+		for (float y = 0; y < gs_map_.size(); ++y)
+		{
+			for (float x = 0; x < gs_map_[y].size(); ++x)
+			{
+				for (float falloff = 0; falloff < 25; ++falloff)
+				{
+					// 
+					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+						{
+							gs_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+							break;
+						}
+				}
+			}
+		}
+	}
+
+	for (int y = 0; y < height(); ++y)
+	{
+		for (int x = 0; x < width(); ++x)
+		{
+			if (!isWalkable(x, y))
+				gs_map_[y][x] = 0.01;
+		}
+	}
+
+	// Update ss_map_
+	for (const auto & unit_info_pair : unit_info_.getUnitInfoMap(Players::Self))
+	{
+		const auto unit_info = unit_info_pair.second;
+		const int damage = Util::GetAttackDamage(unit_info.type, m_bot);
+		const bool skyAttack = Util::canAttackSky(unit_info.type);
+		if (damage == 0||skyAttack==false) continue;
+		int range = static_cast<int>(Util::GetAttackRange(unit_info.type, m_bot)) + 1;
+		//  
+		if (range == 0 && !Util::IsBuilding(unit_info.type)) range = 2;
+
+		for (float y = 0; y < ss_map_.size(); ++y)
+		{
+			for (float x = 0; x < ss_map_[y].size(); ++x)
+			{
+				for (float falloff = 0; falloff < 25; ++falloff)
+				{
+					// 
+					if (!Util::IsWorker(unit_info.unit) && falloff > 1)
+						if (Util::DistSq(sc2::Point2D{ x, y }, unit_info.lastPosition) <= static_cast<float>(range*range + falloff * falloff))
+						{
+							ss_map_[y][x] += static_cast<float>(damage / (falloff * 2 + 1));
+							break;
+						}
+				}
+			}
+		}
+	}
+
+
 }
 
 void MapTools::computeConnectivity()
@@ -448,6 +617,68 @@ void MapTools::drawSphereAroundUnit(const UnitTag & unitTag, sc2::Color color) c
     drawSphere(unit->pos, 1, color);
 }
 
+bool MapTools::IsAnyTileAdjacentToTileType(const sc2::Point2DI p, const MapTileType tile_type, const sc2::UnitTypeID building_type) const
+{
+	const int width = Util::GetUnitTypeWidth(building_type, m_bot);
+	const int height = Util::GetUnitTypeHeight(building_type, m_bot);
+
+	// define the rectangle of the building spot
+	const int startx = p.x - width/2;
+	const int starty = p.y - height/2;
+	const int endx = p.x + width/2 ;
+	const int endy = p.y + height/2;
+
+	// if this rectangle doesn't fit on the map we can't build here
+	if (endx < 0 || endy < 0 || startx >m_width || starty > m_height)
+	{
+		return false;
+	}
+
+	// if we can't build here, or space is reserved, or it's in the resource box, we can't build here.
+	// Yes, < is correct. Don't use <=.
+	// Due to how starcraft calculates the tile type, things are sort of "shifted down and left" slightly. 
+	// Turn on DrawTileInfo to see the "shifting" in action. 
+	for (int x = startx; x < endx; ++x)
+	{
+		for (int y = starty; y < endy; ++y)
+		{
+			if (IsTileAdjacentToTileType(sc2::Point2DI{ x,y }, tile_type))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool MapTools::IsTileAdjacentToTileType(const sc2::Point2DI p, const MapTileType tile_type) const
+{
+	if (p.x > 0 && IsTileTypeOf(p.x - 1, p.y, tile_type))
+		return true;
+	if (p.x < m_width - 1 && IsTileTypeOf(p.x + 1, p.y, tile_type))
+		return true;
+	if (p.y > 0 && IsTileTypeOf(p.x, p.y - 1, tile_type))
+		return true;
+	if (p.y < m_height - 1 && IsTileTypeOf(p.x, p.y + 1, tile_type))
+		return true;
+	return false;
+}
+
+bool MapTools::IsTileTypeOf(const int x, const int y, const MapTileType tile_type) const
+{
+	if (tile_type == MapTileType::CantWalk
+		&& isWalkable(x, y))
+		return true;;
+	if (tile_type == MapTileType::CantBuild
+		&& isBuildable(x, y))
+		return true;
+	if (tile_type == MapTileType::Ramp &&
+		isWalkable(x, y) && !isBuildable(x, y))
+		return true;
+	return false;
+}
+
+
 sc2::Point2DI MapTools::getLeastRecentlySeenPosition() const
 {
     int minSeen = std::numeric_limits<int>::max();
@@ -471,4 +702,19 @@ sc2::Point2DI MapTools::getLeastRecentlySeenPosition() const
 bool MapTools::isBuildable(CCTilePosition & tile) const
 {
 	return isBuildable(tile.x, tile.y);
+}
+
+std::vector<std::vector<float>> MapTools::GetDPSMap() const
+{
+	return dps_map_;
+}
+
+std::vector<std::vector<float>> MapTools::GetGSMap() const
+{
+	return gs_map_;
+}
+
+std::vector<std::vector<float>> MapTools::GetSSMap() const
+{
+	return ss_map_;
 }

@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGUID>{D4AC5062-8BEA-46D8-9231-57241C214F1C}</ProjectGUID>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
     <ProjectName>CommandCenter</ProjectName>
@@ -90,8 +90,8 @@
     <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>D:\scbots\s2client-api\build\bin;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\scbots\s2client-api\include;D:\scbots\s2client-api\build\generated;D:\scbots\s2client-api\contrib\protobuf\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\SC2_project\sc2api\s2client-api\build\bin;C:\Program Files (x86)\Windows Kits\10\lib\10.0.16299.0\um\x64;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.16299.0\ucrt\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\SC2_project\sc2api\s2client-api\include;D:\SC2_project\sc2api\s2client-api\contrib\protobuf\src;D:\SC2_project\sc2api\s2client-api\build\generated;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\winrt;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -307,6 +307,7 @@
     <ClCompile Include="..\src\LurkerManager.cpp" />
     <ClCompile Include="..\src\BattlecruiserManager.cpp" />
     <ClCompile Include="..\src\MarineManager.cpp" />
+    <ClCompile Include="..\src\Pathfinding.cpp" />
     <ClCompile Include="..\src\ThorManager.cpp" />
     <ClCompile Include="..\src\BansheeManager.cpp" />
     <ClCompile Include="..\src\RavenManager.cpp" />
@@ -379,6 +380,7 @@
     <ClInclude Include="..\src\MarauderManager.h" />
     <ClInclude Include="..\src\LurkerManager.h" />
     <ClInclude Include="..\src\MarineManager.h" />
+    <ClInclude Include="..\src\Pathfinding.h" />
     <ClInclude Include="..\src\RavagerManager.h" />
     <ClInclude Include="..\src\MothershipManager.h" />
     <ClInclude Include="..\src\ZealotManager.h" />

@@ -4,8 +4,18 @@
 
 #include "sc2api/sc2_api.h"
 #include "DistanceMap.h"
+#include "UnitInfoManager.h"
 
 class CCBot;
+
+
+enum class MapTileType
+{
+	Free,
+	Ramp,
+	CantBuild,
+	CantWalk
+};
 
 class MapTools
 {
@@ -14,7 +24,7 @@ class MapTools
     int     m_height;
     float   m_maxZ;
     int     m_frame;
-    
+	UnitInfoManager                 unit_info_;
 
     // a cache of already computed distance maps, which is mutable since it only acts as a cache
     mutable std::map<std::pair<int, int>, DistanceMap>   _allMaps;   
@@ -25,6 +35,9 @@ class MapTools
     std::vector<std::vector<int>>   m_lastSeen;         // the last time any of our units has seen this position on the map
     std::vector<std::vector<int>>   m_sectorNumber;     // connectivity sector number, two tiles are ground connected if they have the same number
     std::vector<std::vector<float>> m_terrainHeight;        // height of the map at x+0.5, y+0.5
+	std::vector<std::vector<float>>   dps_map_;			//the dps of every spot of the map
+	std::vector<std::vector<float>>   gs_map_;			//the ground_support of every spot of the map
+	std::vector<std::vector<float>>   ss_map_;			//the sky_support of every spot of the map
     
     void computeConnectivity();
 
@@ -88,5 +101,17 @@ public:
 
     // returns a list of all tiles on the map, sorted by 4-direcitonal walk distance from the given position
     const std::vector<sc2::Point2DI> & getClosestTilesTo(const sc2::Point2DI & pos) const;
+	//return the current dps of the map 
+	std::vector<std::vector<float>> GetDPSMap() const;
+	//return the current ground_support of the map 
+	std::vector<std::vector<float>> GetGSMap() const;
+	//return the current sky_support of the map 
+	std::vector<std::vector<float>> GetSSMap() const;
+
+	bool IsAnyTileAdjacentToTileType(const sc2::Point2DI p, const MapTileType tile_type, const sc2::UnitTypeID building_type) const;
+
+	bool IsTileAdjacentToTileType(const sc2::Point2DI p, const MapTileType tile_type) const;
+
+	bool IsTileTypeOf(const int x, const int y, const MapTileType tile_type) const;
 };
 

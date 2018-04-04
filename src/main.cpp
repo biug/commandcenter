@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     }
     
     rapidjson::Document doc;
-    std::string config = JSONTools::ReadFile("C:\\Users\\Admin\\Documents\\GitHub\\commandcenter\\bin\\BotConfig.txt");
+    std::string config = JSONTools::ReadFile("D:\\SC2_project\\biug_commandcenter\\commandcenter\\bin\\BotConfig.txt");
     if (config.length() == 0)
     {
         std::cerr << "Config file could not be found, and is required for starting the bot\n";

@@ -482,6 +482,10 @@ sc2::Point2DI BuildingManager::getBuildingLocation(const Building & b)
 	{
 		return m_buildingPlacer.getBuildLocationNear(b, 2);
 	}
+	if (b.type == sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT && m_bot.UnitInfo().getUnitTypeCount(Players::Self, sc2::UNIT_TYPEID::TERRAN_SUPPLYDEPOT) < 4)
+	{
+		return  m_buildingPlacer.GetNextCoordinateToWallWithBuilding(b);
+	}
 	int buildingSpacing = m_bot.Config().BuildingSpacing;
 	
     // get a position within our region

@@ -1,6 +1,8 @@
 #include "BansheeManager.h"
 #include "Util.h"
 #include "CCBot.h"
+#include <iostream>
+#include "pathfinding.h"
 
 BansheeInfo::BansheeInfo() :
 m_hpLastSecond(45)
@@ -51,7 +53,20 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 		}
 		float currentHP = Banshee->health;
 		bool beingAttack = currentHP < BansheeInfos[Banshee].m_hpLastSecond;
-		if (refreshInfo) BansheeInfos[Banshee].m_hpLastSecond = currentHP;
+		if (refreshInfo) 
+		{
+			BansheeInfos[Banshee].m_hpLastSecond = currentHP;
+			auto posb = Banshee->pos;
+			float posh=m_bot.Map().terrainHeight(posb.x, posb.y);
+			std::cout << "terrainHeight:"<< posh << std::endl;
+
+//			std::vector<std::vector<float>>& map_to_path=m_bot.Map().GetDPSMap();
+//			std::cout << "currentDSP:" << map_to_path[posb.y][posb.x] << std::endl;
+//				Pathfinding p;
+//				p.SmartRunAway(Banshee, 20, m_bot);
+			
+			
+		}
 		
 		// if the order is to attack or defend
 		if (order.getType() == SquadOrderTypes::Attack || order.getType() == SquadOrderTypes::Defend)
@@ -84,7 +99,6 @@ void BansheeManager::assignTargets(const std::vector<const sc2::Unit *> & target
 						isdetector = true;
 					}
 				}
-				std::cout << iscloakon << std::endl;
 				if (iscloakon && !(isdetector) && Banshee->energy > 25)
 				{
 					Micro::SmartAbility(Banshee, sc2::ABILITY_ID::BEHAVIOR_CLOAKON,  m_bot);
