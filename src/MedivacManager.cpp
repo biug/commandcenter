@@ -50,12 +50,9 @@ void MedivacManager::executeMicro(const std::vector<const sc2::Unit *> & targets
 		}
 		
 		float currentHP = Medivac->health;
-		bool beingAttack = currentHP < MedivacInfos[Medivac].m_hpLastSecond;
+
 		if (refreshInfo) MedivacInfos[Medivac].m_hpLastSecond = currentHP;
 
-		if (beingAttack) {
-			escapeFromEffect(Medivac);
-		}
 		if (!nearbySelf.empty()) {
 			// find the best target for this meleeUnit
 			const sc2::Unit * target = getTarget(Medivac, nearbySelf);

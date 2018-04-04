@@ -61,9 +61,6 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				// find the best target for this meleeUnit
 				const sc2::Unit * target = getTarget(marine, marineTargets);
 				if (!target) continue;
-				if (beingAttack) {
-					escapeFromEffect(marine);
-				}
 				
 				if (m_bot.State().m_stimpack)
 				{
