@@ -87,10 +87,12 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 					//continue;
 				}
 				// kite attack it
-				if (Util::IsMeleeUnit(target) && marine->weapon_cooldown > 0) {
+				//if (Util::IsMeleeUnit(target) && marine->weapon_cooldown > 0) {
+				if(marine->weapon_cooldown > 0){
 					//auto p1 = target->pos, p2 = marine->pos;
 					//auto tp = p2 * 2 - p1;
-					sc2::Point2D rp  = RetreatPosition(marine);
+					//sc2::Point2D rp  = RetreatPosition(marine);
+					sc2::Point2D rp = GeneticAlgorithm::GA(marine, target);
 					Micro::SmartMove(marine, rp, m_bot);
 				}
 				else {

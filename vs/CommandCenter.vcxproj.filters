@@ -205,6 +205,12 @@
     <ClCompile Include="..\src\HightemplarManager.cpp">
       <Filter>micro</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\distance.cpp">
+      <Filter>genticAlgorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GA.cpp">
+      <Filter>genticAlgorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -416,6 +422,15 @@
     <ClInclude Include="..\src\HightemplarManager.h">
       <Filter>micro</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\distance.h">
+      <Filter>genticAlgorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GA.h">
+      <Filter>genticAlgorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Threadpool.h">
+      <Filter>genticAlgorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="global">
@@ -432,6 +447,9 @@
     </Filter>
     <Filter Include="micro">
       <UniqueIdentifier>{9829f5c0-728d-4121-8884-bf1fddd88a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="genticAlgorithm">
+      <UniqueIdentifier>{85584922-c722-4b7b-9e60-f2c98a9981b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

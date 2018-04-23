@@ -294,7 +294,9 @@
     <ClCompile Include="..\src\CombatCommander.cpp" />
     <ClCompile Include="..\src\Common.cpp" />
     <ClCompile Include="..\src\DarktemplarManager.cpp" />
+    <ClCompile Include="..\src\distance.cpp" />
     <ClCompile Include="..\src\DistanceMap.cpp" />
+    <ClCompile Include="..\src\GA.cpp" />
     <ClCompile Include="..\src\GameCommander.cpp" />
     <ClCompile Include="..\src\GhostManager.cpp" />
     <ClCompile Include="..\src\HellionManager.cpp" />
@@ -367,7 +369,9 @@
     <ClInclude Include="..\src\Common.h" />
     <ClInclude Include="..\src\BotConfig.h" />
     <ClInclude Include="..\src\DarktemplarManager.h" />
+    <ClInclude Include="..\src\distance.h" />
     <ClInclude Include="..\src\DistanceMap.h" />
+    <ClInclude Include="..\src\GA.h" />
     <ClInclude Include="..\src\GameCommander.h" />
     <ClInclude Include="..\src\GhostManager.h" />
     <ClInclude Include="..\src\HellionManager.h" />
@@ -381,6 +385,7 @@
     <ClInclude Include="..\src\MarineManager.h" />
     <ClInclude Include="..\src\RavagerManager.h" />
     <ClInclude Include="..\src\MothershipManager.h" />
+    <ClInclude Include="..\src\Threadpool.h" />
     <ClInclude Include="..\src\ZealotManager.h" />
     <ClInclude Include="..\src\SentryManager.h" />
     <ClInclude Include="..\src\ImmortalManager.h" />

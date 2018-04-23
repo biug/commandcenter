@@ -12,7 +12,7 @@
         "EnemyDifficulty"           : 5,
         "EnemyRace"                 : "Zerg",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season3\\AscensiontoAiurLE.SC2Map",
-        "StepSize"                  : 3
+        "StepSize"                  : 1
     },
         
     "Micro" :
@@ -31,22 +31,22 @@
 
     "Debug" :
     {
-        "DrawGameInfo"              : true, 
-        "DrawProductionInfo"        : true, 
-        "DrawBaseLocationInfo"      : true,
-        "DrawTileInfo"              : true,
+        "DrawGameInfo"              : false, 
+        "DrawProductionInfo"        : false, 
+        "DrawBaseLocationInfo"      : false,
+        "DrawTileInfo"              : false,
         "DrawWalkableSectors"       : false,
-        "DrawScoutInfo"             : true,
+        "DrawScoutInfo"             : false,
         "DrawEnemyUnitInfo"         : false,
-        "DrawResourceInfo"          : true,
-        "DrawUnitTargetInfo"        : true,
+        "DrawResourceInfo"          : false,
+        "DrawUnitTargetInfo"        : false,
         "DrawLastSeenTileInfo"      : false,
-        "DrawSquadInfo"             : true,
+        "DrawSquadInfo"             : false,
         "DrawWorkerInfo"            : false,
-        "DrawBuildingInfo"          : true,
-        "DrawReservedBuildingTiles" : true,
+        "DrawBuildingInfo"          :false,
+        "DrawReservedBuildingTiles" : false,
         
-        "DrawCombatUnitCompare"     : true
+        "DrawCombatUnitCompare"     : false
     },
     
     "Modules" :
