@@ -92,6 +92,7 @@ GeneticAlgorithm::GeneticAlgorithm(const sc2::Unit * unit, const sc2::Unit * tar
 		population.SetCanidate(i, can);
 		population.SetReward(i, CalcReward(unit, can, target));
 	}
+	if (target->facing - unit->facing < 45);
 }
 
 GeneticAlgorithm::GeneticAlgorithm()

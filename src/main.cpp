@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     std::string botRaceString;
     std::string enemyRaceString;
     std::string mapString;
-    int stepSize = 5;
+    int stepSize = 1;
 	sc2::Difficulty enemyDifficulty = sc2::Difficulty::MediumHard;
 
     if (doc.HasMember("Game Info") && doc["Game Info"].IsObject())
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     //          Setting this = N means the bot's onFrame gets called once every N frames
     //          The bot may crash or do unexpected things if its logic is not called every frame
     coordinator.SetStepSize(stepSize);
-    coordinator.SetRealtime(false);
+    coordinator.SetRealtime(true);
 
     coordinator.SetParticipants({
         CreateParticipant(Util::GetRaceFromString(botRaceString), &bot),
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     {
         coordinator.Update();
 		// Slow down game speed for better look & feel while making experiments.
-		//sc2::SleepFor(1);
+		//sc2::SleepFor(15);
     }
 
     return 0;

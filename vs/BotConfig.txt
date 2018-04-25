@@ -9,7 +9,7 @@
     "Game Info" :
     {
         "BotRace"                   : "Terran",
-        "EnemyDifficulty"           : 5,
+        "EnemyDifficulty"           : 3,
         "EnemyRace"                 : "Zerg",
         "MapFile"                   : "D:\\scbots\\maps\\Ladder2017Season3\\AscensiontoAiurLE.SC2Map",
         "StepSize"                  : 1
@@ -43,7 +43,7 @@
         "DrawLastSeenTileInfo"      : false,
         "DrawSquadInfo"             : false,
         "DrawWorkerInfo"            : false,
-        "DrawBuildingInfo"          :false,
+        "DrawBuildingInfo"          : false,
         "DrawReservedBuildingTiles" : false,
         
         "DrawCombatUnitCompare"     : false
@@ -57,7 +57,7 @@
     "Strategy" :
     {
         "Protoss"                   : "Protoss_ImmortalRush",
-        "Terran"                    : "Terran_Test2",
+        "Terran"                    : "Terran_MarineRush",
         "Zerg"                      : "Zerg_ZerglingRush",
         
         "ScoutHarassEnemy"          : true,
@@ -76,7 +76,7 @@
 
             "Terran_Test2"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab", "Marine", "Marine", "Marine", "Marauder", "Marauder", "Marauder", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marauder", "Marauder", "Marauder","Factory","Stimpack","Marauder", "Factory", "Starport", "FactoryTechlab", "Medivac", "Medivac", "Medivac", "Medivac", "Marine", "Marine", "Marine", "Marauder", "Marauder", "Marauder", "Reaper", "Reaper", "Reaper", "Reaper", "Reaper","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder","Marine", "Marine", "Marauder", "Marauder", "Marauder"] },
             
-            "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Marine","Marine","Stimpack","Marauder", "Marine", "Marine","Factory","Marine", "Marine", "Marine", "Marine", "Marine", "FactoryTechlab", "Marine", "Marine","go start attack", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine",  "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
+            "Terran_MarineRush"     : { "Race" : "Terran",  "OpeningBuildOrder" : ["go keep train worker 20", "SupplyDepot", "Barracks","Refinery", "go scout","Barracks","OrbitalCommand","go keep train worker 23","Refinery","BarracksReactor" ,"SupplyDepot","BarracksTechlab","Marine","Marine","go start attack","Stimpack","Marine", "Marine","Factory","Marine", "Marine", "Marine", "Marine", "Marine", "FactoryTechlab", "Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine","Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine",  "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine", "Marine"] },
 
             "Zerg_ZerglingRush"     : { "Race" : "Zerg",    "OpeningBuildOrder" : ["SpawningPool", "Drone", "Overlord", "Drone", "Zergling", "Zergling", "Zergling", "Zergling", "BANELINGNEST", "Zergling", "Zergling", "Zergling"] },
 

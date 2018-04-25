@@ -211,6 +211,12 @@
     <ClCompile Include="..\src\GA.cpp">
       <Filter>genticAlgorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Behavior.cpp">
+      <Filter>behaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BehaviorTree.cpp">
+      <Filter>behaviorTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BaseLocationManager.h">
@@ -431,6 +437,15 @@
     <ClInclude Include="..\src\Threadpool.h">
       <Filter>genticAlgorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Behavior.h">
+      <Filter>behaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BehaviorTree.h">
+      <Filter>behaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MarineBehaviorTree.h">
+      <Filter>behaviorTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="global">
@@ -450,6 +465,9 @@
     </Filter>
     <Filter Include="genticAlgorithm">
       <UniqueIdentifier>{85584922-c722-4b7b-9e60-f2c98a9981b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="behaviorTree">
+      <UniqueIdentifier>{ef0882ee-656c-43ee-a73b-b1b88e88f7de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

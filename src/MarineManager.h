@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "MicroManager.h"
-
+#include "MarineBehaviorTree.h"
 class CCBot;
 
 struct MarineInfo
@@ -17,7 +17,6 @@ class MarineManager : public MicroManager
 {
 	std::unordered_map<const sc2::Unit*, MarineInfo> marineInfos;
 public:
-
 	MarineManager(CCBot & bot);
 	void    executeMicro(const std::vector<const sc2::Unit *> & targets);
 	void    assignTargets(const std::vector<const sc2::Unit *> & targets);

@@ -280,6 +280,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AdeptManager.cpp" />
+    <ClCompile Include="..\src\Behavior.cpp" />
+    <ClCompile Include="..\src\BehaviorTree.cpp" />
     <ClCompile Include="..\src\CCBot.cpp" />
     <ClCompile Include="..\src\BaseLocation.cpp" />
     <ClCompile Include="..\src\BaseLocationManager.cpp" />
@@ -355,6 +357,8 @@
   <ItemGroup>
     <ClInclude Include="..\src\BansheeManager.h" />
     <ClInclude Include="..\src\BattlecruiserManager.h" />
+    <ClInclude Include="..\src\Behavior.h" />
+    <ClInclude Include="..\src\BehaviorTree.h" />
     <ClInclude Include="..\src\CCBot.h" />
     <ClInclude Include="..\src\BaseLocation.h" />
     <ClInclude Include="..\src\BaseLocationManager.h" />
@@ -382,6 +386,7 @@
     <ClInclude Include="..\src\MapTools.h" />
     <ClInclude Include="..\src\MarauderManager.h" />
     <ClInclude Include="..\src\LurkerManager.h" />
+    <ClInclude Include="..\src\MarineBehaviorTree.h" />
     <ClInclude Include="..\src\MarineManager.h" />
     <ClInclude Include="..\src\RavagerManager.h" />
     <ClInclude Include="..\src\MothershipManager.h" />

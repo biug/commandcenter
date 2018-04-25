@@ -2,7 +2,7 @@
 #include "Util.h"
 #include "CCBot.h"
 #include <cmath>
-
+using namespace BT;
 MarineInfo::MarineInfo() :
 m_hpLastSecond(45)
 {
@@ -23,6 +23,12 @@ MarineManager::MarineManager(CCBot & bot)
 
 void MarineManager::executeMicro(const std::vector<const sc2::Unit *> & targets)
 {
+	const std::vector<const sc2::Unit *> & marines = getUnits();
+	for (auto marine : marines)
+	{
+		MarineBehaviorTree * marineBT = new MarineBehaviorTree(marine);
+		marineBT->Tick();
+	}
 	assignTargets(targets);
 }
 
@@ -44,6 +50,8 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 	bool refreshInfo = m_bot.Map().frame() % 16;
 	for (auto marine : marines)
 	{
+		MarineBehaviorTree * marineBT = new MarineBehaviorTree(marine);
+		int flag = 0;
 		BOT_ASSERT(marine, "ranged unit is null");
 		if (marineInfos.find(marine) == marineInfos.end())
 		{
@@ -88,13 +96,16 @@ void MarineManager::assignTargets(const std::vector<const sc2::Unit *> & targets
 				}
 				// kite attack it
 				//if (Util::IsMeleeUnit(target) && marine->weapon_cooldown > 0) {
-				if(marine->weapon_cooldown > 0){
+				
+				if(marine->weapon_cooldown > 0 && flag == 0){
 					//auto p1 = target->pos, p2 = marine->pos;
 					//auto tp = p2 * 2 - p1;
 					//sc2::Point2D rp  = RetreatPosition(marine);
 					sc2::Point2D rp = GeneticAlgorithm::GA(marine, target);
 					Micro::SmartMove(marine, rp, m_bot);
+					
 				}
+	
 				else {
 					Micro::SmartAttackMove(marine, target->pos, m_bot);
 				}
